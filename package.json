@@ -4,7 +4,9 @@
 	"description": "Dynamic Crawler Tool",
 	"main": "index.js",
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"prepare": "husky install",
+		"precommit": "eslint ."
 	},
 	"repository": {
 		"type": "git",
@@ -27,14 +29,7 @@
 		"eslint-config-airbnb-base": "^15.0.0",
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-n": "^15.7.0",
-		"eslint-plugin-promise": "^6.1.1"
-	},
-	"husky": {
-		"hooks": {
-		  "applypatch-msg": "echo \"[Husky] applypatch-msg\"",
-		  "pre-applypatch": "echo \"[Husky] pre-applypatch\"",
-		  "post-applypatch": "echo \"[Husky] post-applypatch\"",
-		  "pre-commit": "echo \"[Husky] pre-commit\""
-		}
+		"eslint-plugin-promise": "^6.1.1",
+		"husky": "^8.0.0"
 	}
 }

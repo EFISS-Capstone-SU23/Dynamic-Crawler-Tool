@@ -1,6 +1,6 @@
 import {
 	Builder,
-} from 'selenium-webdriver';
+} from 'selenium-webdiver';
 
 // set chrome options
 import chrome from 'selenium-webdriver/chrome.js';
