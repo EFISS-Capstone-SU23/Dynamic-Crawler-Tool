@@ -20,7 +20,6 @@
 	},
 	"homepage": "https://github.com/RSI-Capstone-SU23/Dynamic-Crawler-Tool#readme",
 	"dependencies": {
-		"husky": "^8.0.3",
 		"selenium-webdriver": "^4.8.2"
 	},
 	"type": "module",
@@ -30,7 +29,7 @@
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-n": "^15.7.0",
 		"eslint-plugin-promise": "^6.1.1",
-		"husky": "^8.0.0"
+		"husky": "^8.0.3"
 	},
 	"husky": {
 		"hooks": {
