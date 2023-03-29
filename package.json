@@ -28,5 +28,13 @@
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-n": "^15.7.0",
 		"eslint-plugin-promise": "^6.1.1"
+	},
+	"husky": {
+		"hooks": {
+		  "applypatch-msg": "echo \"[Husky] applypatch-msg\"",
+		  "pre-applypatch": "echo \"[Husky] pre-applypatch\"",
+		  "post-applypatch": "echo \"[Husky] post-applypatch\"",
+		  "pre-commit": "echo \"[Husky] pre-commit\""
+		}
 	}
 }
