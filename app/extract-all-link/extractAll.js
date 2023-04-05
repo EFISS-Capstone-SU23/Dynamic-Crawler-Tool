@@ -6,6 +6,12 @@ import {
 import getDriverArray from '../../utils/getDriverArray.js';
 
 const startExtractPage = async (driver, url) => new Promise(async (resolve) => {
+	console.log(`Start extract page: ${url}`);
+	if (!url) {
+		resolve([]);
+		return;
+	}
+
 	driver.get(url);
 
 	const output = [];
@@ -28,9 +34,6 @@ const startExtractPage = async (driver, url) => new Promise(async (resolve) => {
 
 export default async function extractAll(startUrl, maxDriver) {
 	const driverArray = getDriverArray(maxDriver);
-
-	console.log(driverArray);
-
 	const visitedURL = {};
 
 	const queue = [startUrl];
@@ -55,11 +58,15 @@ export default async function extractAll(startUrl, maxDriver) {
 			result.forEach((url) => {
 				if (!visitedURL[url]) {
 					queue.push(url);
-					visitedURL[url] = true;
 				}
 			});
 		});
 
 		console.log(`Queue length: ${queue.length}`);
 	}
+
+	// close all driver
+	driverArray.forEach((driver) => {
+		driver.quit();
+	});
 }
