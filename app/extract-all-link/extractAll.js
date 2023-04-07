@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 /* eslint-disable no-restricted-syntax */
 import {
 	By,
@@ -36,9 +37,15 @@ export default async function extractAll(startUrl, maxDriver) {
 	const driverArray = getDriverArray(maxDriver);
 	const visitedURL = {};
 
-	const queue = [startUrl];
+	const domain = new URL(startUrl).origin;
+
+	let queue = [startUrl];
 
 	while (queue.length > 0) {
+		// filter duplicate url in queue via set
+		const set = new Set(queue);
+		queue = [...set];
+
 		// get url array for this batch
 		const urlArray = queue.splice(0, maxDriver);
 
@@ -56,7 +63,7 @@ export default async function extractAll(startUrl, maxDriver) {
 		// merge result array to queue
 		resultArray.forEach((result) => {
 			result.forEach((url) => {
-				if (!visitedURL[url]) {
+				if (url && url.includes(domain) && !visitedURL[url]) {
 					queue.push(url);
 				}
 			});
