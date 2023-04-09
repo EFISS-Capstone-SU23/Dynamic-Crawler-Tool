@@ -1,0 +1,14 @@
+[
+    {
+        "url": "mandofashion.vn",
+        "paginationButton": "//*[@id=\"pagination\"]/div/a[@class=\"next\"]"
+    },
+    {
+        "url":"canifa.com",
+        "paginationButton":"//*[@id=\"app\"]/div[1]/div[2]/main/div[2]/div[2]/div[3]/div/ul/li[@class=\"item pages-item-next\"]"
+    },
+    {
+        "url":"muji.com",
+        "paginationButton":"/html/body/div[@class=\"content\"]/main/section/p"
+    }
+]
