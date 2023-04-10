@@ -24,15 +24,13 @@ const getElementByCss = async (driver, css) => {
 	}
 };
 
-export const extractProductData = async (driver, url) => {
+export const extractProductData = async (driver) => {
 	const {
 		title,
 		price,
 		description,
 		imageContainer,
 	} = selectors;
-
-	await driver.get(url);
 
 	const titleElement = getElementByXpath(driver, title);
 	const priceElement = getElementByXpath(driver, price);
@@ -67,15 +65,20 @@ export const extractProductData = async (driver, url) => {
 	};
 };
 
-export const saveProductData = async (productData) => {
+export const saveProductData = async (productData, url) => {
 	const {
 		imageLinks,
 	} = productData;
 
+	const domain = new URL(url).origin;
+
 	// download image in imageLinks
-	for (const imageLink of imageLinks) {
+	for (let i = 0; i < imageLinks.length; i += 1) {
+		const imageLink = imageLinks[i];
 		// download image
-		console.log(imageLink);
+		// data/<site name>/<id>_<site_name_with_under_score>.jpg
+		// const path = `data/${domain}/${imageLink.split('/').slice(-1)[0]}`;
+		console.log(imageLink, domain);
 	}
 
 	// save product data to database

@@ -19,6 +19,6 @@
         "no-console": "off",
         "no-async-promise-executor": "off",
         "no-plusplus": "off",
-        "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
+        "import/no-extraneous-dependencies": "off"
     }
 }

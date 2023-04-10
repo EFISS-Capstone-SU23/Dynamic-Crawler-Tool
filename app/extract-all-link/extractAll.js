@@ -20,7 +20,7 @@ const startExtractPage = async (driver, url) => new Promise(async (resolve) => {
 	await driver.wait(() => driver.executeScript('return document.readyState').then((readyState) => readyState === 'complete'), 10000);
 
 	// Try to extract product data
-	const productData = await extractProductData(driver, url);
+	const productData = await extractProductData(driver);
 
 	if (productData) {
 		console.log(`Extract product data: ${url}`);
