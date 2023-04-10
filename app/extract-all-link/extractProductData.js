@@ -1,5 +1,10 @@
 /* eslint-disable no-restricted-syntax */
-import { By } from 'selenium-webdriver';
+import {
+	By,
+} from 'selenium-webdriver';
+
+import Products from '../../models/Products';
+import saveFileFromURL from '../../utils/file/saveFileFromURL';
 
 const selectors = {
 	title: '//*[@id="maincontent"]/div[2]/div/div[1]/div[2]/div[1]/div/div[1]/div[1]/h1/span',
@@ -67,19 +72,35 @@ export const extractProductData = async (driver) => {
 
 export const saveProductData = async (productData, url) => {
 	const {
+		title,
+		price,
+		description,
 		imageLinks,
 	} = productData;
+
+	// save product data to database
+	const product = await Products.insertNewProduct({
+		title,
+		price,
+		description,
+		url,
+	});
 
 	const domain = new URL(url).origin;
 
 	// download image in imageLinks
+	const imagePath = [];
 	for (let i = 0; i < imageLinks.length; i += 1) {
 		const imageLink = imageLinks[i];
 		// download image
 		// data/<site name>/<id>_<site_name_with_under_score>.jpg
-		// const path = `data/${domain}/${imageLink.split('/').slice(-1)[0]}`;
-		console.log(imageLink, domain);
+		const path = `data/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.jpg}`;
+		await saveFileFromURL(imageLink, path);
+		imagePath.push(path);
 	}
 
-	// save product data to database
+	// save product image path to database
+	Products.updateProductById(product._id, {
+		imagePath,
+	});
 };

@@ -19,6 +19,7 @@
         "no-console": "off",
         "no-async-promise-executor": "off",
         "no-plusplus": "off",
-        "import/no-extraneous-dependencies": "off"
+        "import/no-extraneous-dependencies": "off",
+        "no-underscore-dangle": "off"
     }
 }
