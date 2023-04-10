@@ -24,7 +24,7 @@ const startExtractPage = async (driver, url) => new Promise(async (resolve) => {
 
 	if (productData) {
 		console.log(`Extract product data: ${url}`);
-		saveProductData(productData);
+		await saveProductData(productData, url);
 	}
 
 	const output = [];
@@ -49,7 +49,7 @@ export default async function extractAll(startUrl, maxDriver) {
 	const driverArray = getDriverArray(maxDriver);
 	const visitedURL = {};
 
-	const domain = new URL(startUrl).origin;
+	const domain = new URL(startUrl).hostname;
 
 	let queue = [startUrl];
 
