@@ -13,6 +13,12 @@
     "rules": {
         "import/extensions": "off",
         "indent": ["error", "tab"],
-        "no-tabs": "off"
+        "no-tabs": "off",
+        "import/prefer-default-export": "off",
+        "no-await-in-loop": "off",
+        "no-console": "off",
+        "no-async-promise-executor": "off",
+        "no-plusplus": "off",
+        "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
     }
 }

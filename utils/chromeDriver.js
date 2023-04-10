@@ -16,9 +16,7 @@ o.setUserPreferences({
 	credential_enable_service: false,
 });
 
-const driver = new Builder()
+export const getDriver = () => new Builder()
 	.forBrowser('chrome')
 	.setChromeOptions(o)
 	.build();
-
-export default driver;
