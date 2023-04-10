@@ -20,7 +20,8 @@
 	},
 	"homepage": "https://github.com/RSI-Capstone-SU23/Dynamic-Crawler-Tool#readme",
 	"dependencies": {
-		"selenium-webdriver": "^4.8.2"
+		"selenium-webdriver": "^4.8.2",
+		"winston": "^3.8.2"
 	},
 	"type": "module",
 	"devDependencies": {
