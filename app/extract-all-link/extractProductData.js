@@ -7,6 +7,14 @@ const selectors = {
 	imageContainer: '//*[@id="gallery_list"]',
 };
 
+const getElementByXpath = async (driver, xpath) => {
+	try {
+		return await driver.findElement(By.xpath(xpath));
+	} catch (error) {
+		return null;
+	}
+};
+
 export const extractProductData = async (driver, url) => {
 	const {
 		title,
@@ -17,10 +25,14 @@ export const extractProductData = async (driver, url) => {
 
 	await driver.get(url);
 
-	const titleElement = await driver.findElement(By.xpath(title));
-	const priceElement = await driver.findElement(By.xpath(price));
-	const descriptionElement = await driver.findElement(By.xpath(description));
-	const imageContainerElement = await driver.findElement(By.xpath(imageContainer));
+	const titleElement = getElementByXpath(driver, title);
+	const priceElement = getElementByXpath(driver, price);
+	const descriptionElement = getElementByXpath(driver, description);
+	const imageContainerElement = getElementByXpath(driver, imageContainer);
+
+	if (!titleElement || !priceElement || !descriptionElement || !imageContainerElement) {
+		return null;
+	}
 
 	const titleText = await titleElement.getText();
 	const priceText = await priceElement.getText();
@@ -33,4 +45,22 @@ export const extractProductData = async (driver, url) => {
 		description: descriptionText,
 		imageLink,
 	};
+};
+
+export const saveProductData = async (productData) => {
+	const {
+		title,
+		price,
+		description,
+		imageLink,
+	} = productData;
+
+	const product = {
+		title,
+		price,
+		description,
+		imageLink,
+	};
+
+	console.log(product);
 };

@@ -5,6 +5,7 @@ import {
 } from 'selenium-webdriver';
 
 import getDriverArray from '../../utils/getDriverArray.js';
+import { extractProductData, saveProductData } from './extractProductData.js';
 
 const startExtractPage = async (driver, url) => new Promise(async (resolve) => {
 	console.log(`Start extract page: ${url}`);
@@ -14,6 +15,17 @@ const startExtractPage = async (driver, url) => new Promise(async (resolve) => {
 	}
 
 	driver.get(url);
+
+	// wait for page to load
+	await driver.wait(() => driver.executeScript('return document.readyState').then((readyState) => readyState === 'complete'), 10000);
+
+	// Try to extract product data
+	const productData = await extractProductData(driver, url);
+
+	if (productData) {
+		console.log(`Extract product data: ${url}`);
+		saveProductData(productData);
+	}
 
 	const output = [];
 	const links = await driver.findElements(By.css('a'));
