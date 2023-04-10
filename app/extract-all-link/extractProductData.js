@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import { By } from 'selenium-webdriver';
 
 const selectors = {
@@ -10,6 +11,14 @@ const selectors = {
 const getElementByXpath = async (driver, xpath) => {
 	try {
 		return await driver.findElement(By.xpath(xpath));
+	} catch (error) {
+		return null;
+	}
+};
+
+const getElementByCss = async (driver, css) => {
+	try {
+		return await driver.findElement(By.css(css));
 	} catch (error) {
 		return null;
 	}
@@ -37,30 +46,37 @@ export const extractProductData = async (driver, url) => {
 	const titleText = await titleElement.getText();
 	const priceText = await priceElement.getText();
 	const descriptionText = await descriptionElement.getText();
-	const imageLink = await imageContainerElement.getAttribute('src');
+
+	const imgElements = getElementByCss(driver, 'img') || [];
+	const imageLinks = [];
+
+	for (const imgElement of imgElements) {
+		try {
+			const src = await imgElement.getAttribute('src');
+			imageLinks.push(src);
+		} catch (error) {
+			console.log(error);
+		}
+	}
 
 	return {
 		title: titleText,
 		price: priceText,
 		description: descriptionText,
-		imageLink,
+		imageLinks,
 	};
 };
 
 export const saveProductData = async (productData) => {
 	const {
-		title,
-		price,
-		description,
-		imageLink,
+		imageLinks,
 	} = productData;
 
-	const product = {
-		title,
-		price,
-		description,
-		imageLink,
-	};
+	// download image in imageLinks
+	for (const imageLink of imageLinks) {
+		// download image
+		console.log(imageLink);
+	}
 
-	console.log(product);
+	// save product data to database
 };
