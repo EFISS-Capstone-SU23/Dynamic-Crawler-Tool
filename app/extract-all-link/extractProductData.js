@@ -98,8 +98,8 @@ export const saveProductData = async (productData, url) => {
 	for (let i = 0; i < imageLinks.length; i += 1) {
 		const imageLink = imageLinks[i];
 		// download image
-		// data/<site name>/<id>_<site_name_with_under_score>.jpg
-		const path = `./data/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`;
+		// output/<site name>/<id>_<site_name_with_under_score>.jpg
+		const path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`;
 		await saveFileFromURL(imageLink, path);
 		imagePath.push(path);
 	}
