@@ -44,7 +44,7 @@ export const extractProductData = async (driver) => {
 	const imageContainerElement = await getElementByXpath(driver, imageContainer);
 
 	if (!titleElement || !priceElement || !descriptionElement || !imageContainerElement) {
-		return null;
+		return {};
 	}
 
 	const titleText = await titleElement.getText();

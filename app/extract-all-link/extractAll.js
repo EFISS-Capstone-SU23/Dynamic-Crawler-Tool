@@ -22,7 +22,7 @@ const startExtractPage = async (driver, url) => new Promise(async (resolve) => {
 	// Try to extract product data
 	const productData = await extractProductData(driver);
 
-	if (productData) {
+	if (productData && productData.title && productData.price && productData.description && (productData.imageLinks || []).length > 0) {
 		console.log(`Extract product data: ${url}`);
 		await saveProductData(productData, url);
 	}

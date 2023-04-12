@@ -20,6 +20,7 @@
         "no-async-promise-executor": "off",
         "no-plusplus": "off",
         "import/no-extraneous-dependencies": "off",
-        "no-underscore-dangle": "off"
+        "no-underscore-dangle": "off",
+        "max-len": "off"
     }
 }
