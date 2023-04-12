@@ -6,7 +6,9 @@ import logger from '../../config/log.js';
 const createParrentDir = (path) => {
 	const dir = path.split('/').slice(0, -1).join('/');
 	if (!fs.existsSync(dir)) {
-		fs.mkdirSync(dir, { recursive: true });
+		fs.mkdirSync(dir, {
+			recursive: true,
+		});
 	}
 };
 
@@ -29,3 +31,10 @@ export default async function saveFileFromURL(url, path) {
 		return false;
 	}
 }
+
+export const saveJsonToFile = (data, path) => {
+	const content = JSON.stringify(data, null, 2);
+	createParrentDir(path);
+
+	fs.writeFile(path, content, () => {});
+};
