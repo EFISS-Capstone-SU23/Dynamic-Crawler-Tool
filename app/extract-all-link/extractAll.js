@@ -7,9 +7,10 @@ import {
 import getDriverArray from '../../utils/getDriverArray.js';
 import { extractProductData, saveProductData } from './extractProductData.js';
 import Products from '../../models/Products.js';
+import logger from '../../config/log.js';
 
 const startExtractPage = async (driver, url, downloadedURL) => new Promise(async (resolve) => {
-	console.log(`Start extract page: ${url}`);
+	logger.info(`Open page: ${url}`);
 	if (!url) {
 		resolve([]);
 		return;
@@ -25,7 +26,7 @@ const startExtractPage = async (driver, url, downloadedURL) => new Promise(async
 		const productData = await extractProductData(driver);
 
 		if (productData && productData.title && productData.price && productData.description && (productData.imageLinks || []).length > 0) {
-			console.log(`Extract product data: ${url}`);
+			logger.info(`Extract product data: ${url}`);
 			downloadedURL[url] = true;
 			await saveProductData(productData, url);
 		}
@@ -42,7 +43,8 @@ const startExtractPage = async (driver, url, downloadedURL) => new Promise(async
 				output.push(href);
 			}
 		} catch (error) {
-			console.log(error);
+			logger.error(`Error when get href: ${url}`);
+			logger.error(error);
 		}
 	}
 
@@ -50,6 +52,8 @@ const startExtractPage = async (driver, url, downloadedURL) => new Promise(async
 });
 
 export default async function extractAll(startUrl, maxDriver) {
+	logger.info(`Start extract all link from: ${startUrl}, max driver: ${maxDriver}`);
+
 	const driverArray = getDriverArray(maxDriver);
 	const visitedURL = {};
 	const downloadedURL = {};
@@ -92,7 +96,7 @@ export default async function extractAll(startUrl, maxDriver) {
 			});
 		});
 
-		console.log(`Queue length: ${queue.length}`);
+		logger.info(`Queue length: ${queue.length}`);
 	}
 
 	// close all driver
