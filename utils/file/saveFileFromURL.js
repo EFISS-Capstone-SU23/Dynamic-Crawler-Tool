@@ -29,3 +29,10 @@ export default async function saveFileFromURL(url, path) {
 		return false;
 	}
 }
+
+export const saveJsonToFile = (data, path) => {
+	const content = JSON.stringify(data, null, 2);
+	createParrentDir(path);
+
+	fs.writeFile(path, content, () => {});
+};

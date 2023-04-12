@@ -8,6 +8,7 @@ import getDriverArray from '../../utils/getDriverArray.js';
 import { extractProductData, saveProductData } from './extractProductData.js';
 import Products from '../../models/Products.js';
 import logger from '../../config/log.js';
+import { saveJsonToFile } from '../../utils/file/saveFileFromURL.js';
 
 const startExtractPage = async (driver, url, downloadedURL) => new Promise(async (resolve) => {
 	logger.info(`Open page: ${url}`);
@@ -97,6 +98,10 @@ export default async function extractAll(startUrl, maxDriver) {
 		});
 
 		logger.info(`Queue length: ${queue.length}`);
+
+		// Save visited url to file and queue to file
+		saveJsonToFile(visitedURL, `./cache/visited-${domain}.json`);
+		saveJsonToFile(queue, `./cache/queue-${domain}.json`);
 	}
 
 	// close all driver
