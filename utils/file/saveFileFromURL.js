@@ -6,7 +6,9 @@ import logger from '../../config/log.js';
 const createParrentDir = (path) => {
 	const dir = path.split('/').slice(0, -1).join('/');
 	if (!fs.existsSync(dir)) {
-		fs.mkdirSync(dir, { recursive: true });
+		fs.mkdirSync(dir, {
+			recursive: true,
+		});
 	}
 };
 

@@ -3,6 +3,7 @@
 import {
 	By,
 } from 'selenium-webdriver';
+import fs from 'fs';
 
 import getDriverArray from '../../utils/getDriverArray.js';
 import { extractProductData, saveProductData } from './extractProductData.js';
@@ -52,22 +53,34 @@ const startExtractPage = async (driver, url, downloadedURL) => new Promise(async
 	resolve(output);
 });
 
-export default async function extractAll(startUrl, maxDriver) {
+export default async function extractAll(startUrl, maxDriver, continueExtract) {
 	logger.info(`Start extract all link from: ${startUrl}, max driver: ${maxDriver}`);
 
 	const driverArray = getDriverArray(maxDriver);
 	const visitedURL = {};
 	const downloadedURL = {};
+	let queue = [startUrl];
 
 	const domain = new URL(startUrl).hostname;
+
+	if (continueExtract) {
+		// check if cached file exist then load it into visitedURL and queue
+		if (fs.existsSync(`./cache/visited-${domain}.json`) && fs.existsSync(`./cache/queue-${domain}.json`)) {
+			const visitedURLFile = fs.readFileSync(`./cache/visited-${domain}.json`, 'utf8');
+			const queueFile = fs.readFileSync(`./cache/queue-${domain}.json`, 'utf8');
+
+			if (visitedURLFile && queueFile) {
+				Object.assign(visitedURL, JSON.parse(visitedURLFile));
+				queue = JSON.parse(queueFile);
+			}
+		}
+	}
 
 	// get all product with domain and mask as downloaded
 	const products = await Products.getAllProductByDomain(domain);
 	products.forEach((product) => {
 		downloadedURL[product.url] = true;
 	});
-
-	let queue = [startUrl];
 
 	while (queue.length > 0) {
 		// filter duplicate url in queue via set
