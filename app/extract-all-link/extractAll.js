@@ -5,8 +5,10 @@ import {
 } from 'selenium-webdriver';
 
 import getDriverArray from '../../utils/getDriverArray.js';
+import { extractProductData, saveProductData } from './extractProductData.js';
+import Products from '../../models/Products.js';
 
-const startExtractPage = async (driver, url) => new Promise(async (resolve) => {
+const startExtractPage = async (driver, url, downloadedURL) => new Promise(async (resolve) => {
 	console.log(`Start extract page: ${url}`);
 	if (!url) {
 		resolve([]);
@@ -14,6 +16,20 @@ const startExtractPage = async (driver, url) => new Promise(async (resolve) => {
 	}
 
 	driver.get(url);
+
+	// wait for page to load
+	await driver.wait(() => driver.executeScript('return document.readyState').then((readyState) => readyState === 'complete'), 10000);
+
+	// Try to extract product data
+	if (!downloadedURL[url]) {
+		const productData = await extractProductData(driver);
+
+		if (productData && productData.title && productData.price && productData.description && (productData.imageLinks || []).length > 0) {
+			console.log(`Extract product data: ${url}`);
+			downloadedURL[url] = true;
+			await saveProductData(productData, url);
+		}
+	}
 
 	const output = [];
 	const links = await driver.findElements(By.css('a'));
@@ -36,8 +52,15 @@ const startExtractPage = async (driver, url) => new Promise(async (resolve) => {
 export default async function extractAll(startUrl, maxDriver) {
 	const driverArray = getDriverArray(maxDriver);
 	const visitedURL = {};
+	const downloadedURL = {};
 
-	const domain = new URL(startUrl).origin;
+	const domain = new URL(startUrl).hostname;
+
+	// get all product with domain and mask as downloaded
+	const products = await Products.getAllProductByDomain(domain);
+	products.forEach((product) => {
+		downloadedURL[product.url] = true;
+	});
 
 	let queue = [startUrl];
 
@@ -55,7 +78,7 @@ export default async function extractAll(startUrl, maxDriver) {
 		});
 
 		// start extract page and return promise array
-		const promiseArray = urlArray.map((url, index) => startExtractPage(driverArray[index], url));
+		const promiseArray = urlArray.map((url, index) => startExtractPage(driverArray[index], url, downloadedURL));
 
 		// wait for all promise to resolve
 		const resultArray = await Promise.all(promiseArray);
