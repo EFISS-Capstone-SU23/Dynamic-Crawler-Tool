@@ -1,6 +1,8 @@
 import axios from 'axios';
 import fs from 'fs';
 
+import logger from '../../config/log.js';
+
 const createParrentDir = (path) => {
 	const dir = path.split('/').slice(0, -1).join('/');
 	if (!fs.existsSync(dir)) {
@@ -23,8 +25,7 @@ export default async function saveFileFromURL(url, path) {
 			writer.on('error', reject);
 		});
 	} catch (error) {
-		console.error(`Failed to download file: ${error.message}`);
-
+		logger.error(`Failed to download file: ${error.message}`);
 		return false;
 	}
 }

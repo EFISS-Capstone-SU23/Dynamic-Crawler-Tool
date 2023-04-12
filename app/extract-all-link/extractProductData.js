@@ -5,6 +5,7 @@ import {
 
 import Products from '../../models/Products.js';
 import saveFileFromURL from '../../utils/file/saveFileFromURL.js';
+import logger from '../../config/log.js';
 
 const selectors = {
 	title: '//*[@id="maincontent"]/div[2]/div/div[1]/div[2]/div[1]/div/div[1]/div[1]/h1/span',
@@ -60,7 +61,8 @@ export const extractProductData = async (driver) => {
 			const src = await imgElement.getAttribute('src');
 			imageLinks.push(src);
 		} catch (error) {
-			console.log('error');
+			logger.error('Error when get image src');
+			logger.error(error);
 		}
 	}
 
