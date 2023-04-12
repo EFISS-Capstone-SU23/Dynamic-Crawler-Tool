@@ -35,6 +35,15 @@ const Product = {
 		};
 		return _db.updateOne(query, update);
 	},
+	getAllProductByDomain(domain) {
+		// query url have domain
+		const query = {
+			url: {
+				$regex: `^https?://${domain}`,
+			},
+		};
+		return _db.find(query);
+	},
 };
 
 export default Product;
