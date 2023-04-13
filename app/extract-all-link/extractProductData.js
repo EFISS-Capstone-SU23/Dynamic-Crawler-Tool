@@ -1,29 +1,9 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
-import {
-	By,
-} from 'selenium-webdriver';
-
 import Products from '../../models/Products.js';
 import saveFileFromURL from '../../utils/file/saveFileFromURL.js';
 import logger from '../../config/log.js';
-
-const getElementByXpath = async (driver, xpath) => {
-	try {
-		return await driver.findElement(By.xpath(xpath));
-	} catch (error) {
-		return null;
-	}
-};
-
-const getElementByCss = async (driver, css) => {
-	try {
-		// find all elements
-		return await driver.findElements(By.css(css));
-	} catch (error) {
-		return null;
-	}
-};
+import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
 
 export const extractProductData = async (driver, xPath) => {
 	const {
@@ -47,7 +27,7 @@ export const extractProductData = async (driver, xPath) => {
 	const priceText = await priceElement.getText();
 	const descriptionText = await descriptionElement.getText();
 
-	const imgElements = await getElementByCss(imageContainerElement, 'img') || [];
+	const imgElements = await getElementsByCss(imageContainerElement, 'img') || [];
 	const imageLinks = [];
 
 	// loop through all image elements

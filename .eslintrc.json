@@ -22,6 +22,7 @@
         "import/no-extraneous-dependencies": "off",
         "no-underscore-dangle": "off",
         "max-len": "off",
-        "no-param-reassign": "off"
+        "no-param-reassign": "off",
+        "no-constant-condition": "off"
     }
 }

@@ -15,6 +15,8 @@ import logger from '../../config/log.js';
 import {
 	saveJsonToFile,
 } from '../../utils/file/saveFileFromURL.js';
+import { getElementByXpath } from '../../utils/getElement.js';
+import { MAX_CLICK_PAGE } from '../../config/config.js';
 
 const startExtractPage = async (driver, url, downloadedURL, xPath) => new Promise(async (resolve) => {
 	logger.info(`Open page: ${url}`);
@@ -40,18 +42,41 @@ const startExtractPage = async (driver, url, downloadedURL, xPath) => new Promis
 	}
 
 	const output = [];
-	const links = await driver.findElements(By.css('a'));
 
-	for (const link of links) {
-		try {
-			const href = await link.getAttribute('href');
+	const getLinks = async () => {
+		const links = await driver.findElements(By.css('a'));
 
-			if (href !== null) {
-				output.push(href);
+		for (const link of links) {
+			try {
+				const href = await link.getAttribute('href');
+
+				if (href !== null) {
+					output.push(href);
+				}
+			} catch (error) {
+				logger.error(`Error when get href: ${url}`);
+				logger.error(error);
 			}
-		} catch (error) {
-			logger.error(`Error when get href: ${url}`);
-			logger.error(error);
+		}
+	};
+
+	if (xPath.paginationButton) {
+		let counter = 0;
+		while (true) {
+			await getLinks();
+
+			if (counter >= MAX_CLICK_PAGE) {
+				break;
+			}
+
+			const nextButton = await getElementByXpath(driver, xPath.paginationButton);
+			// check buton exist and clickable
+			if (nextButton && await nextButton.isDisplayed() && await nextButton.isEnabled()) {
+				await nextButton.click();
+				counter += 1;
+			} else {
+				break;
+			}
 		}
 	}
 
