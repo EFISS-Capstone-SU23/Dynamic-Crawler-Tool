@@ -6,12 +6,17 @@ import {
 import fs from 'fs';
 
 import getDriverArray from '../../utils/getDriverArray.js';
-import { extractProductData, saveProductData } from './extractProductData.js';
+import {
+	extractProductData,
+	saveProductData,
+} from './extractProductData.js';
 import Products from '../../models/Products.js';
 import logger from '../../config/log.js';
-import { saveJsonToFile } from '../../utils/file/saveFileFromURL.js';
+import {
+	saveJsonToFile,
+} from '../../utils/file/saveFileFromURL.js';
 
-const startExtractPage = async (driver, url, downloadedURL) => new Promise(async (resolve) => {
+const startExtractPage = async (driver, url, downloadedURL, xPath) => new Promise(async (resolve) => {
 	logger.info(`Open page: ${url}`);
 	if (!url) {
 		resolve([]);
@@ -25,7 +30,7 @@ const startExtractPage = async (driver, url, downloadedURL) => new Promise(async
 
 	// Try to extract product data
 	if (!downloadedURL[url]) {
-		const productData = await extractProductData(driver);
+		const productData = await extractProductData(driver, xPath);
 
 		if (productData && productData.title && productData.price && productData.description && (productData.imageLinks || []).length > 0) {
 			logger.info(`Extract product data: ${url}`);
@@ -53,7 +58,12 @@ const startExtractPage = async (driver, url, downloadedURL) => new Promise(async
 	resolve(output);
 });
 
-export default async function extractAll(startUrl, maxDriver, continueExtract) {
+export default async function extractAll({
+	startUrl,
+	maxDriver,
+	continueExtract,
+	xPath,
+}) {
 	logger.info(`Start extract all link from: ${startUrl}, max driver: ${maxDriver}`);
 
 	const driverArray = getDriverArray(maxDriver);
@@ -96,7 +106,7 @@ export default async function extractAll(startUrl, maxDriver, continueExtract) {
 		});
 
 		// start extract page and return promise array
-		const promiseArray = urlArray.map((url, index) => startExtractPage(driverArray[index], url, downloadedURL));
+		const promiseArray = urlArray.map((url, index) => startExtractPage(driverArray[index], url, downloadedURL, xPath));
 
 		// wait for all promise to resolve
 		const resultArray = await Promise.all(promiseArray);

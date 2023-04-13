@@ -1,3 +1,4 @@
+/* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
 import {
 	By,
@@ -6,13 +7,6 @@ import {
 import Products from '../../models/Products.js';
 import saveFileFromURL from '../../utils/file/saveFileFromURL.js';
 import logger from '../../config/log.js';
-
-const selectors = {
-	title: '//*[@id="maincontent"]/div[2]/div/div[1]/div[2]/div[1]/div/div[1]/div[1]/h1/span',
-	price: '/html/body/div[7]/main/div[2]/div/div[1]/div[2]/div[1]/div/div[1]/div[4]/span[1]/span/span/span',
-	description: '//*[@id="accordion"]/div[1]/div/div/div/div',
-	imageContainer: '//*[@id="gallery_list"]',
-};
 
 const getElementByXpath = async (driver, xpath) => {
 	try {
@@ -31,13 +25,14 @@ const getElementByCss = async (driver, css) => {
 	}
 };
 
-export const extractProductData = async (driver) => {
+export const extractProductData = async (driver, xPath) => {
 	const {
 		title,
 		price,
 		description,
 		imageContainer,
-	} = selectors;
+		metadata,
+	} = xPath;
 
 	const titleElement = await getElementByXpath(driver, title);
 	const priceElement = await getElementByXpath(driver, price);
@@ -66,11 +61,26 @@ export const extractProductData = async (driver) => {
 		}
 	}
 
+	// get all metadata by for key value
+	const metadataValue = {};
+	for (const key in metadata) {
+		const value = metadata[key];
+
+		const element = await getElementByXpath(driver, value);
+		if (element) {
+			const text = await element.getText();
+			metadataValue[key] = text;
+		} else {
+			metadataValue[key] = '';
+		}
+	}
+
 	return {
 		title: titleText,
 		price: priceText,
 		description: descriptionText,
 		imageLinks,
+		metadata: metadataValue,
 	};
 };
 
@@ -80,6 +90,7 @@ export const saveProductData = async (productData, url) => {
 		price,
 		description,
 		imageLinks,
+		metadata,
 	} = productData;
 
 	// save product data to database
@@ -88,6 +99,7 @@ export const saveProductData = async (productData, url) => {
 		price,
 		description,
 		url,
+		metadata,
 	});
 
 	// only domain name
