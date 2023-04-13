@@ -28,12 +28,13 @@ const _db = mongoose.model('Product', ProductSchema);
 
 const Product = {
 	insertNewProduct: async (product) => _db.create(product),
-	updateProductById(id, product) {
-		const query = { _id: id };
-		const update = {
-			$set: product,
-		};
-		return _db.updateOne(query, update);
+	async updateProductById(id, product) {
+		const updatedProduct = await _db.findOneAndUpdate(
+			{ _id: id },
+			{ $set: product },
+			{ new: true },
+		);
+		return updatedProduct;
 	},
 	getAllProductByDomain(domain) {
 		// query url have domain

@@ -12,7 +12,14 @@ const createParrentDir = (path) => {
 	}
 };
 
-export default async function saveFileFromURL(url, path) {
+export const getExtFromUrl = (url) => {
+	// remove all query string
+	const urlWithoutQueryString = url.split('?')[0];
+	// get ext from url
+	return urlWithoutQueryString.split('.').pop();
+};
+
+export const saveFileFromURL = async (url, path) => {
 	try {
 		createParrentDir(path);
 		const response = await axios.get(url, {
@@ -30,7 +37,7 @@ export default async function saveFileFromURL(url, path) {
 		logger.error(`Failed to download file: ${error.message}`);
 		return false;
 	}
-}
+};
 
 export const saveJsonToFile = (data, path) => {
 	const content = JSON.stringify(data, null, 2);

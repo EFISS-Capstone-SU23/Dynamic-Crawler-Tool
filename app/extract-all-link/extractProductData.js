@@ -1,9 +1,10 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
 import Products from '../../models/Products.js';
-import saveFileFromURL from '../../utils/file/saveFileFromURL.js';
+import { saveFileFromURL, getExtFromUrl } from '../../utils/file/saveFileFromURL.js';
 import logger from '../../config/log.js';
 import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
+import { IMAGE_ALL_EXT } from '../../config/config.js';
 
 export const extractProductData = async (driver, xPath) => {
 	const {
@@ -34,7 +35,11 @@ export const extractProductData = async (driver, xPath) => {
 	for (const imgElement of imgElements) {
 		try {
 			const src = await imgElement.getAttribute('src');
-			imageLinks.push(src);
+
+			// check if image is valid
+			if (IMAGE_ALL_EXT.some((ext) => src.includes(`.${ext}`))) {
+				imageLinks.push(src);
+			}
 		} catch (error) {
 			logger.error('Error when get image src');
 			logger.error(error);
@@ -90,14 +95,15 @@ export const saveProductData = async (productData, url) => {
 	for (let i = 0; i < imageLinks.length; i += 1) {
 		const imageLink = imageLinks[i];
 		// download image
+		const ext = getExtFromUrl(imageLink);
 		// output/<site name>/<id>_<site_name_with_under_score>.jpg
-		const path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`;
+		const path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
 		await saveFileFromURL(imageLink, path);
 		imagePath.push(path);
 	}
 
 	// save product image path to database
-	Products.updateProductById(product._id, {
-		imagePath,
+	await Products.updateProductById(product._id, {
+		images: imagePath,
 	});
 };

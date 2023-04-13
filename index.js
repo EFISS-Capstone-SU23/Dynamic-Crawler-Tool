@@ -1,7 +1,7 @@
 import './config/mongoose.js';
 import extractAll from './app/extract-all-link/extractAll.js';
 
-const URL = 'https://boo.vn/';
+const URL = 'https://boo.vn/quan-short-nu-high-waisted-raw-hem-1-2-09-1-04-002-121-23.html';
 const MAX_INSTANCE = 1;
 const CONTINUE = false;
 

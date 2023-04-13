@@ -54,8 +54,8 @@ const startExtractPage = async (driver, url, downloadedURL, xPath) => new Promis
 					output.push(href);
 				}
 			} catch (error) {
-				logger.error(`Error when get href: ${url}`);
-				logger.error(error);
+				// logger.error(`Error when get href: ${url}`);
+				// logger.error(error);
 			}
 		}
 	};
@@ -72,12 +72,15 @@ const startExtractPage = async (driver, url, downloadedURL, xPath) => new Promis
 			const nextButton = await getElementByXpath(driver, xPath.paginationButton);
 			// check buton exist and clickable
 			if (nextButton && await nextButton.isDisplayed() && await nextButton.isEnabled()) {
+				logger.info(`Click next button: ${url}, counter: ${counter}`);
 				await nextButton.click();
 				counter += 1;
 			} else {
 				break;
 			}
 		}
+	} else {
+		await getLinks();
 	}
 
 	resolve(output);
