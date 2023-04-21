@@ -16,6 +16,7 @@ import {
 	saveJsonToFile,
 } from '../../utils/file/saveFileFromURL.js';
 import { getElementByXpath } from '../../utils/getElement.js';
+import transfromURL from '../../utils/transformURL.js';
 import { MAX_CLICK_PAGE } from '../../config/config.js';
 
 const startExtractPage = async (driver, url, downloadedURL, xPath) => new Promise(async (resolve) => {
@@ -97,7 +98,9 @@ export default async function extractAll({
 	const driverArray = getDriverArray(maxDriver);
 	const visitedURL = {};
 	const downloadedURL = {};
-	let queue = [startUrl];
+	let queue = [
+		transfromURL(startUrl),
+	];
 
 	const domain = new URL(startUrl).hostname;
 
@@ -143,7 +146,7 @@ export default async function extractAll({
 		resultArray.forEach((result) => {
 			result.forEach((url) => {
 				if (url && url.includes(domain) && !visitedURL[url]) {
-					queue.push(url);
+					queue.push(transfromURL(url));
 				}
 			});
 		});
