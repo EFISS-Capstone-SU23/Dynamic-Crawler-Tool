@@ -128,6 +128,9 @@ export default async function extractAll({
 		const set = new Set(queue);
 		queue = [...set];
 
+		// suffle queue
+		queue.sort(() => Math.random() - 0.5);
+
 		// get url array for this batch
 		const urlArray = queue.splice(0, maxDriver);
 
