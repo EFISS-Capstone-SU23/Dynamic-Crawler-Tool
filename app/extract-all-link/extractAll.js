@@ -35,6 +35,8 @@ const startExtractPage = async (driver, url, downloadedURL, xPath) => new Promis
 	if (!downloadedURL[url]) {
 		const productData = await extractProductData(driver, xPath);
 
+		console.log(productData);
+
 		if (productData && productData.title && productData.price && productData.description && (productData.imageLinks || []).length > 0) {
 			logger.info(`Extract product data: ${url}`);
 			downloadedURL[url] = true;

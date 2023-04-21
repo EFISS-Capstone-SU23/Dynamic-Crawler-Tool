@@ -1,10 +1,13 @@
+/* eslint-disable no-promise-executor-return */
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
 import Products from '../../models/Products.js';
 import { saveFileFromURL, getExtFromUrl } from '../../utils/file/saveFileFromURL.js';
 import logger from '../../config/log.js';
 import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
-import { IMAGE_ALL_EXT } from '../../config/config.js';
+import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT } from '../../config/config.js';
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const extractProductData = async (driver, xPath) => {
 	const {
@@ -14,10 +17,24 @@ export const extractProductData = async (driver, xPath) => {
 		imageContainer,
 		metadata,
 	} = xPath;
+	delay(1000);
 
 	const titleElement = await getElementByXpath(driver, title);
+	if (!titleElement) {
+		return {};
+	}
+
 	const priceElement = await getElementByXpath(driver, price);
+	if (!priceElement) {
+		return {};
+	}
+
 	const descriptionElement = await getElementByXpath(driver, description);
+	if (!descriptionElement) {
+		return {};
+	}
+
+	delay(DELAY_LOADING_PRODUCT);
 	const imageContainerElement = await getElementByXpath(driver, imageContainer);
 
 	if (!titleElement || !priceElement || !descriptionElement || !imageContainerElement) {
