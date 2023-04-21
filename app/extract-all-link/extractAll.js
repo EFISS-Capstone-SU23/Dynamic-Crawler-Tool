@@ -23,7 +23,7 @@ import {
 	MAX_CLICK_PAGE,
 } from '../../config/config.js';
 
-const startExtractPage = async (driver, url, params) => new Promise(async (resolve) => {
+const startExtractPage = async (driver, url, downloadedURL, params) => new Promise(async (resolve) => {
 	logger.info(`Open page: ${url}`);
 	if (!url) {
 		resolve([]);
@@ -31,7 +31,6 @@ const startExtractPage = async (driver, url, params) => new Promise(async (resol
 	}
 
 	const {
-		downloadedURL,
 		xPath,
 		imageLinkProperties,
 	} = params;
@@ -44,9 +43,6 @@ const startExtractPage = async (driver, url, params) => new Promise(async (resol
 	// Try to extract product data
 	if (!downloadedURL[url]) {
 		const productData = await extractProductData(driver, xPath, imageLinkProperties);
-
-		console.log(productData);
-
 		if (productData && productData.title && productData.price && productData.description && (productData.imageLinks || []).length > 0) {
 			logger.info(`Extract product data: ${url}`);
 			downloadedURL[url] = true;
@@ -168,7 +164,7 @@ export default async function extractAll(params) {
 		});
 
 		// start extract page and return promise array
-		const promiseArray = urlArray.map((url, index) => startExtractPage(driverArray[index], url, params));
+		const promiseArray = urlArray.map((url, index) => startExtractPage(driverArray[index], url, downloadedURL, params));
 
 		// wait for all promise to resolve
 		const resultArray = await Promise.all(promiseArray);
