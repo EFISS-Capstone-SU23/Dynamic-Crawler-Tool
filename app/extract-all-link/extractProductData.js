@@ -9,7 +9,7 @@ import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT } from '../../config/config.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const extractProductData = async (driver, xPath) => {
+export const extractProductData = async (driver, xPath, imageLinkProperties = 'src') => {
 	const {
 		title,
 		price,
@@ -51,7 +51,7 @@ export const extractProductData = async (driver, xPath) => {
 	// loop through all image elements
 	for (const imgElement of imgElements) {
 		try {
-			const src = await imgElement.getAttribute('src');
+			const src = await imgElement.getAttribute(imageLinkProperties);
 
 			// check if image is valid
 			if (IMAGE_ALL_EXT.some((ext) => src.includes(`.${ext}`))) {

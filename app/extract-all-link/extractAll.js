@@ -15,16 +15,26 @@ import logger from '../../config/log.js';
 import {
 	saveJsonToFile,
 } from '../../utils/file/saveFileFromURL.js';
-import { getElementByXpath } from '../../utils/getElement.js';
+import {
+	getElementByXpath,
+} from '../../utils/getElement.js';
 import transfromURL from '../../utils/transformURL.js';
-import { MAX_CLICK_PAGE } from '../../config/config.js';
+import {
+	MAX_CLICK_PAGE,
+} from '../../config/config.js';
 
-const startExtractPage = async (driver, url, downloadedURL, xPath) => new Promise(async (resolve) => {
+const startExtractPage = async (driver, url, params) => new Promise(async (resolve) => {
 	logger.info(`Open page: ${url}`);
 	if (!url) {
 		resolve([]);
 		return;
 	}
+
+	const {
+		downloadedURL,
+		xPath,
+		imageLinkProperties,
+	} = params;
 
 	driver.get(url);
 
@@ -33,7 +43,7 @@ const startExtractPage = async (driver, url, downloadedURL, xPath) => new Promis
 
 	// Try to extract product data
 	if (!downloadedURL[url]) {
-		const productData = await extractProductData(driver, xPath);
+		const productData = await extractProductData(driver, xPath, imageLinkProperties);
 
 		console.log(productData);
 
@@ -89,13 +99,14 @@ const startExtractPage = async (driver, url, downloadedURL, xPath) => new Promis
 	resolve(output);
 });
 
-export default async function extractAll({
-	startUrl,
-	maxDriver,
-	continueExtract,
-	xPath,
-	ignoreURLs,
-}) {
+export default async function extractAll(params) {
+	const {
+		startUrl,
+		maxDriver,
+		continueExtract,
+		ignoreURLs,
+	} = params;
+
 	logger.info(`Start extract all link from: ${startUrl}, max driver: ${maxDriver}`);
 
 	const driverArray = getDriverArray(maxDriver);
@@ -127,7 +138,7 @@ export default async function extractAll({
 	});
 
 	// convert string to regex
-	ignoreURLs = ignoreURLs.map((url) => new RegExp(url));
+	const ignoreURLsRegex = ignoreURLs.map((url) => new RegExp(url));
 
 	while (queue.length > 0) {
 		// filter duplicate url in queue via set
@@ -137,7 +148,7 @@ export default async function extractAll({
 		// filter ignore url with regex
 		queue = queue.filter((url) => {
 			let isIgnore = false;
-			ignoreURLs.forEach((ignoreURL) => {
+			ignoreURLsRegex.forEach((ignoreURL) => {
 				if (url.match(ignoreURL)) {
 					isIgnore = true;
 				}
@@ -157,7 +168,7 @@ export default async function extractAll({
 		});
 
 		// start extract page and return promise array
-		const promiseArray = urlArray.map((url, index) => startExtractPage(driverArray[index], url, downloadedURL, xPath));
+		const promiseArray = urlArray.map((url, index) => startExtractPage(driverArray[index], url, params));
 
 		// wait for all promise to resolve
 		const resultArray = await Promise.all(promiseArray);

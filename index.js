@@ -24,4 +24,5 @@ extractAll({
 	ignoreURLs: [
 		'https://boo.vn/customer/account/login/referer/.*',
 	],
+	imageLinkProperties: 'data-original',
 });
