@@ -137,24 +137,6 @@ export default async function extractAll(params) {
 	const ignoreURLsRegex = ignoreURLs.map((url) => new RegExp(url));
 
 	while (queue.length > 0) {
-		// filter duplicate url in queue via set
-		const set = new Set(queue);
-		queue = [...set];
-
-		// filter ignore url with regex
-		queue = queue.filter((url) => {
-			let isIgnore = false;
-			ignoreURLsRegex.forEach((ignoreURL) => {
-				if (url.match(ignoreURL)) {
-					isIgnore = true;
-				}
-			});
-			return !isIgnore;
-		});
-
-		// suffle queue
-		queue.sort(() => Math.random() - 0.5);
-
 		// get url array for this batch
 		const urlArray = queue.splice(0, maxDriver);
 
@@ -177,6 +159,24 @@ export default async function extractAll(params) {
 				}
 			});
 		});
+
+		// filter duplicate url in queue via set
+		const set = new Set(queue);
+		queue = [...set];
+
+		// filter ignore url with regex
+		queue = queue.filter((url) => {
+			let isIgnore = false;
+			ignoreURLsRegex.forEach((ignoreURL) => {
+				if (url.match(ignoreURL)) {
+					isIgnore = true;
+				}
+			});
+			return !isIgnore;
+		});
+
+		// suffle queue
+		queue.sort(() => Math.random() - 0.5);
 
 		logger.info(`Queue length: ${queue.length}`);
 

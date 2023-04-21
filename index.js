@@ -1,7 +1,7 @@
 import './config/mongoose.js';
 import extractAll from './app/extract-all-link/extractAll.js';
 
-const URL = 'https://boo.vn/quan-jogger-nam-loose-khaki-cargo-booest03-reorder-1-2-24-2-02-004-222-23.html';
+const URL = 'https://boo.vn/';
 const MAX_INSTANCE = 1;
 const CONTINUE = false;
 
