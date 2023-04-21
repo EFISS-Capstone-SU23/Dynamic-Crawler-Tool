@@ -21,4 +21,7 @@ extractAll({
 			sku: '/html/body/div[7]/main/div[2]/div/div[1]/div[2]/div[1]/div/div[1]/div[2]/div[3]/div',
 		},
 	},
+	ignoreURLs: [
+		'https://boo.vn/customer/account/login/referer/.*',
+	],
 });

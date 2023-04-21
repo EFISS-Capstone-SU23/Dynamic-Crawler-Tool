@@ -92,6 +92,7 @@ export default async function extractAll({
 	maxDriver,
 	continueExtract,
 	xPath,
+	ignoreURLs,
 }) {
 	logger.info(`Start extract all link from: ${startUrl}, max driver: ${maxDriver}`);
 
@@ -123,10 +124,24 @@ export default async function extractAll({
 		downloadedURL[product.url] = true;
 	});
 
+	// convert string to regex
+	ignoreURLs = ignoreURLs.map((url) => new RegExp(url));
+
 	while (queue.length > 0) {
 		// filter duplicate url in queue via set
 		const set = new Set(queue);
 		queue = [...set];
+
+		// filter ignore url with regex
+		queue = queue.filter((url) => {
+			let isIgnore = false;
+			ignoreURLs.forEach((ignoreURL) => {
+				if (url.match(ignoreURL)) {
+					isIgnore = true;
+				}
+			});
+			return !isIgnore;
+		});
 
 		// suffle queue
 		queue.sort(() => Math.random() - 0.5);
