@@ -164,7 +164,7 @@ export default async function extractAll(params) {
 		const set = new Set(queue);
 		queue = [...set];
 
-		// filter ignore url with regex
+		// filter ignore url with regex and filter visited url
 		queue = queue.filter((url) => {
 			let isIgnore = false;
 			ignoreURLsRegex.forEach((ignoreURL) => {
@@ -172,7 +172,7 @@ export default async function extractAll(params) {
 					isIgnore = true;
 				}
 			});
-			return !isIgnore;
+			return !isIgnore && !visitedURL[url];
 		});
 
 		// suffle queue
