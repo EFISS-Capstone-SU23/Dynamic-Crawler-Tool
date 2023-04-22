@@ -104,15 +104,14 @@ export default async function extractAll(params) {
 	} = params;
 
 	logger.info(`Start extract all link from: ${startUrl}, max driver: ${maxDriver}`);
+	const domain = new URL(startUrl).hostname;
 
 	const driverArray = getDriverArray(maxDriver);
 	const visitedURL = {};
 	const downloadedURL = {};
 	let queue = [
-		transfromURL(startUrl),
+		transfromURL(startUrl, domain),
 	];
-
-	const domain = new URL(startUrl).hostname;
 
 	if (continueExtract) {
 		// check if cached file exist then load it into visitedURL and queue
@@ -154,18 +153,22 @@ export default async function extractAll(params) {
 		// merge result array to queue
 		resultArray.forEach((result) => {
 			result.forEach((url) => {
-				if (url && url.includes(domain) && !visitedURL[url]) {
-					queue.push(transfromURL(url));
+				if (url) {
+					queue.push(transfromURL(url, domain));
 				}
 			});
 		});
 
 		// filter duplicate url in queue via set
-		const set = new Set(queue);
-		queue = [...set];
+		// const set = new Set(queue);
+		// queue = [...set];
 
 		// filter ignore url with regex and filter visited url
 		queue = queue.filter((url) => {
+			if (!url.includes(domain)) {
+				return false;
+			}
+
 			let isIgnore = false;
 			ignoreURLsRegex.forEach((ignoreURL) => {
 				if (url.match(ignoreURL)) {
@@ -189,4 +192,6 @@ export default async function extractAll(params) {
 	driverArray.forEach((driver) => {
 		driver.quit();
 	});
+
+	logger.info('Finish extract all link.');
 }
