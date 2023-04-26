@@ -1,0 +1,58 @@
+[{
+	"id": 0,
+	"groupId": 0,
+	"name": "QUẦN LEGGING THẤM HÚT MỒ HÔI NHANH KHÔ NỮ XS XÁM ĐẬM",
+	"price": "392.000",
+	"onlineUrl": "https://www.muji.com/vn/products/cmdty/detail/4550512292197",
+	"description": "Sản phẩm được làm từ chất liệu nhanh khô và có độ co giãn vừa phải, phù hợp mặc hàng ngày ",
+	"labels": [
+		"QUẦN ÁO",
+		"TRANG PHỤC NỮ",
+		"QUẦN & VÁY NỮ"
+	],
+	"sizes": [
+		"S",
+		"M",
+		"L",
+		"XL",
+		"XXL"
+	],
+	"metadata": {},
+	"images": [{
+			"path": "./output/images/0/0",
+			"alt": ""
+		},
+		{
+			"path": "./output/images/0/1",
+			"alt": ""
+		},
+		{
+			"path": "./output/images/0/2",
+			"alt": ""
+		},
+		{
+			"path": "./output/images/0/3",
+			"alt": ""
+		},
+		{
+			"path": "./output/images/0/4",
+			"alt": ""
+		},
+		{
+			"path": "./output/images/0/5",
+			"alt": ""
+		},
+		{
+			"path": "./output/images/0/6",
+			"alt": ""
+		},
+		{
+			"path": "./output/images/0/7",
+			"alt": ""
+		},
+		{
+			"path": "./output/images/0/8",
+			"alt": ""
+		}
+	]
+}, ]
