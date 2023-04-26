@@ -20,6 +20,8 @@ extractAll({
 			color: '/html/body/div[1]/div/div/div/div/main/div/div[2]/div/div/div/div/div[2]/div/div[1]/div[2]/div[2]/div[1]/div[1]/div/h7',
 		},
 	},
-	ignoreURLs: [],
+	ignoreURLs: [
+		'https://www.uniqlo.com/((?!vn)[a-z]{2})/.*$',
+	],
 	imageLinkProperties: 'src',
 });

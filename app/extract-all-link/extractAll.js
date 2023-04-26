@@ -82,12 +82,18 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 
 			const nextButton = await getElementByXpath(driver, xPath.paginationButton);
 			// check buton exist and clickable
-			if (nextButton && await nextButton.isDisplayed() && await nextButton.isEnabled()) {
-				logger.info(`Click next button: ${url}, counter: ${counter}`);
-				await nextButton.click();
-				await delay(5 * 1000);
-				counter += 1;
-			} else {
+			try {
+				if (nextButton && await nextButton.isDisplayed() && await nextButton.isEnabled()) {
+					logger.info(`Click next button: ${url}, counter: ${counter}`);
+					await nextButton.click();
+					await delay(5 * 1000);
+					counter += 1;
+				} else {
+					break;
+				}
+			} catch (error) {
+				console.log('Error when click next button', url);
+				console.log(error);
 				break;
 			}
 		}
