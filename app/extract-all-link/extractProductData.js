@@ -46,7 +46,7 @@ export const extractProductData = async (driver, xPath, imageLinkProperties = 's
 	const descriptionText = await descriptionElement.getText();
 
 	const imgElements = await getElementsByCss(imageContainerElement, 'img') || [];
-	const imageLinks = [];
+	let imageLinks = [];
 
 	// loop through all image elements
 	for (const imgElement of imgElements) {
@@ -55,13 +55,18 @@ export const extractProductData = async (driver, xPath, imageLinkProperties = 's
 
 			// check if image is valid
 			if (IMAGE_ALL_EXT.some((ext) => src.includes(`.${ext}`))) {
-				imageLinks.push(src);
+				// remove query in url
+				const url = new URL(src);
+				url.search = '';
+				imageLinks.push(url.toString());
 			}
 		} catch (error) {
 			logger.error('Error when get image src');
 			logger.error(error);
 		}
 	}
+	// remove imageLinks duplicate
+	imageLinks = [...new Set(imageLinks)];
 
 	// get all metadata by for key value
 	const metadataValue = {};

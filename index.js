@@ -9,14 +9,16 @@ process.setMaxListeners(MAX_INSTANCE + 5);
 extractAll({
 	maxDriver: MAX_INSTANCE,
 	continueExtract: CONTINUE,
-	startUrl: 'https://candles.vn/tshirt-pc358107.html',
+	startUrl: 'https://www.uniqlo.com/vn/vi/',
 	xPath: {
-		title: '//*[@id="wrapper"]/div[1]/div/div[1]/div[2]/div[1]/h1',
-		price: '//*[@id="wrapper"]/div[1]/div/div[1]/div[2]/div[1]/p[2]/span',
-		description: '/html/body/div[1]/div[1]/div/div[1]/div[2]/div[4]/div/p[1]',
-		imageContainer: '//*[@id="wrapper"]/div[1]/div/div[1]/div[1]/div[2]/div/div/div',
-		paginationButton: '',
-		metadata: {},
+		title: '//*[@id="right"]/div[1]/div/div[1]/h1',
+		price: '//*[@id="right"]/div[1]/div/div[2]/div[1]/div/div/div/span',
+		description: '//*[@id="right"]/div[1]/div/div[3]/div',
+		imageContainer: '//*[@id="left"]/div',
+		paginationButton: '//*[@id="root"]/div/div/div/div/main/div/div[2]/div/div/div/section[2]/div/div/div[2]/div[1]/a',
+		metadata: {
+			color: '/html/body/div[1]/div/div/div/div/main/div/div[2]/div/div/div/div/div[2]/div/div[1]/div[2]/div[2]/div[1]/div[1]/div/h7',
+		},
 	},
 	ignoreURLs: [],
 	imageLinkProperties: 'src',

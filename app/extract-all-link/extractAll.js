@@ -1,3 +1,4 @@
+/* eslint-disable no-promise-executor-return */
 /* eslint-disable no-loop-func */
 /* eslint-disable no-restricted-syntax */
 import {
@@ -69,6 +70,7 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 		}
 	};
 
+	const delay = (ms) => new Promise((resolveDelay) => setTimeout(resolveDelay, ms));
 	if (xPath.paginationButton) {
 		let counter = 0;
 		while (true) {
@@ -83,6 +85,7 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 			if (nextButton && await nextButton.isDisplayed() && await nextButton.isEnabled()) {
 				logger.info(`Click next button: ${url}, counter: ${counter}`);
 				await nextButton.click();
+				await delay(5 * 1000);
 				counter += 1;
 			} else {
 				break;
