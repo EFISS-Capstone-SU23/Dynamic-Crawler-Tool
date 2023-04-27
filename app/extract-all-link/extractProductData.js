@@ -6,6 +6,7 @@ import { saveFileFromURL, getExtFromUrl } from '../../utils/file/saveFileFromURL
 import logger from '../../config/log.js';
 import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
 import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT } from '../../config/config.js';
+import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -48,15 +49,11 @@ export const extractProductData = async (driver, xPath, imageLinkProperties = 's
 	const descriptionText = await descriptionElement.getText();
 
 	// scroll the page to load all images
-	const scrollHeight = parseInt(await imageContainerElement.getAttribute('scrollHeight'), 10);
-	const offsetHeight = parseInt(await imageContainerElement.getAttribute('offsetHeight'), 10);
+	const diffHeight = await getDiffHeight(imageContainerElement);
 
-	console.log('scrollHeight', scrollHeight);
-	console.log('offsetHeight', offsetHeight);
-
-	if (scrollHeight > offsetHeight) {
-		console.log('scrollHeight > offsetHeight');
-		await driver.executeScript('arguments[0].scrollTo(0, arguments[0].scrollHeight)', imageContainerElement);
+	if (diffHeight > 0) {
+		console.log('scrollElement');
+		await scrollElement(driver, imageContainerElement);
 		await delay(DELAY_LOADING_PRODUCT);
 	}
 
