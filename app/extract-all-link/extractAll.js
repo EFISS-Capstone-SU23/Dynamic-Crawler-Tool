@@ -24,6 +24,8 @@ import {
 	MAX_CLICK_PAGE,
 } from '../../config/config.js';
 
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const startExtractPage = async (driver, url, downloadedURL, params) => new Promise(async (resolve) => {
 	logger.info(`Open page: ${url}`);
 	if (!url) {
@@ -70,7 +72,6 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 		}
 	};
 
-	const delay = (ms) => new Promise((resolveDelay) => setTimeout(resolveDelay, ms));
 	if (xPath.paginationButton) {
 		let counter = 0;
 		while (true) {

@@ -17,7 +17,6 @@ export const extractProductData = async (driver, xPath, imageLinkProperties = 's
 		imageContainer,
 		metadata,
 	} = xPath;
-	delay(1000);
 
 	const titleElement = await getElementByXpath(driver, title);
 	if (!titleElement) {
@@ -37,7 +36,7 @@ export const extractProductData = async (driver, xPath, imageLinkProperties = 's
 		return {};
 	}
 
-	delay(DELAY_LOADING_PRODUCT);
+	// await delay(DELAY_LOADING_PRODUCT);
 	const imageContainerElement = await getElementByXpath(driver, imageContainer);
 
 	if (!titleElement || !priceElement || !descriptionElement || !imageContainerElement) {
@@ -47,6 +46,19 @@ export const extractProductData = async (driver, xPath, imageLinkProperties = 's
 	const titleText = await titleElement.getText();
 	const priceText = await priceElement.getText();
 	const descriptionText = await descriptionElement.getText();
+
+	// scroll the page to load all images
+	const scrollHeight = parseInt(await imageContainerElement.getAttribute('scrollHeight'), 10);
+	const offsetHeight = parseInt(await imageContainerElement.getAttribute('offsetHeight'), 10);
+
+	console.log('scrollHeight', scrollHeight);
+	console.log('offsetHeight', offsetHeight);
+
+	if (scrollHeight > offsetHeight) {
+		console.log('scrollHeight > offsetHeight');
+		await driver.executeScript('arguments[0].scrollTo(0, arguments[0].scrollHeight)', imageContainerElement);
+		await delay(DELAY_LOADING_PRODUCT);
+	}
 
 	const imgElements = await getElementsByCss(imageContainerElement, 'img') || [];
 	let imageLinks = [];
