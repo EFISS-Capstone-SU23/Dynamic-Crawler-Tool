@@ -9,19 +9,19 @@ process.setMaxListeners(MAX_INSTANCE + 5);
 extractAll({
 	maxDriver: MAX_INSTANCE,
 	continueExtract: CONTINUE,
-	startUrl: 'https://www.uniqlo.com/vn/vi/',
+	startUrl: 'https://www.zara.com/vn/vi/ao-len-jacquard-det-kim-co-polo-hoa-tiet-hinh-hoc-p00794410.html',
 	xPath: {
-		title: '//*[@id="right"]/div[1]/div/div[1]/h1',
-		price: '//*[@id="right"]/div[1]/div/div[2]/div[1]/div/div/div/span',
-		description: '//*[@id="right"]/div[1]/div/div[3]/div',
-		imageContainer: '//*[@id="left"]/div',
-		paginationButton: '//*[@id="root"]/div/div/div/div/main/div/div[2]/div/div/div/section[2]/div/div/div[2]/div[1]/a',
+		title: '//*[@id="main"]/article/div/div[1]/div[2]/div[1]/div[1]/h1',
+		price: '//*[@id="main"]/article/div/div[1]/div[2]/div[1]/div[2]/div/span/span/span/div/span',
+		description: '//*[@id="main"]/article/div/div[1]/div[2]/div[1]/div[3]/div/div/div/p',
+		imageContainer: '//*[@id="main"]/article/div/div[1]/div[1]/section/ul',
+		paginationButton: '',
 		metadata: {
-			color: '/html/body/div[1]/div/div/div/div/main/div/div[2]/div/div/div/div/div[2]/div/div[1]/div[2]/div[2]/div[1]/div[1]/div/h7',
+			color: '//*[@id="main"]/article/div/div[1]/div[2]/div[1]/p',
 		},
 	},
 	ignoreURLs: [
-		'https://www.uniqlo.com/((?!vn)[a-z]{2})/.*$',
+		'https://www.zara.com/((?!vn)[a-z]{2})/.*$',
 	],
 	imageLinkProperties: 'src',
 });
