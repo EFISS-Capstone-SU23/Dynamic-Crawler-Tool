@@ -63,7 +63,6 @@ export const extractProductData = async (driver, xPath, imageLinkProperties = 's
 	for (const imgElement of imgElements) {
 		try {
 			const src = await imgElement.getAttribute(imageLinkProperties);
-			console.log('src', src);
 			// check if image is valid
 			if (IMAGE_ALL_EXT.some((ext) => src.includes(`.${ext}`))) {
 				// remove query in url

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import fs from 'fs';
+import { IMAGE_ALL_EXT } from '../../config/config.js';
 
 import logger from '../../config/log.js';
 
@@ -12,12 +13,7 @@ const createParrentDir = (path) => {
 	}
 };
 
-export const getExtFromUrl = (url) => {
-	// remove all query string
-	const urlWithoutQueryString = url.split('?')[0];
-	// get ext from url
-	return urlWithoutQueryString.split('.').pop();
-};
+export const getExtFromUrl = (url) => IMAGE_ALL_EXT.find((ext) => url.includes(`.${ext}`) || 'jpg');
 
 export const saveFileFromURL = async (url, path) => {
 	try {

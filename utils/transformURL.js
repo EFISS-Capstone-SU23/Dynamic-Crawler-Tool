@@ -11,6 +11,11 @@ export const transformImageURL = (url) => {
 		'size',
 	];
 
+	// add https to url if it not contain protocol
+	if (!url.startsWith('http')) {
+		url = `https:${url}`;
+	}
+
 	// remove query in url if it contain queryToRemove
 	const urlObject = new URL(url);
 	for (const key in queryToRemove) {
