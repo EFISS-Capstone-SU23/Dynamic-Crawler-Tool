@@ -8,7 +8,7 @@ import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
 import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT } from '../../config/config.js';
 import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
 import { transformImageURL } from '../../utils/transformURL.js';
-import { removeSmallImage } from '../../utils/file/imageFile.js';
+import { removeSmallImage, checkFileTypeByContent } from '../../utils/file/imageFile.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -130,8 +130,11 @@ export const saveProductData = async (productData, url) => {
 		// output/<site name>/<id>_<site_name_with_under_score>.jpg
 		const path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
 		await saveFileFromURL(imageLink, path);
-		if (!removeSmallImage(path)) {
+
+		const isRemoved = await removeSmallImage(path);
+		if (!isRemoved) {
 			imagePath.push(path);
+			checkFileTypeByContent(path);
 		}
 	}
 
