@@ -4,6 +4,8 @@ import fs from 'fs';
 
 import '../../config/mongoose.js';
 import Products from '../../models/Products.js';
+import logger from '../../config/log.js';
+
 // read and parse json file
 const products = JSON.parse(fs.readFileSync('./data/products.json', 'utf8'));
 
@@ -37,7 +39,7 @@ const main = async () => {
 			// move file from prevPath to newPath
 			fs.rename(prevPath, newPath, (err) => {
 				if (err) {
-					console.log(err);
+					logger.error(err);
 				}
 			});
 			imagesPath.push(newPath);

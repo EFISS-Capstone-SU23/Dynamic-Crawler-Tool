@@ -94,8 +94,8 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 					break;
 				}
 			} catch (error) {
-				console.log('Error when click next button', url);
-				console.log(error);
+				logger.error('Error when click next button', url);
+				logger.error(error);
 				break;
 			}
 		}
