@@ -7,6 +7,7 @@ import logger from '../../config/log.js';
 import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
 import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT } from '../../config/config.js';
 import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
+import { transformImageURL } from '../../utils/transformURL.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -65,8 +66,8 @@ export const extractProductData = async (driver, xPath, imageLinkProperties = 's
 			// check if image is valid
 			if (IMAGE_ALL_EXT.some((ext) => src.includes(`.${ext}`))) {
 				// remove query in url
-				const url = new URL(src);
-				url.search = '';
+				const url = transformImageURL(src);
+				console.log(url);
 				imageLinks.push(url.toString());
 			}
 		} catch (error) {

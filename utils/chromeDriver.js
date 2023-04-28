@@ -10,7 +10,7 @@ const o = new chrome.Options();
 // o.addArguments('start-fullscreen');
 o.addArguments('disable-infobars');
 o.addArguments('start-maximized');
-// o.addArguments('headless'); // running test on visual chrome browser
+o.addArguments('headless'); // running test on visual chrome browser
 // Add Chrome user agent
 o.addArguments('--user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome');
 

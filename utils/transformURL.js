@@ -1,3 +1,26 @@
+/* eslint-disable guard-for-in */
+/* eslint-disable no-restricted-syntax */
+export const transformImageURL = (url) => {
+	const queryToRemove = [
+		'width',
+		'height',
+		'quality',
+		'h',
+		'w',
+		'q',
+		'size',
+	];
+
+	// remove query in url if it contain queryToRemove
+	const urlObject = new URL(url);
+	for (const key in queryToRemove) {
+		urlObject.searchParams.delete(key);
+	}
+
+	// return string url
+	return urlObject.toString();
+};
+
 export default (url, domain) => {
 	// get all query of url as object
 	const urlObject = new URL(url);
