@@ -21,19 +21,16 @@ export const extractProductData = async (driver, xPath, imageLinkProperties = 's
 
 	const titleElement = await getElementByXpath(driver, title);
 	if (!titleElement) {
-		console.log('titleElement');
 		return {};
 	}
 
 	const priceElement = await getElementByXpath(driver, price);
 	if (!priceElement) {
-		console.log('priceElement');
 		return {};
 	}
 
 	const descriptionElement = await getElementByXpath(driver, description);
 	if (!descriptionElement) {
-		console.log('descriptionElement');
 		return {};
 	}
 
@@ -54,7 +51,6 @@ export const extractProductData = async (driver, xPath, imageLinkProperties = 's
 	const diffHeight = await getDiffHeight(imageContainerElement);
 
 	if (diffHeight > 0) {
-		console.log('scrollElement');
 		await scrollElement(driver, imageContainerElement, diffHeight, imgElements.length);
 		await delay(DELAY_LOADING_PRODUCT);
 	}
@@ -65,7 +61,6 @@ export const extractProductData = async (driver, xPath, imageLinkProperties = 's
 	for (const imgElement of imgElements) {
 		try {
 			const src = await imgElement.getAttribute(imageLinkProperties);
-			console.log(src);
 
 			// check if image is valid
 			if (IMAGE_ALL_EXT.some((ext) => src.includes(`.${ext}`))) {
