@@ -67,7 +67,6 @@ export const extractProductData = async (driver, xPath, imageLinkProperties = 's
 			if (IMAGE_ALL_EXT.some((ext) => src.includes(`.${ext}`))) {
 				// remove query in url
 				const url = transformImageURL(src);
-				console.log(url);
 				imageLinks.push(url.toString());
 			}
 		} catch (error) {

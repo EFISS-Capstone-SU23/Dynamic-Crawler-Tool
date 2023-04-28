@@ -24,6 +24,9 @@ export const saveFileFromURL = async (url, path) => {
 		createParrentDir(path);
 		const response = await axios.get(url, {
 			responseType: 'stream',
+			headers: {
+				'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome',
+			},
 		});
 
 		const writer = fs.createWriteStream(path);
