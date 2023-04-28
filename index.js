@@ -9,7 +9,7 @@ process.setMaxListeners(MAX_INSTANCE + 5);
 extractAll({
 	maxDriver: MAX_INSTANCE,
 	continueExtract: CONTINUE,
-	startUrl: 'https://www.zara.com/vn/vi/ao-len-jacquard-det-kim-co-polo-hoa-tiet-hinh-hoc-p00794410.html',
+	startUrl: 'https://www.zara.com/vn/vi/',
 	xPath: {
 		title: '//*[@id="main"]/article/div/div[1]/div[2]/div[1]/div[1]/h1',
 		price: '//*[@id="main"]/article/div/div[1]/div[2]/div[1]/div[2]/div/span/span/span/div/span',
@@ -22,6 +22,7 @@ extractAll({
 	},
 	ignoreURLs: [
 		'https://www.zara.com/((?!vn)[a-z]{2})/.*$',
+		'https://www.zara.com/vn/((?!vi)[a-z]{2})/.*$',
 	],
 	imageLinkProperties: 'src',
 });
