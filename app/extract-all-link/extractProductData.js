@@ -48,16 +48,17 @@ export const extractProductData = async (driver, xPath, imageLinkProperties = 's
 	const priceText = await priceElement.getText();
 	const descriptionText = await descriptionElement.getText();
 
+	const imgElements = await getElementsByCss(imageContainerElement, 'img') || [];
+
 	// scroll the page to load all images
 	const diffHeight = await getDiffHeight(imageContainerElement);
 
 	if (diffHeight > 0) {
 		console.log('scrollElement');
-		await scrollElement(driver, imageContainerElement);
+		await scrollElement(driver, imageContainerElement, diffHeight, imgElements.length);
 		await delay(DELAY_LOADING_PRODUCT);
 	}
 
-	const imgElements = await getElementsByCss(imageContainerElement, 'img') || [];
 	let imageLinks = [];
 
 	// loop through all image elements
