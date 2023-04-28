@@ -3,7 +3,7 @@ import sharp from 'sharp';
 import {
 	MIN_HEIGHT,
 	MIN_WITH,
-} from '../../config/config';
+} from '../../config/config.js';
 
 export const removeSmallImage = async (imagePath) => {
 	// check size of image and remove if it too small

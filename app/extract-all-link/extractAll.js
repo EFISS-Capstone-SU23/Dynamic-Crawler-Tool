@@ -44,8 +44,8 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 	await driver.wait(() => driver.executeScript('return document.readyState').then((readyState) => readyState === 'complete'), 10000);
 
 	// Try to extract product data
-	// if (downloadedURL[url]) {
-	if (!downloadedURL[url]) {
+	if (downloadedURL[url]) {
+	// if (!downloadedURL[url]) {
 		const productData = await extractProductData(driver, xPath, imageLinkProperties);
 		if (productData && productData.title && productData.price && productData.description && (productData.imageLinks || []).length > 0) {
 			logger.info(`Extract product data: ${url}`);
