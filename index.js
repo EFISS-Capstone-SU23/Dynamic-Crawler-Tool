@@ -9,7 +9,7 @@ process.setMaxListeners(MAX_INSTANCE + 5);
 extractAll({
 	maxDriver: MAX_INSTANCE,
 	continueExtract: CONTINUE,
-	startUrl: 'https://www2.hm.com/vi_vn/productpage.1161980002.html',
+	startUrl: 'https://www2.hm.com/vi_vn/',
 	xPath: {
 		title: '//*[@id="js-product-name"]/div/h1',
 		price: '//*[@id="product-price"]/div/span',
