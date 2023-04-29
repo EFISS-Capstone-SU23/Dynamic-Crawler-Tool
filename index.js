@@ -9,20 +9,16 @@ process.setMaxListeners(MAX_INSTANCE + 5);
 extractAll({
 	maxDriver: MAX_INSTANCE,
 	continueExtract: CONTINUE,
-	startUrl: 'https://www2.hm.com/vi_vn/',
+	startUrl: 'https://nellytaobao.vn/ao-phong-make-it-rain-heybig-ngan-tay-advance',
 	xPath: {
-		title: '//*[@id="js-product-name"]/div/h1',
-		price: '//*[@id="product-price"]/div/span',
-		description: '//*[@id="js-product-description"]/div',
-		imageContainer: '//*[@id="main-content"]/div[1]/div[2]/div[1]',
-		paginationButton: '//*[@id="page-content"]/div/div[3]/div[2]/button',
-		imageElement: '//img',
-		imageLinkProperties: 'src',
-		metadata: {
-			color: '//*[@id="main-content"]/div[1]/div[2]/div[1]/div[1]/div/div[1]/h3',
-		},
+		title: '/html/body/section[2]/div[2]/div/div[1]/div/div[1]/div[2]/h1',
+		price: '/html/body/section[2]/div[2]/div/div[1]/div/div[1]/div[2]/div[3]/span[2]/span',
+		description: '/html/body/section[2]/div[2]/div/div[1]/div/div[1]/div[2]/div[4]/div',
+		imageContainer: '//*[@id="gallery_01"]/div/div',
+		paginationButton: '/html/body/div[4]/div/section/div[2]/div[2]/nav/ul/li[last()]/a',
+		imageElement: '//a',
+		imageLinkProperties: 'data-image',
+		metadata: {},
 	},
-	ignoreURLs: [
-		'https://www2.hm.com/((?!vi_vn).*)/.*$',
-	],
+	ignoreURLs: [],
 });
