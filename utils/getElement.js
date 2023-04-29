@@ -10,6 +10,14 @@ export const getElementByXpath = async (driver, xpath) => {
 	}
 };
 
+export const getElementsByXpath = async (driver, xpath) => {
+	try {
+		return await driver.findElements(By.xpath(xpath));
+	} catch (error) {
+		return null;
+	}
+};
+
 export const getElementsByCss = async (driver, css) => {
 	try {
 		// find all elements

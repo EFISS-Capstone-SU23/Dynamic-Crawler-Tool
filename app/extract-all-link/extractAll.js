@@ -35,7 +35,6 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 
 	const {
 		xPath,
-		imageLinkProperties,
 	} = params;
 
 	driver.get(url);
@@ -46,7 +45,7 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 	// Try to extract product data
 	// if (downloadedURL[url]) {
 	if (!downloadedURL[url]) {
-		const productData = await extractProductData(driver, xPath, imageLinkProperties);
+		const productData = await extractProductData(driver, xPath);
 		if (productData && productData.title && productData.price && productData.description && (productData.imageLinks || []).length > 0) {
 			logger.info(`Extract product data: ${url}`);
 			downloadedURL[url] = true;

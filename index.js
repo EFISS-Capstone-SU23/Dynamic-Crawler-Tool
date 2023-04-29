@@ -16,6 +16,8 @@ extractAll({
 		description: '//*[@id="js-product-description"]/div',
 		imageContainer: '//*[@id="main-content"]/div[1]/div[2]/div[1]',
 		paginationButton: '//*[@id="page-content"]/div/div[3]/div[2]/button',
+		imageElement: '//img',
+		imageLinkProperties: 'src',
 		metadata: {
 			color: '//*[@id="main-content"]/div[1]/div[2]/div[1]/div[1]/div/div[1]/h3',
 		},
@@ -23,5 +25,4 @@ extractAll({
 	ignoreURLs: [
 		'https://www2.hm.com/((?!vi_vn).*)/.*$',
 	],
-	imageLinkProperties: 'src',
 });
