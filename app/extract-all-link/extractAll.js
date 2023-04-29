@@ -129,7 +129,7 @@ const filterQueue = (queue, visitedURL, ignoreURLsRegex, domain) => {
 	return queue;
 };
 
-export default async function extractAll(params) {
+const _extractAll = async (params, driverArray) => {
 	const {
 		startUrl,
 		maxDriver,
@@ -137,12 +137,10 @@ export default async function extractAll(params) {
 		ignoreURLs,
 	} = params;
 
-	logger.info(`Start extract all link from: ${startUrl}, max driver: ${maxDriver}`);
-	const domain = new URL(startUrl).hostname;
-
-	const driverArray = getDriverArray(maxDriver);
 	const visitedURL = {};
 	const downloadedURL = {};
+
+	const domain = new URL(startUrl).hostname;
 	let queue = [
 		transfromURL(startUrl, domain),
 	];
@@ -205,11 +203,24 @@ export default async function extractAll(params) {
 		saveJsonToFile(visitedURL, `./cache/visited-${domain}.json`);
 		saveJsonToFile(queue, `./cache/queue-${domain}.json`);
 	}
+};
 
-	// close all driver
-	driverArray.forEach((driver) => {
-		driver.quit();
-	});
+export default async function extractAll(params) {
+	const {
+		startUrl,
+		maxDriver,
+	} = params;
+	logger.info(`Start extract all link from: ${startUrl}, max driver: ${maxDriver}`);
+	const driverArray = getDriverArray(maxDriver);
+
+	try {
+		await _extractAll(params, driverArray);
+	} finally {
+		// close all driver
+		driverArray.forEach((driver) => {
+			driver.quit();
+		});
+	}
 
 	logger.info('Finish extract all link.');
 }
