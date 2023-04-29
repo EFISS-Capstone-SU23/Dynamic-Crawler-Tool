@@ -1,8 +1,10 @@
 import './config/mongoose.js';
+import optimist from 'optimist';
+
 import extractAll from './app/extract-all-link/extractAll.js';
 
-const MAX_INSTANCE = process.argv.indexOf('--max-instance') > -1 ? parseInt(process.argv[process.argv.indexOf('--max-instance') + 1], 10) : 1;
-const CONTINUE = process.argv.indexOf('--continue') > -1;
+const MAX_INSTANCE = optimist.argv['max-instance'] || 1;
+const CONTINUE = optimist.argv.continue || false;
 
 process.setMaxListeners(MAX_INSTANCE + 5);
 

@@ -5,6 +5,7 @@ import {
 	By,
 } from 'selenium-webdriver';
 import fs from 'fs';
+import optimist from 'optimist';
 
 import getDriverArray from '../../utils/getDriverArray.js';
 import {
@@ -24,7 +25,7 @@ import {
 	MAX_CLICK_PAGE,
 } from '../../config/config.js';
 
-const DEV_MOD = process.argv.indexOf('--dev') > -1;
+const DEV_MOD = optimist.argv.dev || false;
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 

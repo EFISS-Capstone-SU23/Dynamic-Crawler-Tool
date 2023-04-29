@@ -3,8 +3,9 @@ import {
 } from 'selenium-webdriver';
 // set chrome options
 import chrome from 'selenium-webdriver/chrome.js';
+import optimist from 'optimist';
 
-const NO_HEADLESS = process.argv.indexOf('--no-headless') > -1;
+const NO_HEADLESS = optimist.argv['no-headless'] || false;
 
 const o = new chrome.Options();
 // o.addArguments('start-fullscreen');
