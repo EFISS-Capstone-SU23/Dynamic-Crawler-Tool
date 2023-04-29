@@ -25,7 +25,7 @@ import {
 	MAX_CLICK_PAGE,
 } from '../../config/config.js';
 
-const DEV_MOD = optimist.argv.dev || false;
+const DEV_MOD = 'dev' in optimist.argv;
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
