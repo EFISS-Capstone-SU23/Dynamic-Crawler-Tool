@@ -21,7 +21,7 @@ extractAll({
 		},
 	},
 	ignoreURLs: [
-		'https://www2.hm.com/((?!vi_vn)[a-z]{4})/.*$',
+		'https://www2.hm.com/((?!vi_vn).*)/.*$',
 	],
 	imageLinkProperties: 'src',
 });
