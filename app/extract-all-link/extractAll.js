@@ -24,6 +24,8 @@ import {
 	MAX_CLICK_PAGE,
 } from '../../config/config.js';
 
+const DEV_MOD = process.argv.indexOf('--dev') > -1;
+
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const startExtractPage = async (driver, url, downloadedURL, params) => new Promise(async (resolve) => {
@@ -43,8 +45,8 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 	await driver.wait(() => driver.executeScript('return document.readyState').then((readyState) => readyState === 'complete'), 10000);
 
 	// Try to extract product data
-	if (downloadedURL[url]) {
-	// if (!downloadedURL[url]) {
+	// if (downloadedURL[url]) {
+	if (!downloadedURL[url] || DEV_MOD) {
 		const productData = await extractProductData(driver, xPath);
 		if (productData && productData.title && productData.price && productData.description && (productData.imageLinks || []).length > 0) {
 			logger.info(`Extract product data: ${url}`);
