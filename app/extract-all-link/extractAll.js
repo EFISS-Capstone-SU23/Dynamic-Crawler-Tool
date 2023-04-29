@@ -106,6 +106,28 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 	resolve(output);
 });
 
+const filterQueue = (queue, visitedURL, ignoreURLsRegex, domain) => {
+	// filter ignore url with regex and filter visited url
+	queue = queue.filter((url) => {
+		if (!url.includes(domain)) {
+			return false;
+		}
+
+		let isIgnore = false;
+		ignoreURLsRegex.forEach((ignoreURL) => {
+			if (url.match(ignoreURL)) {
+				isIgnore = true;
+			}
+		});
+		return !isIgnore && !visitedURL[url];
+	});
+
+	// suffle queue
+	queue.sort(() => Math.random() - 0.5);
+
+	return queue;
+};
+
 export default async function extractAll(params) {
 	const {
 		startUrl,
@@ -124,6 +146,9 @@ export default async function extractAll(params) {
 		transfromURL(startUrl, domain),
 	];
 
+	// convert string to regex
+	const ignoreURLsRegex = ignoreURLs.map((url) => new RegExp(url));
+
 	if (continueExtract) {
 		// check if cached file exist then load it into visitedURL and queue
 		if (fs.existsSync(`./cache/visited-${domain}.json`) && fs.existsSync(`./cache/queue-${domain}.json`)) {
@@ -133,6 +158,8 @@ export default async function extractAll(params) {
 			if (visitedURLFile && queueFile) {
 				Object.assign(visitedURL, JSON.parse(visitedURLFile));
 				queue = JSON.parse(queueFile);
+
+				queue = filterQueue(queue, visitedURL, ignoreURLsRegex, domain);
 			}
 		}
 	}
@@ -142,9 +169,6 @@ export default async function extractAll(params) {
 	products.forEach((product) => {
 		downloadedURL[product.url] = true;
 	});
-
-	// convert string to regex
-	const ignoreURLsRegex = ignoreURLs.map((url) => new RegExp(url));
 
 	while (queue.length > 0) {
 		// get url array for this batch
@@ -173,25 +197,7 @@ export default async function extractAll(params) {
 		// filter duplicate url in queue via set
 		// const set = new Set(queue);
 		// queue = [...set];
-
-		// filter ignore url with regex and filter visited url
-		queue = queue.filter((url) => {
-			if (!url.includes(domain)) {
-				return false;
-			}
-
-			let isIgnore = false;
-			ignoreURLsRegex.forEach((ignoreURL) => {
-				if (url.match(ignoreURL)) {
-					isIgnore = true;
-				}
-			});
-			return !isIgnore && !visitedURL[url];
-		});
-
-		// suffle queue
-		queue.sort(() => Math.random() - 0.5);
-
+		queue = filterQueue(queue, visitedURL, ignoreURLsRegex, domain);
 		logger.info(`Queue length: ${queue.length}`);
 
 		// Save visited url to file and queue to file
