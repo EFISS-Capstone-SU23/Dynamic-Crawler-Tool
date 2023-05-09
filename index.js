@@ -18,9 +18,9 @@ extractAll({
 		description: '//*[@id="detail-product"]/div/div/div[6]/div[1]/div',
 		imageContainer: '//*[@id="product false"]/div/div[2]/div/div[1]/div[1]/div/div[2]',
 		paginationButton: '',
+		metadata: {},
 		imageElement: '//img',
 		imageLinkProperties: 'src',
-		metadata: {},
 	},
 	ignoreURLs: [],
 });
