@@ -1,26 +1,63 @@
 import './config/mongoose.js';
+
 import optimist from 'optimist';
+import fs from 'fs';
 
 import extractAll from './app/extract-all-link/extractAll.js';
+import logger from './config/log.js';
 
 const MAX_INSTANCE = optimist.argv['max-instance'] || 1;
 const CONTINUE = 'continue' in optimist.argv;
+const TEMPLATE = optimist.argv.template;
 
 process.setMaxListeners(MAX_INSTANCE + 5);
+
+const validateTemplate = (template) => {
+	const {
+		xPath,
+		startUrl,
+	} = template;
+
+	if (!xPath) {
+		logger.error('Template must have xPath');
+		process.exit(1);
+	}
+
+	if (!startUrl) {
+		logger.error('Template must have startUrl');
+		process.exit(1);
+	}
+
+	const xPathRequire = [
+		'title',
+		'price',
+		'description',
+		'imageContainer',
+	];
+
+	xPathRequire.forEach((key) => {
+		if (!xPath[key]) {
+			logger.error(`Template must have xPath.${key}`);
+			process.exit(1);
+		}
+	});
+};
+
+// if have template flag and have template file
+let templateData = {};
+if (TEMPLATE) {
+	const templatePath = `./templates/${TEMPLATE}.json`;
+	if (fs.existsSync(templatePath)) {
+		templateData = JSON.parse(fs.readFileSync(templatePath, 'utf8'));
+		validateTemplate(templateData);
+	} else {
+		logger.error(`Template ${TEMPLATE} not found`);
+		process.exit(1);
+	}
+}
 
 extractAll({
 	maxDriver: MAX_INSTANCE,
 	continueExtract: CONTINUE,
-	startUrl: 'https://highwaymenswear.com/so-mi-cuban-dusty-brown-regular-fit-nau-p40682376.html',
-	xPath: {
-		title: '//*[@id="detail-product"]/div/div/div[1]/h1',
-		price: '//*[@id="price-preview"]/span/span',
-		description: '//*[@id="detail-product"]/div/div/div[6]/div[1]/div',
-		imageContainer: '//*[@id="product false"]/div/div[2]/div/div[1]/div[1]/div/div[2]',
-		paginationButton: '',
-		metadata: {},
-		imageElement: '//img',
-		imageLinkProperties: 'src',
-	},
-	ignoreURLs: [],
+	...templateData,
 });
