@@ -45,7 +45,7 @@ const validateTemplate = (template) => {
 // if have template flag and have template file
 let templateData = {};
 if (TEMPLATE) {
-	const templatePath = `./templates/${TEMPLATE}.json`;
+	const templatePath = `./template/${TEMPLATE}.json`;
 	if (fs.existsSync(templatePath)) {
 		templateData = JSON.parse(fs.readFileSync(templatePath, 'utf8'));
 		validateTemplate(templateData);
