@@ -1,5 +1,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import winston from 'winston';
+import optimist from 'optimist';
+
+const TEMPLATE = optimist.argv.template;
 
 const customFormat = winston.format.printf(({
 	level,
@@ -17,7 +20,7 @@ const logger = winston.createLogger({
 		new winston.transports.Console(),
 		new winston.transports.File({
 			// add time stamp to log file name
-			filename: `./logs/extract-${new Date().toISOString().replace(/:/g, '-')}.log`,
+			filename: `./logs/extract-${TEMPLATE}-${new Date().toISOString().replace(/:/g, '-')}.log`,
 		}),
 	],
 });

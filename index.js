@@ -4,7 +4,6 @@ import optimist from 'optimist';
 import fs from 'fs';
 
 import extractAll from './app/extract-all-link/extractAll.js';
-import logger from './config/log.js';
 
 const MAX_INSTANCE = optimist.argv['max-instance'] || 1;
 const CONTINUE = 'continue' in optimist.argv;
@@ -19,12 +18,12 @@ const validateTemplate = (template) => {
 	} = template;
 
 	if (!xPath) {
-		logger.error('Template must have xPath');
+		console.error('Template must have xPath');
 		process.exit(1);
 	}
 
 	if (!startUrl) {
-		logger.error('Template must have startUrl');
+		console.error('Template must have startUrl');
 		process.exit(1);
 	}
 
@@ -37,7 +36,7 @@ const validateTemplate = (template) => {
 
 	xPathRequire.forEach((key) => {
 		if (!xPath[key]) {
-			logger.error(`Template must have xPath.${key}`);
+			console.error(`Template must have xPath.${key}`);
 			process.exit(1);
 		}
 	});
@@ -51,11 +50,11 @@ if (TEMPLATE) {
 		templateData = JSON.parse(fs.readFileSync(templatePath, 'utf8'));
 		validateTemplate(templateData);
 	} else {
-		logger.error(`Template ${TEMPLATE} not found`);
+		console.error(`Template ${TEMPLATE} not found`);
 		process.exit(1);
 	}
 } else {
-	logger.error('Please provide template name');
+	console.error('Please provide template name');
 	process.exit(1);
 }
 
