@@ -54,6 +54,9 @@ if (TEMPLATE) {
 		logger.error(`Template ${TEMPLATE} not found`);
 		process.exit(1);
 	}
+} else {
+	logger.error('Please provide template name');
+	process.exit(1);
 }
 
 extractAll({
