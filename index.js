@@ -1,13 +1,14 @@
 import './config/mongoose.js';
 
-import optimist from 'optimist';
 import fs from 'fs';
 
 import extractAll from './app/extract-all-link/extractAll.js';
 
-const MAX_INSTANCE = optimist.argv['max-instance'] || 1;
-const CONTINUE = 'continue' in optimist.argv;
-const TEMPLATE = optimist.argv.template;
+import {
+	MAX_INSTANCE,
+	CONTINUE,
+	TEMPLATE,
+} from './config/parram.js';
 
 process.setMaxListeners(MAX_INSTANCE + 5);
 

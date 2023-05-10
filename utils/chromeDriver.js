@@ -3,13 +3,10 @@ import {
 } from 'selenium-webdriver';
 // set chrome options
 import chrome from 'selenium-webdriver/chrome.js';
-import optimist from 'optimist';
 
-let HEADLESS = optimist.argv.headless;
-
-if (HEADLESS === undefined) {
-	HEADLESS = true;
-}
+import {
+	HEADLESS,
+} from '../config/parram.js';
 
 const o = new chrome.Options();
 // o.addArguments('start-fullscreen');

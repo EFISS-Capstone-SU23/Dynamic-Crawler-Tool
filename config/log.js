@@ -1,8 +1,9 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import winston from 'winston';
-import optimist from 'optimist';
 
-const TEMPLATE = optimist.argv.template;
+import {
+	TEMPLATE,
+} from './parram.js';
 
 const customFormat = winston.format.printf(({
 	level,
