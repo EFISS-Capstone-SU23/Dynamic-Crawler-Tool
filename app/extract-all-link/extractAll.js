@@ -109,6 +109,10 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 });
 
 const filterQueue = (queue, visitedURL, ignoreURLsRegex, domain) => {
+	// filter duplicate url in queue
+	const set = new Set(queue);
+	queue = [...set];
+
 	// filter ignore url with regex and filter visited url
 	queue = queue.filter((url) => {
 		if (!url.includes(domain)) {
@@ -194,9 +198,6 @@ const _extractAll = async (params, driverArray) => {
 			});
 		});
 
-		// filter duplicate url in queue via set
-		// const set = new Set(queue);
-		// queue = [...set];
 		queue = filterQueue(queue, visitedURL, ignoreURLsRegex, domain);
 		logger.info(`Queue length: ${queue.length}`);
 
