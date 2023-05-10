@@ -1,10 +1,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import winston from 'winston';
 
-import {
-	TEMPLATE,
-} from './parram.js';
-
 const customFormat = winston.format.printf(({
 	level,
 	message,
@@ -21,7 +17,7 @@ const logger = winston.createLogger({
 		new winston.transports.Console(),
 		new winston.transports.File({
 			// add time stamp to log file name
-			filename: `./logs/extract-${TEMPLATE}-${new Date().toISOString().replace(/:/g, '-')}.log`,
+			filename: `./logs/extract-${new Date().toISOString().replace(/:/g, '-')}.log`,
 		}),
 	],
 });
