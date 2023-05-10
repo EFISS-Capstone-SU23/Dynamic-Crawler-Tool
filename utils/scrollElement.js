@@ -1,5 +1,5 @@
 /* eslint-disable no-promise-executor-return */
-import logger from '../config/log';
+import logger from '../config/log.js';
 
 /* eslint-disable no-restricted-syntax */
 export const getDiffHeight = async (imageContainer) => {

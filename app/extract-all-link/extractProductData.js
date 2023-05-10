@@ -131,7 +131,11 @@ export const saveProductData = async (productData, url) => {
 		const ext = getExtFromUrl(imageLink);
 		// output/<site name>/<id>_<site_name_with_under_score>.jpg
 		const path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
-		await saveFileFromURL(imageLink, path);
+		const saveStatus = await saveFileFromURL(imageLink, path);
+
+		if (!saveStatus) {
+			return;
+		}
 
 		const isRemoved = await removeSmallImage(path);
 		if (!isRemoved) {

@@ -28,10 +28,11 @@ export const saveFileFromURL = async (url, path) => {
 		const writer = fs.createWriteStream(path);
 		response.data.pipe(writer);
 
-		return new Promise((resolve, reject) => {
+		await new Promise((resolve, reject) => {
 			writer.on('finish', resolve);
 			writer.on('error', reject);
 		});
+		return true;
 	} catch (error) {
 		logger.error(`Failed to download file: ${error.message}`);
 		return false;
