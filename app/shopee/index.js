@@ -10,11 +10,11 @@ import {
 } from '../../config/parram.js';
 
 const SHOPE_NAMES = [
-	'tinn_store',
-	'22decembrestore',
-	'thedelia',
-	'rame_vn',
-	'poloman.vn',
+	// 'tinn_store',
+	// '22decembrestore',
+	// 'thedelia',
+	// 'rame_vn',
+	// 'poloman.vn',
 	'coolmate.vn',
 ];
 
