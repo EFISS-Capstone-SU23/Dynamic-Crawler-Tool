@@ -9,7 +9,7 @@ import { delay } from '../../../utils/delay.js';
 const getMaxPage = async (shopId, driver) => {
 	const shopHomeURL = `https://shopee.vn/${shopId}?page=0&sortBy=pop`;
 	driver.get(shopHomeURL);
-	await delay(30 * 1000);
+	await delay(2.5 * 1000);
 
 	const maxPageEl = await getElementByXpath(driver, MAX_PAGE);
 	return maxPageEl.getText();
@@ -25,7 +25,7 @@ export default async function getAllProductLink(shopId, driver) {
 
 		const shopHomeURL = `https://shopee.vn/${shopId}?page=${page}&sortBy=pop`;
 		driver.get(shopHomeURL);
-		await delay(20 * 1000);
+		await delay(2.5 * 1000);
 
 		const containerEl = await getElementByXpath(driver, SEARCH_CONTAINER);
 
