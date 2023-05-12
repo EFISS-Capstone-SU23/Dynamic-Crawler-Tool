@@ -1,4 +1,5 @@
 /* eslint-disable no-restricted-syntax */
+import '../../config/env.js';
 import getDriverArray from '../../utils/getDriverArray.js';
 import {
 	MAX_INSTANCE,
