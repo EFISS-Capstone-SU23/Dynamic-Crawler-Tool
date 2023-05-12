@@ -4,19 +4,32 @@ import getDriverArray from '../../utils/getDriverArray.js';
 import {
 	MAX_INSTANCE,
 } from '../../config/parram.js';
-import extractShopeeByShop from './extractShopeeByShop.js';
+// import extractShopeeByShop from './extractShopeeByShop.js';
+import loginShopee from './utils/loginShopee.js';
 
-const SHOP_IDS = [
-	'coolmate.vn',
-];
+// const SHOP_IDS = [
+// 	'coolmate.vn',
+// ];
 
 const driverArr = getDriverArray(MAX_INSTANCE);
-try {
-	for (const shopId of SHOP_IDS) {
-		await extractShopeeByShop(shopId, driverArr);
+const main = async () => {
+	// Login to shopee for all driver
+	for (const driver of driverArr) {
+		await loginShopee(driver);
 	}
-} finally {
+
+	// for (const shopId of SHOP_IDS) {
+	// 	await extractShopeeByShop(shopId, driverArr);
+	// }
+};
+
+main().catch((error) => {
+	console.error(error);
 	driverArr.forEach((driver) => {
 		driver.quit();
 	});
-}
+}).then(() => {
+	// driverArr.forEach((driver) => {
+	// 	driver.quit();
+	// });
+});
