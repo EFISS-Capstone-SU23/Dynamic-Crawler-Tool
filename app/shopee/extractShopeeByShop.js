@@ -2,6 +2,7 @@ import fs from 'fs';
 
 import logger from '../../config/log.js';
 import getAllProductLink from './pipeline/getAllProductLink.js';
+import extractProductData from './pipeline/extractProductData.js';
 import {
 	CONTINUE,
 } from '../../config/parram.js';
@@ -25,4 +26,17 @@ export default async function extractShopeeByShop(shopId, driverArr) {
 	}
 
 	logger.info(`Step 02: getAllProductInfo: ${shopId}`);
+	// remove duplicate link
+	const queue = [...new Set(allLink)];
+	const maxDriver = driverArr.length;
+
+	while (queue.length > 0) {
+		const urlArray = queue.splice(0, maxDriver);
+
+		// start extract page and return promise array
+		const promiseArray = urlArray.map((url, index) => extractProductData(driverArr[index], url));
+
+		// wait for all promise to resolve
+		await Promise.all(promiseArray);
+	}
 }

@@ -22,6 +22,9 @@ const ProductSchema = new mongoose.Schema({
 	metadata: {
 		type: Object,
 	},
+	group: {
+		type: String,
+	},
 });
 
 const _db = mongoose.model('Product', ProductSchema);
