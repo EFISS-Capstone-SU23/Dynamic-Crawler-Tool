@@ -1,14 +1,14 @@
 import {
 	delay,
-} from '../../../utils/delay';
+} from '../../../utils/delay.js';
 import {
 	xPath,
-} from '../xPath';
+} from '../xPath.js';
 import {
 	getElementByXpath,
 	getElementsByXpath,
-} from '../../../utils/getElement';
-import Products from '../../../models/Products';
+} from '../../../utils/getElement.js';
+import Products from '../../../models/Products.js';
 import { saveFileFromURL } from '../../../utils/file/saveFileFromURL.js';
 
 export default async function extractProductData(driver, url, group) {

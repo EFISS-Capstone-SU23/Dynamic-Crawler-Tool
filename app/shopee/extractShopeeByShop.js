@@ -29,12 +29,13 @@ export default async function extractShopeeByShop(shopId, driverArr) {
 	// remove duplicate link
 	const queue = [...new Set(allLink)];
 	const maxDriver = driverArr.length;
+	const group = `shopee_${shopId}`;
 
 	while (queue.length > 0) {
 		const urlArray = queue.splice(0, maxDriver);
 
 		// start extract page and return promise array
-		const promiseArray = urlArray.map((url, index) => extractProductData(driverArr[index], url));
+		const promiseArray = urlArray.map((url, index) => extractProductData(driverArr[index], url, group));
 
 		// wait for all promise to resolve
 		await Promise.all(promiseArray);
