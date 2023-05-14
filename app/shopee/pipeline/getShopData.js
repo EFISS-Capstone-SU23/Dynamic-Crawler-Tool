@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-loop-func */
 import axios from 'axios';
 
@@ -5,7 +6,7 @@ import Products from '../../../models/Products.js';
 import { saveFileFromURL } from '../../../utils/file/saveFileFromURL.js';
 import logger from '../../../config/log.js';
 
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 50;
 
 export default async function getShopData(shopId, group) {
 	logger.info(`Downloading shop ${group}`);
@@ -24,8 +25,7 @@ export default async function getShopData(shopId, group) {
 		}
 		const items = data.items;
 
-		// Download all items in this page
-		const itemsPromises = items.map(async (item) => {
+		for (const item of items) {
 			const {
 				name,
 				images,
@@ -46,27 +46,28 @@ export default async function getShopData(shopId, group) {
 			});
 
 			// download image in imageLinks
-			const imageLinks = [];
-			images.forEach(async (image, i) => {
+			const imagesPromise = images.map(async (image, i) => {
 				const imageLink = `https://down-vn.img.susercontent.com/file/${image}`;
 				const imgPath = `./output/${group}/${product._id}_${i}_${group.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
 
 				const saveStatus = await saveFileFromURL(imageLink, imgPath);
 
 				if (!saveStatus) {
-					return;
+					return null;
 				}
 
-				imageLinks.push(imgPath);
+				return imgPath;
 			});
+
+			const imageLinks = await Promise.all(imagesPromise);
+			// filter null
+			const imageLinksFiltered = imageLinks.filter((imageLink) => imageLink !== null);
 
 			// save product image path to database
 			await Products.updateProductById(product._id, {
-				images: imageLinks,
+				images: imageLinksFiltered,
 			});
-		});
-
-		await Promise.all(itemsPromises);
+		}
 
 		offSet += PAGE_SIZE;
 	}

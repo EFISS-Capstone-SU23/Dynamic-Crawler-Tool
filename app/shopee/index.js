@@ -1,4 +1,6 @@
 /* eslint-disable no-restricted-syntax */
+import '../../config/mongoose.js';
+
 import getShopId from './pipeline/getShopId.js';
 import getShopData from './pipeline/getShopData.js';
 import logger from '../../config/log.js';
