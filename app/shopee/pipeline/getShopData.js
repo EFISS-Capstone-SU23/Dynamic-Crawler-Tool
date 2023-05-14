@@ -11,7 +11,7 @@ import { delay } from '../../../utils/delay.js';
 const PAGE_SIZE = 100;
 
 export default async function getShopData(shopId, group) {
-	logger.info(`Downloading shop ${group}`);
+	logger.info(`Downloading shop ${group} - ${shopId}`);
 	let offSet = 0;
 
 	const downloadedURL = await Products.getDownloadedProductURL('shopee.vn');
@@ -23,7 +23,7 @@ export default async function getShopData(shopId, group) {
 		const res = await axios.get(API_ENDPOINT);
 		const data = res.data.data;
 
-		if (!data || data.no_more) {
+		if (!data || !(data.items || []).length) {
 			logger.info(`No more data for shop ${group}`);
 			break;
 		}
