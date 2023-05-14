@@ -48,6 +48,16 @@ const Product = {
 		};
 		return _db.find(query);
 	},
+	async getDownloadedProductURL(domain) {
+		const downloadedURL = {};
+
+		const products = await this.getAllProductByDomain(domain);
+		products.forEach((product) => {
+			downloadedURL[product.url] = true;
+		});
+
+		return downloadedURL;
+	},
 };
 
 export default Product;

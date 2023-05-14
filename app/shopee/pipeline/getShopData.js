@@ -1,3 +1,4 @@
+/* eslint-disable no-continue */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-loop-func */
 import axios from 'axios';
@@ -12,6 +13,8 @@ const PAGE_SIZE = 100;
 export default async function getShopData(shopId, group) {
 	logger.info(`Downloading shop ${group}`);
 	let offSet = 0;
+
+	const downloadedURL = Products.getDownloadedURL('shopee.vn');
 
 	while (true) {
 		logger.info(`Downloading page ${offSet / PAGE_SIZE + 1} of shop ${group}`);
@@ -35,6 +38,11 @@ export default async function getShopData(shopId, group) {
 			} = item;
 			const url = `https://shopee.vn/${name}-i.${shopId}.${itemid}`;
 			const description = name;
+
+			if (!downloadedURL[url]) {
+				console.log('skip');
+				continue;
+			}
 
 			logger.info(`Downloading item ${name}`);
 			const product = await Products.insertNewProduct({

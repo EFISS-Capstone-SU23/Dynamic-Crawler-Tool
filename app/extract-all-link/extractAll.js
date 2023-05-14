@@ -143,7 +143,6 @@ const _extractAll = async (params, driverArray) => {
 	} = params;
 
 	const visitedURL = {};
-	const downloadedURL = {};
 
 	const domain = new URL(startUrl).hostname;
 	let queue = [
@@ -169,10 +168,7 @@ const _extractAll = async (params, driverArray) => {
 	}
 
 	// get all product with domain and mask as downloaded
-	const products = await Products.getAllProductByDomain(domain);
-	products.forEach((product) => {
-		downloadedURL[product.url] = true;
-	});
+	const downloadedURL = await Products.getDownloadedProductURL(domain);
 
 	while (queue.length > 0) {
 		// get url array for this batch
