@@ -6,6 +6,11 @@ import getShopData from './pipeline/getShopData.js';
 import logger from '../../config/log.js';
 
 const SHOPE_NAMES = [
+	'tinn_store',
+	'22decembrestore',
+	'shop/134147548',
+	'rame_vn',
+	'poloman.vn',
 	'coolmate.vn',
 ];
 

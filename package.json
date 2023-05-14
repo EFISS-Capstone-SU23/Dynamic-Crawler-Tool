@@ -7,7 +7,8 @@
 		"prepare": "husky install",
 		"lint": "eslint .",
 		"start:dev": "node index.js --dev",
-		"start:prod": "node index.js --max-instance=32 --continue"
+		"start:prod": "node index.js --max-instance=32 --continue",
+		"start:shopee": "node app/shopee/index.js"
 	},
 	"repository": {
 		"type": "git",

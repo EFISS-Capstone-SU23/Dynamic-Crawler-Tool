@@ -5,8 +5,9 @@ import axios from 'axios';
 import Products from '../../../models/Products.js';
 import { saveFileFromURL } from '../../../utils/file/saveFileFromURL.js';
 import logger from '../../../config/log.js';
+import { delay } from '../../../utils/delay.js';
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 100;
 
 export default async function getShopData(shopId, group) {
 	logger.info(`Downloading shop ${group}`);
@@ -70,5 +71,6 @@ export default async function getShopData(shopId, group) {
 		}
 
 		offSet += PAGE_SIZE;
+		delay(5 * 1000);
 	}
 }
