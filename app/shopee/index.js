@@ -8,7 +8,7 @@ import logger from '../../config/log.js';
 const SHOPE_NAMES = [
 	'tinn_store',
 	'22decembrestore',
-	'shop/134147548',
+	'thedelia',
 	'rame_vn',
 	'poloman.vn',
 	'coolmate.vn',
@@ -19,6 +19,12 @@ const main = async () => {
 	const shopInfo = [];
 	for (const shopName of SHOPE_NAMES) {
 		const shopId = await getShopId(shopName);
+
+		if (!shopId) {
+			logger.error(`Cannot find shopId for ${shopName}`);
+			continue;
+		}
+
 		shopInfo.push({
 			shopName,
 			shopId,

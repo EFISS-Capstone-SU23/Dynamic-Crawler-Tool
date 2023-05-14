@@ -24,6 +24,7 @@
         "max-len": "off",
         "no-param-reassign": "off",
         "no-constant-condition": "off",
-        "prefer-destructuring": "off"
+        "prefer-destructuring": "off",
+        "no-continue": "off"
     }
 }
