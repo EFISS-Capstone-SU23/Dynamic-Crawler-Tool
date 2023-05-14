@@ -16,6 +16,8 @@ const main = async () => {
 			shopId,
 		});
 	}
+
+	logger.info('Step 02: Downloading shop product data');
 	console.log(shopInfo);
 };
 
