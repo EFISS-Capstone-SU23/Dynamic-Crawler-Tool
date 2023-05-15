@@ -75,9 +75,10 @@ export default async function getShopData(shopId, group) {
 			await Products.updateProductById(product._id, {
 				images: imageLinksFiltered,
 			});
+
+			await delay(0.2 * 1000);
 		}
 
 		offSet += PAGE_SIZE;
-		delay(5 * 1000);
 	}
 }
