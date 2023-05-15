@@ -9,6 +9,31 @@ import logger from '../../../config/log.js';
 import { delay } from '../../../utils/delay.js';
 
 const PAGE_SIZE = 100;
+const MAX_DOWNLOAD_IMAGE = 30 * 1000;
+
+const timeoutDownloadImage = new Promise((resolve) => {
+	setTimeout(() => {
+		resolve();
+	}, MAX_DOWNLOAD_IMAGE);
+});
+
+const downloadImage = async (product, group, images) => {
+	const imagesPromise = images.map(async (image, i) => {
+		const imageLink = `https://down-vn.img.susercontent.com/file/${image}`;
+		const imgPath = `./output/${group}/${product._id}_${i}_${group.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
+
+		const saveStatus = await saveFileFromURL(imageLink, imgPath);
+
+		if (!saveStatus) {
+			return null;
+		}
+
+		return imgPath;
+	});
+	const imageLinks = await Promise.all(imagesPromise);
+	const imageLinksFiltered = imageLinks.filter((imageLink) => imageLink !== null);
+	return imageLinksFiltered;
+};
 
 export default async function getShopData(shopId, group) {
 	logger.info(`Downloading shop ${group} - ${shopId}`);
@@ -54,26 +79,15 @@ export default async function getShopData(shopId, group) {
 			});
 
 			// download image in imageLinks
-			const imagesPromise = images.map(async (image, i) => {
-				const imageLink = `https://down-vn.img.susercontent.com/file/${image}`;
-				const imgPath = `./output/${group}/${product._id}_${i}_${group.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
-
-				const saveStatus = await saveFileFromURL(imageLink, imgPath);
-
-				if (!saveStatus) {
-					return null;
-				}
-
-				return imgPath;
-			});
-
-			const imageLinks = await Promise.all(imagesPromise);
-			// filter null
-			const imageLinksFiltered = imageLinks.filter((imageLink) => imageLink !== null);
+			// filter null\
+			const imageLinks = await Promise.race([
+				downloadImage(product, group, images),
+				timeoutDownloadImage,
+			]);
 
 			// save product image path to database
 			await Products.updateProductById(product._id, {
-				images: imageLinksFiltered,
+				images: imageLinks,
 			});
 
 			await delay(0.2 * 1000);
