@@ -18,6 +18,8 @@ const SHOPE_NAMES = [
 	'coolmate.vn',
 ];
 
+const START_AT = '';
+
 const main = async () => {
 	logger.info('Step 01: Start getting shop info');
 	let shopInfo = [];
@@ -39,6 +41,16 @@ const main = async () => {
 		logger.info('Fetching all shop info');
 		shopInfo = await fetchAllShop();
 		logger.info(`Fetched ${shopInfo.length} shops`);
+
+		if (START_AT) {
+			const startAtIndex = shopInfo.findIndex((el) => el.shopName === START_AT);
+
+			if (startAtIndex === -1) {
+				logger.error(`Cannot find shop ${START_AT}`);
+			} else {
+				shopInfo = shopInfo.slice(startAtIndex);
+			}
+		}
 	}
 
 	logger.info('Step 02: Downloading shop product data');
