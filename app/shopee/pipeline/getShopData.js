@@ -85,6 +85,12 @@ export default async function getShopData(shopId, group) {
 				timeoutDownloadImage,
 			]);
 
+			if (!imageLinks) {
+				logger.error(`Timeout download image for item ${name}`);
+				logger.error(shopId, itemid);
+				continue;
+			}
+
 			// save product image path to database
 			await Products.updateProductById(product._id, {
 				images: imageLinks,
