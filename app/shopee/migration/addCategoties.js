@@ -4,6 +4,7 @@ import '../../../config/mongoose.js';
 import axios from 'axios';
 
 import Products from '../../../models/Products.js';
+import logger from '../../../config/log.js';
 
 const MAX_CHUNK = 100;
 
@@ -25,6 +26,7 @@ const fetchProductData = async (id, url) => {
 		description,
 		category: categories.map((category) => category.display_name),
 	});
+	logger.info(`Updated product ${id} with ${categories.map((category) => category.display_name).join(', ')}`);
 };
 
 const mainMigration = async () => {
