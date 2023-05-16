@@ -17,3 +17,5 @@ const mainMigration = async () => {
 		allShopeeProductsChunks.push(allShopeeProducts.slice(i, i + MAX_CHUNK));
 	}
 };
+
+mainMigration();
