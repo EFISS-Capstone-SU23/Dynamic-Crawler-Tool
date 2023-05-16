@@ -26,6 +26,7 @@ const fetchProductData = async (id, url) => {
 	const {
 		description,
 		categories,
+		images,
 	} = data.data;
 
 	// remove first category
@@ -34,6 +35,7 @@ const fetchProductData = async (id, url) => {
 	await Products.updateProductById(id, {
 		description,
 		category: categories.map((category) => category.display_name),
+		original_images: images.map((image) => `https://down-vn.img.susercontent.com/file/${image}`),
 	});
 	logger.info(`Updated product ${id} with ${categories.map((category) => category.display_name).join(', ')}`);
 };
