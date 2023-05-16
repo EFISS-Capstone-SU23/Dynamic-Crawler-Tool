@@ -6,9 +6,9 @@ import axios from 'axios';
 import Products from '../../../models/Products.js';
 import logger from '../../../config/log.js';
 import { SHOPEE_HEADER } from '../config/header.js';
-import delay from '../../../utils/delay.js';
+import { delay } from '../../../utils/delay.js';
 
-const MAX_CHUNK = 10;
+const MAX_CHUNK = 1;
 
 const fetchProductData = async (id, url) => {
 	const [shopId, itemId] = url.split('-i.')[1].split('.');
@@ -29,18 +29,18 @@ const fetchProductData = async (id, url) => {
 	} = data.data;
 
 	// remove first category
-	categories.shift();
+	// categories.shift();
 
 	await Products.updateProductById(id, {
 		description,
 		category: categories.map((category) => category.display_name),
 	});
 	logger.info(`Updated product ${id} with ${categories.map((category) => category.display_name).join(', ')}`);
-	await delay(5 * 1000);
 };
 
 const mainMigration = async () => {
 	const allShopeeProducts = (await Products.getAllProductByDomain('shopee.vn'))
+		.filter((product) => !product.categories || !product.description)
 		.map((product) => ({
 			_id: product._id,
 			url: product.url,
@@ -54,6 +54,7 @@ const mainMigration = async () => {
 
 	for (const chunk of allShopeeProductsChunks) {
 		await Promise.all(chunk.map(({ _id, url }) => fetchProductData(_id, url)));
+		await delay(5 * 1000);
 	}
 };
 
