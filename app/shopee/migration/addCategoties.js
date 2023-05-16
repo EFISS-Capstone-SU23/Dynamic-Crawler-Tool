@@ -5,39 +5,49 @@ import axios from 'axios';
 
 import Products from '../../../models/Products.js';
 import logger from '../../../config/log.js';
-import { SHOPEE_HEADER } from '../config/header.js';
-import { delay } from '../../../utils/delay.js';
+import {
+	SHOPEE_HEADER,
+} from '../config/header.js';
+import {
+	delay,
+} from '../../../utils/delay.js';
 
 const MAX_CHUNK = 1;
 
 const fetchProductData = async (id, url) => {
 	const [shopId, itemId] = url.split('-i.')[1].split('.');
-	const URL_ENDPOINT = `https://shopee.vn/api/v4/item/get?itemid=${itemId}&shopid=${shopId}`;
+	try {
+		const URL_ENDPOINT = `https://shopee.vn/api/v4/item/get?itemid=${itemId}&shopid=${shopId}`;
 
-	const { data } = await axios.get(URL_ENDPOINT, {
-		headers: SHOPEE_HEADER,
-	});
+		const {
+			data,
+		} = await axios.get(URL_ENDPOINT, {
+			headers: SHOPEE_HEADER,
+		});
 
-	if (!data.data) {
-		logger.error(`Cannot get product ${id} with url shoppid=${shopId} and itemid=${itemId}`);
-		return;
+		if (!data.data) {
+			logger.error(`Cannot get product ${id} with url shoppid=${shopId} and itemid=${itemId}`);
+			return;
+		}
+
+		const {
+			description,
+			categories,
+			images,
+		} = data.data;
+
+		// remove first category
+		// categories.shift();
+
+		await Products.updateProductById(id, {
+			description,
+			category: categories.map((category) => category.display_name),
+			original_images: images.map((image) => `https://down-vn.img.susercontent.com/file/${image}`),
+		});
+		logger.info(`Updated product ${id} with ${categories.map((category) => category.display_name).join(', ')}`);
+	} catch (error) {
+		logger.error(`Cannot get product ${id} with shopid=${shopId} and itemid=${itemId}`);
 	}
-
-	const {
-		description,
-		categories,
-		images,
-	} = data.data;
-
-	// remove first category
-	// categories.shift();
-
-	await Products.updateProductById(id, {
-		description,
-		category: categories.map((category) => category.display_name),
-		original_images: images.map((image) => `https://down-vn.img.susercontent.com/file/${image}`),
-	});
-	logger.info(`Updated product ${id} with ${categories.map((category) => category.display_name).join(', ')}`);
 };
 
 const mainMigration = async () => {
@@ -55,8 +65,11 @@ const mainMigration = async () => {
 	}
 
 	for (const chunk of allShopeeProductsChunks) {
-		await Promise.all(chunk.map(({ _id, url }) => fetchProductData(_id, url)));
-		await delay(5 * 1000);
+		await Promise.all(chunk.map(({
+			_id,
+			url,
+		}) => fetchProductData(_id, url)));
+		await delay(3 * 1000);
 	}
 };
 
