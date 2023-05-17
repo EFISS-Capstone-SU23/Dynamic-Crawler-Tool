@@ -25,6 +25,7 @@
         "no-param-reassign": "off",
         "no-constant-condition": "off",
         "prefer-destructuring": "off",
-        "no-continue": "off"
+        "no-continue": "off",
+        "consistent-return": "off"
     }
 }

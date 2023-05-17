@@ -102,6 +102,30 @@ export const extractProductData = async (driver, xPath) => {
 	};
 };
 
+const downloadImage = async (product, domain, imageLinks) => {
+	const imagesPromise = imageLinks.map(async (imageLink, i) => {
+		const ext = getExtFromUrl(imageLink);
+		// output/<site name>/<id>_<site_name_with_under_score>.jpg
+		const path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
+
+		const saveStatus = await saveFileFromURL(imageLink, path);
+		if (!saveStatus) {
+			return;
+		}
+
+		const isRemoved = await removeSmallImage(path);
+		if (isRemoved) {
+			return;
+		}
+
+		checkFileTypeByContent(path);
+		return path;
+	});
+
+	const imagesPath = await Promise.all(imagesPromise);
+	return imagesPath.filter((imagePath) => imagePath);
+};
+
 export const saveProductData = async (productData, url) => {
 	const {
 		title,
@@ -124,25 +148,7 @@ export const saveProductData = async (productData, url) => {
 	const domain = new URL(url).hostname;
 
 	// download image in imageLinks
-	const imagePath = [];
-	for (let i = 0; i < imageLinks.length; i += 1) {
-		const imageLink = imageLinks[i];
-		// download image
-		const ext = getExtFromUrl(imageLink);
-		// output/<site name>/<id>_<site_name_with_under_score>.jpg
-		const path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
-		const saveStatus = await saveFileFromURL(imageLink, path);
-
-		if (!saveStatus) {
-			return;
-		}
-
-		const isRemoved = await removeSmallImage(path);
-		if (!isRemoved) {
-			imagePath.push(path);
-			checkFileTypeByContent(path);
-		}
-	}
+	const imagePath = await downloadImage(product, domain, imageLinks);
 
 	// save product image path to database
 	await Products.updateProductById(product._id, {
