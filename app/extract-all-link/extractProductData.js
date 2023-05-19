@@ -9,6 +9,7 @@ import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT } from '../../config/config.js';
 import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
 import { transformImageURL } from '../../utils/transformURL.js';
 import { removeSmallImage, checkFileTypeByContent } from '../../utils/file/imageFile.js';
+import convertPrice from '../../utils/convertPrice.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -95,7 +96,7 @@ export const extractProductData = async (driver, xPath) => {
 
 	return {
 		title: titleText,
-		price: priceText,
+		price: convertPrice(priceText),
 		description: descriptionText,
 		imageLinks,
 		metadata: metadataValue,
