@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import convertPrice from '../utils/convertPrice';
+
 const ProductSchema = new mongoose.Schema({
 	title: {
 		type: String,
@@ -38,6 +40,10 @@ const _db = mongoose.model('Product', ProductSchema);
 const Product = {
 	insertNewProduct: async (product) => _db.create(product),
 	async updateProductById(id, product) {
+		if (product.price) {
+			product.price = convertPrice(product.price);
+		}
+
 		const updatedProduct = await _db.findOneAndUpdate(
 			{ _id: id },
 			{ $set: product },
