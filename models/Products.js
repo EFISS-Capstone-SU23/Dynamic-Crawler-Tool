@@ -60,6 +60,9 @@ const Product = {
 		};
 		return _db.find(query);
 	},
+	getAllProduct() {
+		return _db.find({});
+	},
 	async getDownloadedProductURL(domain) {
 		const downloadedURL = {};
 
