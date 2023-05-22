@@ -38,11 +38,17 @@ const ProductSchema = new mongoose.Schema({
 const _db = mongoose.model('Product', ProductSchema);
 
 const Product = {
-	insertNewProduct: async (product) => _db.create(product),
-	async updateProductById(id, product) {
+	insertNewProduct: async (product) => {
 		if (product.price) {
 			product.price = convertPrice(product.price);
 		}
+
+		return _db.create(product);
+	},
+	async updateProductById(id, product) {
+		// if (product.price) {
+		// 	product.price = convertPrice(product.price);
+		// }
 
 		const updatedProduct = await _db.findOneAndUpdate(
 			{ _id: id },
