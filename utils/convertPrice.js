@@ -11,8 +11,8 @@ export default function convertPrice(price) {
 	const priceNumber = Number(priceString);
 
 	// Check if price is a number
-	if (!Number.isNaN(priceNumber)) {
-		return price;
+	if (priceNumber) {
+		return priceNumber;
 	}
 
 	return -1;
