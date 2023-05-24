@@ -1,3 +1,4 @@
+import '../../config/env.js';
 import '../../config/mongoose.js';
 import Products from '../../models/Products.js';
 import convertPrice from '../../utils/convertPrice.js';

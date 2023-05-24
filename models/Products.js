@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import convertPrice from '../utils/convertPrice';
+import convertPrice from '../utils/convertPrice.js';
 
 const ProductSchema = new mongoose.Schema({
 	title: {
