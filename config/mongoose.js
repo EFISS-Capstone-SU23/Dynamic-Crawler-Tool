@@ -9,7 +9,13 @@ const {
 	MONGODB_PASSWORD,
 } = process.env;
 
-const MONGODB_URI = `mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}`;
+const parrams = [
+	'authSource=admin',
+	'retryWrites=true',
+	'w=majority',
+];
+
+const MONGODB_URI = `mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?${parrams.join('&')}`;
 
 mongoose.connect(MONGODB_URI, {
 	useNewUrlParser: true,
