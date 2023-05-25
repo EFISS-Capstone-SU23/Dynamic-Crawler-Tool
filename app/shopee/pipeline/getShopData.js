@@ -65,7 +65,7 @@ export default async function getShopData(shopId, group) {
 			} = item;
 			images = images.map((image) => `https://down-vn.img.susercontent.com/file/${image}`);
 
-			const url = `https://shopee.vn/${name}-i.${shopId}.${itemid}`;
+			const url = `https://shopee.vn/product/${shopId}/${itemid}`;
 			const description = name;
 
 			if (downloadedURL[url]) {

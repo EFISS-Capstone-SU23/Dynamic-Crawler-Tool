@@ -54,6 +54,7 @@ const fetchProductData = async (id, url, header) => {
 			categories: categories.map((category) => category.display_name),
 			original_images: images.map((image) => `https://down-vn.img.susercontent.com/file/${image}`),
 			price: price / 1e5,
+			url: `https://shopee.vn/product/${shopId}/${itemId}`,
 		});
 		logger.info(`Updated product ${id} with ${categories.map((category) => category.display_name).join(', ')}`);
 
