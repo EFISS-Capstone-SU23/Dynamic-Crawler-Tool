@@ -43,6 +43,7 @@ const fetchProductData = async (id, url, header) => {
 			description,
 			categories,
 			images,
+			price,
 		} = data.data;
 
 		// remove first category
@@ -52,6 +53,7 @@ const fetchProductData = async (id, url, header) => {
 			description,
 			categories: categories.map((category) => category.display_name),
 			original_images: images.map((image) => `https://down-vn.img.susercontent.com/file/${image}`),
+			price: price / 1e5,
 		});
 		logger.info(`Updated product ${id} with ${categories.map((category) => category.display_name).join(', ')}`);
 
@@ -71,7 +73,7 @@ const processForEachUser = async (userHeader, products) => {
 	let SPC_EC = userHeader.SPC_EC;
 
 	while (true) {
-		if (!products) {
+		if (!products.length) {
 			logger.info(`${NAME} has no product => Stop!`);
 			return null;
 		}
@@ -99,6 +101,7 @@ const mainMigration = async () => {
 			_id: product._id,
 			url: product.url,
 		}));
+
 	// Read all file in user folder
 	const users = [];
 	fs.readdirSync(USER_FOLDER).forEach((file) => {
