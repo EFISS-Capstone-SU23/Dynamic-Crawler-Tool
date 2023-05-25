@@ -66,7 +66,8 @@ const fetchProductData = async (id, url, header) => {
 };
 
 const processForEachUser = async (userHeader, products) => {
-	const { NAME, BASE_COOKIE } = userHeader;
+	const { NAME, BASE_COOKIE, pathFile } = userHeader;
+	delete userHeader.pathFile;
 	let SPC_EC = userHeader.SPC_EC;
 
 	while (true) {
@@ -84,6 +85,10 @@ const processForEachUser = async (userHeader, products) => {
 
 		const NEW_SPC_EC = await fetchProductData(product._id, product.url, header);
 		SPC_EC = NEW_SPC_EC || SPC_EC;
+		userHeader.SPC_EC = SPC_EC;
+
+		// Save user header to file
+		fs.writeFileSync(pathFile, JSON.stringify(userHeader, null, 4));
 	}
 };
 
