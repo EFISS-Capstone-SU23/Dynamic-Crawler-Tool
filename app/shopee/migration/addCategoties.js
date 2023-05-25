@@ -7,21 +7,33 @@ import fs from 'fs';
 
 import Products from '../../../models/Products.js';
 import logger from '../../../config/log.js';
+import { delay } from '../../../utils/delay.js';
 
 const USER_FOLDER = './app/shopee/config/shopeeUser/';
+const BASE_HEADER = {
+	'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36',
+};
 
-// eslint-disable-next-line no-unused-vars
+const getCookieKey = (cookies) => {
+	const cookieKey = {};
+	for (const cookie of cookies) {
+		const [key, value] = cookie.split(';')[0].split('=');
+		cookieKey[key] = value;
+	}
+
+	return cookieKey.SPC_EC;
+};
+
 const fetchProductData = async (id, url, header) => {
 	const [shopId, itemId] = url.split('-i.')[1].split('.');
 	try {
 		const URL_ENDPOINT = `https://shopee.vn/api/v4/item/get?itemid=${itemId}&shopid=${shopId}`;
 
-		const {
-			data,
-		} = await axios.get(URL_ENDPOINT, {
+		const response = await axios.get(URL_ENDPOINT, {
 			headers: header,
 		});
 
+		const { data } = response;
 		if (!data.data) {
 			logger.error(`Cannot get product ${id} with url shoppid=${shopId} and itemid=${itemId}`);
 			return;
@@ -42,19 +54,36 @@ const fetchProductData = async (id, url, header) => {
 			original_images: images.map((image) => `https://down-vn.img.susercontent.com/file/${image}`),
 		});
 		logger.info(`Updated product ${id} with ${categories.map((category) => category.display_name).join(', ')}`);
+
+		await delay(3 * 1000);
+		return getCookieKey(response.headers['set-cookie']);
 	} catch (error) {
 		logger.error(`Cannot get product ${id} with shopid=${shopId} and itemid=${itemId}`);
+
+		await delay(3 * 1000);
+		return null;
 	}
 };
 
-const processForEachUser = (userHeader, products) => {
-	const { NAME } = userHeader;
+const processForEachUser = async (userHeader, products) => {
+	const { NAME, BASE_COOKIE } = userHeader;
+	let SPC_EC = userHeader.SPC_EC;
 
 	while (true) {
 		if (!products) {
 			logger.info(`${NAME} has no product => Stop!`);
 			return null;
 		}
+
+		const product = products.shift();
+		const header = {
+			...BASE_HEADER,
+			'Af-Ac-Enc-Dat': userHeader['Af-Ac-Enc-Dat'],
+			Cookie: `${BASE_COOKIE}; SPC_EC=${SPC_EC}`,
+		};
+
+		const NEW_SPC_EC = await fetchProductData(product._id, product.url, header);
+		SPC_EC = NEW_SPC_EC || SPC_EC;
 	}
 };
 
@@ -77,7 +106,7 @@ const mainMigration = async () => {
 	});
 
 	const userProcessPromises = users.map(async (user) => {
-		processForEachUser(user, allShopeeProducts);
+		await processForEachUser(user, allShopeeProducts);
 	});
 
 	await Promise.all(userProcessPromises);
