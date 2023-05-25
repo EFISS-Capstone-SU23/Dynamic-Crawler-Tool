@@ -66,20 +66,6 @@ const mainMigration = async () => {
 			url: product.url,
 		}));
 
-	// split to sub array with MAX_CHUNK
-	// const allShopeeProductsChunks = [];
-	// for (let i = 0; i < allShopeeProducts.length; i += MAX_CHUNK) {
-	// 	allShopeeProductsChunks.push(allShopeeProducts.slice(i, i + MAX_CHUNK));
-	// }
-
-	// for (const chunk of allShopeeProductsChunks) {
-	// 	await Promise.all(chunk.map(({
-	// 		_id,
-	// 		url,
-	// 	}) => fetchProductData(_id, url)));
-	// 	await delay(3 * 1000);
-	// }
-
 	// Read all file in user folder
 	const users = [];
 	fs.readdirSync(USER_FOLDER).forEach((file) => {
