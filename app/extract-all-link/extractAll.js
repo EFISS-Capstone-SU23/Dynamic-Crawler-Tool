@@ -203,6 +203,13 @@ const _extractAll = async (params, driverArray) => {
 	}
 };
 
+const quitAllDriver = (driverArray) => {
+	logger.info('Quit all driver');
+	driverArray.forEach((driver) => {
+		driver.quit();
+	});
+};
+
 export default async function extractAll(params) {
 	const {
 		startUrl,
@@ -212,12 +219,11 @@ export default async function extractAll(params) {
 	const driverArray = getDriverArray(maxDriver);
 
 	try {
-		await _extractAll(params, driverArray);
-	} finally {
-		// close all driver
-		driverArray.forEach((driver) => {
-			driver.quit();
+		await _extractAll(params, driverArray).then(() => {
+			quitAllDriver();
 		});
+	} finally {
+		quitAllDriver();
 	}
 
 	logger.info('Finish extract all link.');
