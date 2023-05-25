@@ -50,7 +50,7 @@ const fetchProductData = async (id, url, header) => {
 
 		await Products.updateProductById(id, {
 			description,
-			category: categories.map((category) => category.display_name),
+			categories: categories.map((category) => category.display_name),
 			original_images: images.map((image) => `https://down-vn.img.susercontent.com/file/${image}`),
 		});
 		logger.info(`Updated product ${id} with ${categories.map((category) => category.display_name).join(', ')}`);
@@ -60,7 +60,7 @@ const fetchProductData = async (id, url, header) => {
 	} catch (error) {
 		logger.error(`Cannot get product ${id} with shopid=${shopId} and itemid=${itemId}`);
 
-		await delay(3 * 1000);
+		await delay(2 * 1000);
 		return null;
 	}
 };
@@ -94,12 +94,11 @@ const processForEachUser = async (userHeader, products) => {
 
 const mainMigration = async () => {
 	const allShopeeProducts = (await Products.getAllProductByDomain('shopee.vn'))
-		.filter((product) => !product.categories || !product.description)
+		.filter((product) => (product.categories || []).length === 0)
 		.map((product) => ({
 			_id: product._id,
 			url: product.url,
 		}));
-
 	// Read all file in user folder
 	const users = [];
 	fs.readdirSync(USER_FOLDER).forEach((file) => {
