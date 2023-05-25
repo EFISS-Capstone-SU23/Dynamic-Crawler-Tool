@@ -103,6 +103,8 @@ const mainMigration = async () => {
 			url: product.url,
 		}));
 
+	logger.info(`Total product need to update: ${allShopeeProducts.length}`);
+
 	// Read all file in user folder
 	const users = [];
 	fs.readdirSync(USER_FOLDER).forEach((file) => {
@@ -118,6 +120,7 @@ const mainMigration = async () => {
 	});
 
 	await Promise.all(userProcessPromises);
+	logger.info('Done!');
 };
 
 mainMigration();
