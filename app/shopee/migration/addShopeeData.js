@@ -58,7 +58,7 @@ const fetchProductData = async (id, url, header) => {
 		});
 		logger.info(`Updated product ${id} with ${categories.map((category) => category.display_name).join(', ')}`);
 
-		await delay(3 * 1000);
+		await delay(2 * 1000);
 		return getCookieKey(response.headers['set-cookie']);
 	} catch (error) {
 		logger.error(`Cannot get product ${id} with shopid=${shopId} and itemid=${itemId}`);
