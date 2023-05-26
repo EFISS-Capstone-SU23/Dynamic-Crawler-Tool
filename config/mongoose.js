@@ -15,7 +15,11 @@ const parrams = [
 	'w=majority',
 ];
 
-const MONGODB_URI = `mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?${parrams.join('&')}`;
+let MONGODB_URI = `mongodb://${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?${parrams.join('&')}`;
+
+if (MONGODB_USERNAME && MONGODB_PASSWORD) {
+	MONGODB_URI = `mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?${parrams.join('&')}`;
+}
 
 mongoose.connect(MONGODB_URI, {
 	useNewUrlParser: true,

@@ -18,8 +18,7 @@ const timeoutDownloadImage = new Promise((resolve) => {
 });
 
 const downloadImage = async (product, group, images) => {
-	const imagesPromise = images.map(async (image, i) => {
-		const imageLink = `https://down-vn.img.susercontent.com/file/${image}`;
+	const imagesPromise = images.map(async (imageLink, i) => {
 		const imgPath = `./output/${group}/${product._id}_${i}_${group.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
 
 		const saveStatus = await saveFileFromURL(imageLink, imgPath);
@@ -57,11 +56,16 @@ export default async function getShopData(shopId, group) {
 		for (const item of items) {
 			const {
 				name,
-				images,
 				itemid,
 				price,
 			} = item;
-			const url = `https://shopee.vn/${name}-i.${shopId}.${itemid}`;
+
+			let {
+				images,
+			} = item;
+			images = images.map((image) => `https://down-vn.img.susercontent.com/file/${image}`);
+
+			const url = `https://shopee.vn/product/${shopId}/${itemid}`;
 			const description = name;
 
 			if (downloadedURL[url]) {
@@ -71,7 +75,8 @@ export default async function getShopData(shopId, group) {
 			logger.info(`Downloading item ${name}`);
 			const product = await Products.insertNewProduct({
 				title: name,
-				price,
+				price: price / 1e5,
+				original_images: images,
 				description,
 				url,
 				group,
