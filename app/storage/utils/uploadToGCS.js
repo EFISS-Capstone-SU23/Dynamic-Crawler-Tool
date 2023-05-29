@@ -1,14 +1,6 @@
 import { bucket } from '../setupStorage.js';
 
-export default async (fileBuffer, filePath) => new Promise((resolve, reject) => {
+export default async (fileBuffer, filePath) => {
 	const fileUpload = bucket.file(filePath);
-
-	fileUpload.createWriteStream()
-		.on('error', (error) => {
-			reject(error);
-		})
-		.on('finish', () => {
-			resolve();
-		})
-		.end(fileBuffer);
-});
+	return fileUpload.save(fileBuffer);
+};
