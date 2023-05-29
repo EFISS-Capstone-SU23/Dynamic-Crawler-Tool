@@ -145,7 +145,7 @@ export const saveProductData = async (productData, url) => {
 		description,
 		url,
 		metadata,
-		original_images: imageLinks,
+		originalImages: imageLinks,
 		group: domain,
 	});
 

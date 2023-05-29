@@ -12,7 +12,7 @@ const main = async () => {
 			const domain = new URL(url).hostname;
 			await Products.updateProductById(_id, {
 				group: domain,
-				original_images: [],
+				originalImages: [],
 			});
 			console.log(`Product ${_id} updated`);
 		}
