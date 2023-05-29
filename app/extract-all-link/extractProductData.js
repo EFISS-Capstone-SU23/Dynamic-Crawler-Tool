@@ -135,6 +135,9 @@ export const saveProductData = async (productData, url) => {
 		metadata,
 	} = productData;
 
+	// only domain name
+	const domain = new URL(url).hostname;
+
 	// save product data to database
 	const product = await Products.insertNewProduct({
 		title,
@@ -142,10 +145,9 @@ export const saveProductData = async (productData, url) => {
 		description,
 		url,
 		metadata,
+		originalImages: imageLinks,
+		group: domain,
 	});
-
-	// only domain name
-	const domain = new URL(url).hostname;
 
 	// download image in imageLinks
 	const imagePath = await downloadImage(product, domain, imageLinks);
