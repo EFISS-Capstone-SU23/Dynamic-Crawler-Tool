@@ -4,7 +4,7 @@
 import Products from '../../models/Products.js';
 import { saveFileFromURL, getExtFromUrl } from '../../utils/file/saveFileFromURL.js';
 import logger from '../../config/log.js';
-import { getElementByXpath, getElementsByXpath } from '../../utils/getElement.js';
+import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
 import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT } from '../../config/config.js';
 import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
 import { transformImageURL } from '../../utils/transformURL.js';
@@ -19,7 +19,7 @@ export const extractProductData = async (driver, xPath) => {
 		description,
 		imageContainer,
 		metadata,
-		imageElement = '//img',
+		imageElement = 'img',
 		imageLinkProperties = 'src',
 	} = xPath;
 
@@ -49,7 +49,9 @@ export const extractProductData = async (driver, xPath) => {
 	const priceText = await priceElement.getText();
 	const descriptionText = await descriptionElement.getText();
 
-	const imgElements = await getElementsByXpath(imageContainerElement, imageElement) || [];
+	// const imgElements = await getElementsByXpath(imageContainerElement, imageElement) || [];
+	// We need to use css selector instead of xpath because of length
+	const imgElements = await getElementsByCss(imageContainerElement, imageElement) || [];
 
 	// scroll the page to load all images
 	const diffHeight = await getDiffHeight(imageContainerElement);
