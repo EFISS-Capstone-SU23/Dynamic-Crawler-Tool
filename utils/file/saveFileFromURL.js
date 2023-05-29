@@ -1,7 +1,7 @@
 import axios from 'axios';
 import fs from 'fs';
 import { IMAGE_ALL_EXT } from '../../config/config.js';
-import { uploadToGCS } from '../../app/storage';
+import { uploadToGCS } from '../../app/storage/index.js';
 
 import logger from '../../config/log.js';
 

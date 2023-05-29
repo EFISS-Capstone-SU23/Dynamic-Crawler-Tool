@@ -1,8 +1,8 @@
 import {
 	storage,
 	bucket,
-} from './setupStorage';
-import uploadToGCS from './utils/uploadToGCS';
+} from './setupStorage.js';
+import uploadToGCS from './utils/uploadToGCS.js';
 
 export {
 	storage,
