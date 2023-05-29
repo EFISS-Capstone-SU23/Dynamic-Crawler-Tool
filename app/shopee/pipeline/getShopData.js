@@ -76,7 +76,7 @@ export default async function getShopData(shopId, group) {
 			const product = await Products.insertNewProduct({
 				title: name,
 				price: price / 1e5,
-				original_images: images,
+				originalImages: images,
 				description,
 				url,
 				group,
