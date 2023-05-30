@@ -7,19 +7,19 @@ import {
 	MIN_WITH,
 } from '../../config/config.js';
 
-export const removeSmallImage = async (imagePath) => {
+export const removeSmallImage = async (fileBuffer) => {
 	// check size of image and remove if it too small
 	// imagePath is path to image file
 	const {
 		width,
 		height,
-	} = await sharp(imagePath).metadata();
+	} = await sharp(fileBuffer).metadata();
 
 	// Check if the image is smaller than 128x128 pixels
 	if (width <= MIN_WITH || height <= MIN_HEIGHT) {
 		// Delete the file
-		fs.unlinkSync(imagePath);
-		return true;
+		// fs.unlinkSync(imagePath);
+		// return true;
 	}
 
 	return false;

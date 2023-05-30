@@ -8,7 +8,7 @@ import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
 import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT } from '../../config/config.js';
 import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
 import { transformImageURL } from '../../utils/transformURL.js';
-// import { removeSmallImage, checkFileTypeByContent } from '../../utils/file/imageFile.js';
+import { removeSmallImage } from '../../utils/file/imageFile.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -111,15 +111,15 @@ const downloadImage = async (product, domain, imageLinks) => {
 		// const path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
 		const path = `data/product_images/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
 
-		const saveStatus = await saveFileFromURL(imageLink, path);
-		if (!saveStatus) {
+		const fileBuffer = await saveFileFromURL(imageLink, path);
+		if (!fileBuffer) {
 			return;
 		}
 
-		// const isRemoved = await removeSmallImage(path);
-		// if (isRemoved) {
-		// 	return;
-		// }
+		const isRemoved = await removeSmallImage(fileBuffer);
+		if (isRemoved) {
+			return;
+		}
 
 		// checkFileTypeByContent(path);
 		return path;

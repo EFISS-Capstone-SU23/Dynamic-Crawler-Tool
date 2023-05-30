@@ -29,7 +29,7 @@ export const saveFileFromURL = async (url, path) => {
 		const fileBuffer = Buffer.from(response.data, 'binary');
 		await uploadToGCS(fileBuffer, path);
 
-		return true;
+		return fileBuffer;
 	} catch (error) {
 		logger.error(`Failed to download file: ${error.message}`);
 		return false;
