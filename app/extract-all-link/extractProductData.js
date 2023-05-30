@@ -5,7 +5,7 @@ import Products from '../../models/Products.js';
 import { saveFileFromURL, getExtFromUrl } from '../../utils/file/saveFileFromURL.js';
 import logger from '../../config/log.js';
 import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
-import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT } from '../../config/config.js';
+import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT, STORAGE_PREFIX } from '../../config/config.js';
 import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
 import { transformImageURL } from '../../utils/transformURL.js';
 import { removeSmallImage } from '../../utils/file/imageFile.js';
@@ -109,7 +109,7 @@ const downloadImage = async (product, domain, imageLinks) => {
 		const ext = getExtFromUrl(imageLink);
 		// output/<site name>/<id>_<site_name_with_under_score>.jpg
 		// const path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
-		const path = `data/product_images/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
+		const path = `${STORAGE_PREFIX}/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
 
 		const fileBuffer = await saveFileFromURL(imageLink, path);
 		if (!fileBuffer) {
