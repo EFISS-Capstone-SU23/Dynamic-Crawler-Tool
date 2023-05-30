@@ -116,7 +116,7 @@ const downloadImage = async (product, domain, imageLinks) => {
 			return;
 		}
 
-		const isRemoved = await removeSmallImage(fileBuffer);
+		const isRemoved = await removeSmallImage(fileBuffer, path);
 		if (isRemoved) {
 			return;
 		}

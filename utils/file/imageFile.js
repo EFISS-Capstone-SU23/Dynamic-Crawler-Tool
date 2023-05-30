@@ -6,8 +6,9 @@ import {
 	MIN_HEIGHT,
 	MIN_WITH,
 } from '../../config/config.js';
+import { removeFile } from '../../app/storage/index.js';
 
-export const removeSmallImage = async (fileBuffer) => {
+export const removeSmallImage = async (fileBuffer, filePath) => {
 	// check size of image and remove if it too small
 	// imagePath is path to image file
 	const {
@@ -19,7 +20,8 @@ export const removeSmallImage = async (fileBuffer) => {
 	if (width <= MIN_WITH || height <= MIN_HEIGHT) {
 		// Delete the file
 		// fs.unlinkSync(imagePath);
-		// return true;
+		await removeFile(filePath);
+		return true;
 	}
 
 	return false;
