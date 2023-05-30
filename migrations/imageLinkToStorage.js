@@ -15,12 +15,12 @@ const main = async () => {
 			continue;
 		}
 
-		const { _id, imageLinks } = product;
+		const { _id, images } = product;
 		// `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`
 		//  to `${STORAGE_PREFIX}/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`
 
-		const newImageLinks = imageLinks.map((imageLink) => {
-			if (imageLink.contain('storage.googleapis.com')) {
+		const newImageLinks = images.map((imageLink) => {
+			if (imageLink.includes('storage.googleapis.com')) {
 				return imageLink;
 			}
 
