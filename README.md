@@ -7,5 +7,5 @@ Node version: v18.12.1
 ## Sync data to GCS
 
 ```bash
-gsutil -m rsync -r /media/saplab/Data_Win/RSI_Do_An/AnhND/Dynamic-Crawler-Tool/output gs://efiss/data/output
+gsutil -m rsync -r /media/saplab/Data_Win/RSI_Do_An/AnhND/Dynamic-Crawler-Tool/output gs://efiss/data/product_images
 ```
