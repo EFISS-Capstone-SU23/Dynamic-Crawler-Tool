@@ -24,3 +24,5 @@ if (MONGODB_USERNAME && MONGODB_PASSWORD) {
 mongoose.connect(MONGODB_URI, {
 	useNewUrlParser: true,
 });
+
+export default MONGODB_URI;
