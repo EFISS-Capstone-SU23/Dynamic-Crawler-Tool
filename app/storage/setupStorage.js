@@ -20,4 +20,4 @@ const bucket = storage.bucket(bucketName);
 // 	});
 // });
 
-export { bucket, storage };
+export { bucket, storage, bucketName };

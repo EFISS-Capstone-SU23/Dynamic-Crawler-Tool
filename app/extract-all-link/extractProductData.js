@@ -9,6 +9,7 @@ import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT, STORAGE_PREFIX } from '../../conf
 import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
 import { transformImageURL } from '../../utils/transformURL.js';
 import { removeSmallImage } from '../../utils/file/imageFile.js';
+import { bucketName } from '../storage/index.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -122,7 +123,7 @@ const downloadImage = async (product, domain, imageLinks) => {
 		}
 
 		// checkFileTypeByContent(path);
-		return path;
+		return `https://storage.googleapis.com/${bucketName}/${path}`;
 	});
 
 	const imagesPath = await Promise.all(imagesPromise);

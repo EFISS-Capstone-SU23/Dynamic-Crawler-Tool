@@ -8,6 +8,7 @@ import { saveFileFromURL } from '../../../utils/file/saveFileFromURL.js';
 import logger from '../../../config/log.js';
 import { delay } from '../../../utils/delay.js';
 import { STORAGE_PREFIX } from '../../../config/config.js';
+import { bucketName } from '../../storage/setupStorage.js';
 
 const PAGE_SIZE = 100;
 const MAX_DOWNLOAD_IMAGE = 30 * 1000;
@@ -28,7 +29,7 @@ const downloadImage = async (product, group, images) => {
 			return null;
 		}
 
-		return imgPath;
+		return `https://storage.googleapis.com/${bucketName}/${imgPath}`;
 	});
 	const imageLinks = await Promise.all(imagesPromise);
 	const imageLinksFiltered = imageLinks.filter((imageLink) => imageLink !== null);
