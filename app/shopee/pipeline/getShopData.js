@@ -19,7 +19,7 @@ const timeoutDownloadImage = new Promise((resolve) => {
 
 const downloadImage = async (product, group, images) => {
 	const imagesPromise = images.map(async (imageLink, i) => {
-		const imgPath = `./output/${group}/${product._id}_${i}_${group.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
+		const imgPath = `data/product_images/${group}/${product._id}_${i}_${group.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
 
 		const saveStatus = await saveFileFromURL(imageLink, imgPath);
 
