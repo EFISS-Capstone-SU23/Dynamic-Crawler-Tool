@@ -29,12 +29,12 @@ const main = async () => {
 		});
 
 		await Products.updateProductById(_id, {
-			imageLinks: newImageLinks,
+			images: newImageLinks,
 		});
 
 		console.log(`Product ${_id} updated`);
-		console.log(newImageLinks);
 	}
+	console.log('Done');
 };
 
 main();
