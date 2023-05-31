@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 const {
 	MONGODB_HOST,
 	MONGODB_PORT,
-	MONGODB_DATABASE,
+	MONGODB_DATABASE = '',
 	MONGODB_USERNAME,
 	MONGODB_PASSWORD,
 } = process.env;
@@ -15,11 +15,11 @@ const parrams = [
 	'w=majority',
 ];
 
-let MONGODB_URI = `mongodb://${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?${parrams.join('&')}`;
+const PROTOCOL = MONGODB_PORT ? 'mongodb' : 'mongodb+srv';
+const USER = MONGODB_USERNAME && MONGODB_PASSWORD ? `${MONGODB_USERNAME}:${MONGODB_PASSWORD}@` : '';
+const HOST = MONGODB_PORT ? `${MONGODB_HOST}:${MONGODB_PORT}` : `${MONGODB_HOST}`;
 
-if (MONGODB_USERNAME && MONGODB_PASSWORD) {
-	MONGODB_URI = `mongodb://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@${MONGODB_HOST}:${MONGODB_PORT}/${MONGODB_DATABASE}?${parrams.join('&')}`;
-}
+const MONGODB_URI = `${PROTOCOL}://${USER}${HOST}/${MONGODB_DATABASE}?${parrams.join('&')}`;
 
 mongoose.connect(MONGODB_URI, {
 	useNewUrlParser: true,
