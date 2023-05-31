@@ -1,6 +1,7 @@
 import axios from 'axios';
 import fs from 'fs';
 import { IMAGE_ALL_EXT } from '../../config/config.js';
+import { uploadToGCS } from '../../app/storage/index.js';
 
 import logger from '../../config/log.js';
 
@@ -17,22 +18,18 @@ export const getExtFromUrl = (url) => IMAGE_ALL_EXT.find((ext) => url.includes(`
 
 export const saveFileFromURL = async (url, path) => {
 	try {
-		createParrentDir(path);
+		// createParrentDir(path);
 		const response = await axios.get(url, {
-			responseType: 'stream',
+			responseType: 'arraybuffer',
 			headers: {
 				'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome',
 			},
 		});
 
-		const writer = fs.createWriteStream(path);
-		response.data.pipe(writer);
+		const fileBuffer = Buffer.from(response.data, 'binary');
+		await uploadToGCS(fileBuffer, path);
 
-		await new Promise((resolve, reject) => {
-			writer.on('finish', resolve);
-			writer.on('error', reject);
-		});
-		return true;
+		return fileBuffer;
 	} catch (error) {
 		logger.error(`Failed to download file: ${error.message}`);
 		return false;

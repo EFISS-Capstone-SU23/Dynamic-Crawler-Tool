@@ -7,6 +7,8 @@ import Products from '../../../models/Products.js';
 import { saveFileFromURL } from '../../../utils/file/saveFileFromURL.js';
 import logger from '../../../config/log.js';
 import { delay } from '../../../utils/delay.js';
+import { STORAGE_PREFIX } from '../../../config/config.js';
+import { bucketName } from '../../storage/setupStorage.js';
 
 const PAGE_SIZE = 100;
 const MAX_DOWNLOAD_IMAGE = 30 * 1000;
@@ -19,7 +21,7 @@ const timeoutDownloadImage = new Promise((resolve) => {
 
 const downloadImage = async (product, group, images) => {
 	const imagesPromise = images.map(async (imageLink, i) => {
-		const imgPath = `./output/${group}/${product._id}_${i}_${group.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
+		const imgPath = `${STORAGE_PREFIX}/${group}/${product._id}_${i}_${group.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
 
 		const saveStatus = await saveFileFromURL(imageLink, imgPath);
 
@@ -27,7 +29,7 @@ const downloadImage = async (product, group, images) => {
 			return null;
 		}
 
-		return imgPath;
+		return `https://storage.googleapis.com/${bucketName}/${imgPath}`;
 	});
 	const imageLinks = await Promise.all(imagesPromise);
 	const imageLinksFiltered = imageLinks.filter((imageLink) => imageLink !== null);

@@ -1,3 +1,4 @@
+import './config/env.js';
 import './config/mongoose.js';
 
 import fs from 'fs';
