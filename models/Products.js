@@ -69,6 +69,9 @@ const Product = {
 	getAllProduct() {
 		return _db.find({});
 	},
+	getSampleOfProduct() {
+		return _db.find({}).limit(10);
+	},
 	async getDownloadedProductURL(domain) {
 		const downloadedURL = {};
 

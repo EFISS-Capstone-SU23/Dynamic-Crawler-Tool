@@ -7,7 +7,7 @@ const main = async () => {
 	console.log('Test connection to database');
 	console.log('MONGODB_URI:', MONGODB_URI);
 	const allProducts = await Products.getAllProduct();
-	console.log('Number of products:', allProducts.length);
+	console.log('Number of products for test:', allProducts.length);
 
 	console.log('Test connection to storage');
 	const file = bucket.file('testConnect.txt');

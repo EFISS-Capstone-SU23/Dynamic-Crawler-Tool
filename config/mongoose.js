@@ -10,7 +10,7 @@ const {
 } = process.env;
 
 const parrams = [
-	'authSource=admin',
+	// 'authSource=admin',
 	'retryWrites=true',
 	'w=majority',
 ];
