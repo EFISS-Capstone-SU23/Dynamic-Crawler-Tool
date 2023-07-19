@@ -1,9 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 
-import { SERVER_PORT } from './config/config';
+import './config/env.js';
+import './config/mongoose.js';
+import { SERVER_PORT } from './config/config.js';
 
-import templateRouter from './routes/templateRoute';
+import templateRouter from './routes/templateRoute.js';
 
 const app = express();
 

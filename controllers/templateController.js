@@ -1,4 +1,4 @@
-import Templates from '../models/Templates';
+import Templates from '../models/Templates.js';
 
 const findTemplateList = async (req, res) => {
 	const {
