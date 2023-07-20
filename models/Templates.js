@@ -6,11 +6,7 @@ const TemplateSchema = new mongoose.Schema({
 		required: true,
 		index: true,
 	},
-	startUrl: {
-		type: String,
-		required: true,
-	},
-	templateData: {
+	template: {
 		type: Object,
 		required: true,
 	},
@@ -48,7 +44,7 @@ const Templates = {
 		};
 		const projection = {
 			_id: -1,
-			templateData: -1,
+			template: -1,
 		};
 
 		return _db.find(searchQuery, projection, {
@@ -57,6 +53,9 @@ const Templates = {
 			sort,
 		});
 	},
+	findOneByWebsite: async (website) => _db.findOne({
+		website,
+	}),
 };
 
 export default Templates;

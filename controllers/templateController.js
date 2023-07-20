@@ -20,20 +20,30 @@ const findTemplateList = async (req, res) => {
 
 const insertNewTemplate = async (req, res) => {
 	const {
-		website,
-		startUrl,
-		templateData,
-		addedBy,
+		template,
 	} = req.body;
 
-	const template = {
-		website,
-		startUrl,
-		templateData,
-		addedBy,
-	};
+	const website = new URL(template.startUrl).hostname;
 
-	const data = await Templates.insertNewTemplate(template);
+	// check if website exist
+	const websiteExist = await Templates.findOneByWebsite(website);
+	if (websiteExist) {
+		res.status(400).json({
+			message: 'Website already exist',
+		});
+		return;
+	}
+
+	// TODO: set addedBy to current user
+	const addedBy = 'admin';
+
+	const templateData = {
+		addedBy,
+		template,
+		website,
+	};
+	const data = await Templates.insertNewTemplate(templateData);
+
 	res.json({
 		data,
 	});
