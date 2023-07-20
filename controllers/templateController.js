@@ -61,8 +61,28 @@ const deleteTempleteByID = async (req, res) => {
 	});
 };
 
+const getTemplateByID = async (req, res) => {
+	const {
+		id,
+	} = req.params;
+
+	const template = await Templates.findOneById(id);
+
+	if (!template) {
+		res.status(404).json({
+			message: 'Template not found',
+		});
+		return;
+	}
+
+	res.json({
+		template,
+	});
+};
+
 export default {
 	findTemplateList,
 	insertNewTemplate,
 	deleteTempleteByID,
+	getTemplateByID,
 };

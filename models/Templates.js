@@ -29,6 +29,7 @@ const TemplateSchema = new mongoose.Schema({
 const _db = mongoose.model('Template', TemplateSchema);
 
 const Templates = {
+	_db,
 	insertNewTemplate: async (template) => _db.create(template),
 	countAllTemplates: async () => _db.countDocuments(),
 	findTemplateList(page = 1, pageSize = 20, query = {}) {
@@ -55,6 +56,14 @@ const Templates = {
 	findOneByWebsite: async (website) => _db.findOne({
 		website,
 	}),
+	findOneById: async (id) => {
+		try {
+			const template = await _db.findById(id);
+			return template;
+		} catch (err) {
+			return null;
+		}
+	},
 	deleteById: async (id) => _db.findByIdAndDelete(id),
 };
 
