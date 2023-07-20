@@ -1,17 +1,15 @@
 import Templates from '../models/Templates.js';
 
 const findTemplateList = async (req, res) => {
-	const {
-		page = 0,
-		pageSize = 20,
-	} = req.query;
+	const page = parseInt(req.query.page, 10) || 1;
+	const pageSize = parseInt(req.query.pageSize, 10) || 20;
 
 	const {
 		query,
 	} = req.body;
 
 	const data = await Templates.findTemplateList(page, pageSize, query);
-	const total = Templates.countAllTemplates();
+	const total = await Templates.countAllTemplates();
 
 	res.json({
 		data,

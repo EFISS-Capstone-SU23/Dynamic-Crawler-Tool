@@ -31,8 +31,8 @@ const _db = mongoose.model('Template', TemplateSchema);
 const Templates = {
 	insertNewTemplate: async (template) => _db.create(template),
 	countAllTemplates: async () => _db.countDocuments(),
-	findTemplateList(page = 0, pageSize = 20, query = {}) {
-		const skip = page * pageSize;
+	findTemplateList(page = 1, pageSize = 20, query = {}) {
+		const skip = (page - 1) * pageSize;
 
 		const searchQuery = {};
 		if (query.website) {
