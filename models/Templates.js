@@ -43,7 +43,6 @@ const Templates = {
 			createdAt: -1,
 		};
 		const projection = {
-			_id: 0,
 			template: 0,
 		};
 
@@ -56,6 +55,7 @@ const Templates = {
 	findOneByWebsite: async (website) => _db.findOne({
 		website,
 	}),
+	deleteById: async (id) => _db.findByIdAndDelete(id),
 };
 
 export default Templates;

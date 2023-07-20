@@ -50,7 +50,19 @@ const insertNewTemplate = async (req, res) => {
 	});
 };
 
+const deleteTempleteByID = async (req, res) => {
+	const {
+		id,
+	} = req.params;
+
+	const response = await Templates.deleteById(id);
+	res.json({
+		response,
+	});
+};
+
 export default {
 	findTemplateList,
 	insertNewTemplate,
+	deleteTempleteByID,
 };

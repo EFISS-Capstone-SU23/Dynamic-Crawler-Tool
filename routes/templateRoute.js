@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.post('/list', templateController.findTemplateList);
 router.post('/insert', templateController.insertNewTemplate);
+router.delete('/delete/:id', templateController.deleteTempleteByID);
 
 export default router;
