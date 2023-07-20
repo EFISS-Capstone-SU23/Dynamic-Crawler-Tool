@@ -19,35 +19,60 @@ const findTemplateList = async (req, res) => {
 	});
 };
 
-const insertNewTemplate = async (req, res) => {
+const upsertTemplate = async (req, res) => {
 	const {
 		template,
 	} = req.body;
 
-	const website = new URL(template.startUrl).hostname;
-
 	// check if website exist
+	const website = new URL(template.startUrl).hostname;
 	const websiteExist = await Templates.findOneByWebsite(website);
-	if (websiteExist) {
-		res.status(400).json({
-			message: 'Website already exist',
+
+	if (!template._id) {
+		// create new template
+		if (websiteExist) {
+			res.status(400).json({
+				message: 'Website already exist',
+			});
+			return;
+		}
+
+		// TODO: set addedBy to current user
+		const addedBy = 'admin';
+
+		const templateData = {
+			addedBy,
+			template,
+			website,
+		};
+		const data = await Templates.insertNewTemplate(templateData);
+
+		res.json({
+			type: 'create',
+			data,
 		});
-		return;
+	} else {
+		// update template
+		if (websiteExist && websiteExist._id.toString() !== template._id) {
+			res.status(400).json({
+				message: 'Website already exist',
+			});
+
+			return;
+		}
+
+		const templateData = {
+			template,
+			website,
+		};
+
+		const data = await Templates.updateTemplateById(template._id, templateData);
+
+		res.json({
+			type: 'update',
+			data,
+		});
 	}
-
-	// TODO: set addedBy to current user
-	const addedBy = 'admin';
-
-	const templateData = {
-		addedBy,
-		template,
-		website,
-	};
-	const data = await Templates.insertNewTemplate(templateData);
-
-	res.json({
-		data,
-	});
 };
 
 const deleteTempleteByID = async (req, res) => {
@@ -82,7 +107,7 @@ const getTemplateByID = async (req, res) => {
 
 export default {
 	findTemplateList,
-	insertNewTemplate,
+	upsertTemplate,
 	deleteTempleteByID,
 	getTemplateByID,
 };

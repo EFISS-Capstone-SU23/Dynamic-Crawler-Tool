@@ -65,6 +65,11 @@ const Templates = {
 		}
 	},
 	deleteById: async (id) => _db.findByIdAndDelete(id),
+	updateTemplateById: async (id, update) => _db.updateOne({
+		_id: id,
+	}, {
+		$set: update,
+	}),
 };
 
 export default Templates;
