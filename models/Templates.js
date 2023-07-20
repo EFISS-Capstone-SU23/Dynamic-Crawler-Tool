@@ -43,8 +43,8 @@ const Templates = {
 			createdAt: -1,
 		};
 		const projection = {
-			_id: -1,
-			template: -1,
+			_id: 0,
+			template: 0,
 		};
 
 		return _db.find(searchQuery, projection, {

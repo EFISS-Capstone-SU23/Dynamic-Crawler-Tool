@@ -4,7 +4,10 @@ const findTemplateList = async (req, res) => {
 	const {
 		page = 0,
 		pageSize = 20,
-		query = {},
+	} = req.query;
+
+	const {
+		query,
 	} = req.body;
 
 	const data = await Templates.findTemplateList(page, pageSize, query);
