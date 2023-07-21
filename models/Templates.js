@@ -32,13 +32,9 @@ const Templates = {
 	_db,
 	insertNewTemplate: async (template) => _db.create(template),
 	countAllTemplates: async () => _db.countDocuments(),
-	findTemplateList(page = 1, pageSize = 20, query = {}) {
+	countTemplatesByQuery: async (query = {}) => _db.countDocuments(query),
+	findTemplateList(page = 1, pageSize = 20, searchQuery = {}) {
 		const skip = (page - 1) * pageSize;
-
-		const searchQuery = {};
-		if (query.website) {
-			// TODO: handle query.website here
-		}
 
 		const sort = {
 			createdAt: -1,

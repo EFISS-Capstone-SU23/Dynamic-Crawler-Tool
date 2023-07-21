@@ -8,8 +8,17 @@ const findTemplateList = async (req, res) => {
 		query,
 	} = req.body;
 
-	const data = await Templates.findTemplateList(page, pageSize, query);
-	const total = await Templates.countAllTemplates();
+	const searchQuery = {};
+	if (query.website) {
+		// query all website that contains the query.website
+		searchQuery.website = {
+			$regex: query.website,
+			$options: 'i',
+		};
+	}
+
+	const data = await Templates.findTemplateList(page, pageSize, searchQuery);
+	const total = await Templates.countTemplatesByQuery(searchQuery);
 
 	res.json({
 		data,
