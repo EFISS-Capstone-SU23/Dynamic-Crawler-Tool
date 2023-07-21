@@ -6,6 +6,7 @@ import './config/mongoose.js';
 import { SERVER_PORT } from './config/config.js';
 
 import templateRouter from './routes/templateRoute.js';
+import crawRouter from './routes/crawlRoute.js';
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(cors({
 }));
 
 app.use('/template', templateRouter);
+app.use('/crawl', crawRouter);
 
 app.listen(SERVER_PORT, () => {
 	console.log(`Server is listening on port ${SERVER_PORT}`);
