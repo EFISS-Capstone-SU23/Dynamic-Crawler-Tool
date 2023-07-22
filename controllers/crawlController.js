@@ -58,13 +58,13 @@ const upsertCrawl = async (req, res) => {
 			numInstance,
 			ignoreUrlPatterns,
 		};
-		await Crawls.insertNewCrawl(crawl);
+		const crawlInserted = await Crawls.insertNewCrawl(crawl);
 
 		// update info in template
 		await Templates.startNewCrawlWithTemplate(templateId);
 
 		// TODO: start crawl
-		startCrawl(_id);
+		startCrawl(crawlInserted._id);
 
 		res.json({
 			success: true,

@@ -26,6 +26,7 @@ import {
 import {
 	DEV_MOD,
 } from '../../config/parram.js';
+import Crawls from '../../models/Crawls.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -140,6 +141,7 @@ const _extractAll = async (params, driverArray) => {
 		numInstance,
 		continueExtract,
 		ignoreUrlPatterns,
+		crawlId,
 	} = params;
 
 	const visitedURL = {};
@@ -171,6 +173,14 @@ const _extractAll = async (params, driverArray) => {
 	const downloadedURL = await Products.getDownloadedProductURL(domain);
 
 	while (queue.length > 0) {
+		// Check status of crawl if it runnning
+		const crawl = await Crawls.findOneById(crawlId);
+
+		if (!crawl || crawl.status !== 'running') {
+			logger.info('Crawl stopped');
+			break;
+		}
+
 		// get url array for this batch
 		const urlArray = queue.splice(0, numInstance);
 
@@ -220,10 +230,10 @@ export default async function extractAll(params) {
 
 	try {
 		await _extractAll(params, driverArray).then(() => {
-			quitAllDriver();
+			quitAllDriver(driverArray);
 		});
-	} finally {
-		quitAllDriver();
+	} catch (error) {
+		quitAllDriver(driverArray);
 	}
 
 	logger.info('Finish extract all link.');

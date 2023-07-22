@@ -18,6 +18,7 @@ export const startCrawl = async (crawlId) => {
 		continueExtract: false,
 		...templateData,
 		ignoreUrlPatterns,
+		crawlId,
 	};
 
 	extractAll(crawlParams);
