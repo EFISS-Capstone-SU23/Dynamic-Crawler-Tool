@@ -137,7 +137,7 @@ const filterQueue = (queue, visitedURL, ignoreURLsRegex, domain) => {
 const _extractAll = async (params, driverArray) => {
 	const {
 		startUrl,
-		maxDriver,
+		numInstance,
 		continueExtract,
 		ignoreURLs,
 	} = params;
@@ -172,7 +172,7 @@ const _extractAll = async (params, driverArray) => {
 
 	while (queue.length > 0) {
 		// get url array for this batch
-		const urlArray = queue.splice(0, maxDriver);
+		const urlArray = queue.splice(0, numInstance);
 
 		// update visited url
 		urlArray.forEach((url) => {
@@ -213,10 +213,10 @@ const quitAllDriver = (driverArray) => {
 export default async function extractAll(params) {
 	const {
 		startUrl,
-		maxDriver,
+		numInstance,
 	} = params;
-	logger.info(`Start extract all link from: ${startUrl}, max driver: ${maxDriver}`);
-	const driverArray = getDriverArray(maxDriver);
+	logger.info(`Start extract all link from: ${startUrl}, max driver: ${numInstance}`);
+	const driverArray = getDriverArray(numInstance);
 
 	try {
 		await _extractAll(params, driverArray).then(() => {
