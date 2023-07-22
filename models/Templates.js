@@ -66,6 +66,22 @@ const Templates = {
 	}, {
 		$set: update,
 	}),
+	startNewCrawlWithTemplate: async (templateId) => {
+		// increment numOfCrawls
+		await Templates.incrementNumOfCrawls(templateId);
+
+		// update lastCrawl
+		await Templates.updateTemplateById(templateId, {
+			lastCrawl: new Date(),
+		});
+	},
+	incrementNumOfCrawls: async (id) => _db.updateOne({
+		_id: id,
+	}, {
+		$inc: {
+			numOfCrawls: 1,
+		},
+	}),
 };
 
 export default Templates;
