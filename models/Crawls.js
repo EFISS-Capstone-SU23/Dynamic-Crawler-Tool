@@ -1,9 +1,17 @@
 import mongoose from 'mongoose';
 
-const TemplateSchema = new mongoose.Schema({
+const CrawlSchema = new mongoose.Schema({
 	templateData: {
 		type: Object,
 		required: true,
+	},
+	website: {
+		type: String,
+		required: true,
+	},
+	numOfCrawledProduct: {
+		type: Number,
+		default: 0,
 	},
 	ignoreUrlPatterns: {
 		type: Array,
@@ -31,7 +39,7 @@ const TemplateSchema = new mongoose.Schema({
 	timestamps: true,
 });
 
-const _db = mongoose.model('Crawl', TemplateSchema);
+const _db = mongoose.model('Crawl', CrawlSchema);
 
 const Crawls = {
 	_db,
