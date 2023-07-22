@@ -17,7 +17,7 @@ const TemplateSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	maxInstances: {
+	numInstance: {
 		type: Number,
 		required: true,
 	},
@@ -49,6 +49,14 @@ const Crawls = {
 			limit: pageSize,
 			sort,
 		});
+	},
+	findOneById: async (id) => {
+		try {
+			const crawl = await _db.findById(id);
+			return crawl;
+		} catch (err) {
+			return null;
+		}
 	},
 	insertNewCrawl: async (crawl) => _db.create(crawl),
 	updateCrawlById(_id, update) {

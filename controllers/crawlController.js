@@ -33,7 +33,7 @@ const upsertCrawl = async (req, res) => {
 	const {
 		_id,
 		templateId,
-		maxInstances = 1,
+		numInstance = 1,
 		ignoreUrlPatterns = [],
 		status,
 	} = req.body;
@@ -53,7 +53,7 @@ const upsertCrawl = async (req, res) => {
 			// TODO: add runBy
 			runBy: 'admin',
 			status,
-			maxInstances,
+			numInstance,
 			ignoreUrlPatterns,
 		};
 		await Crawls.insertNewCrawl(crawl);
@@ -69,7 +69,7 @@ const upsertCrawl = async (req, res) => {
 	} else {
 		// Update crawl
 		const update = {
-			maxInstances,
+			numInstance,
 			ignoreUrlPatterns,
 		};
 
@@ -81,7 +81,26 @@ const upsertCrawl = async (req, res) => {
 	}
 };
 
+const findCrawlById = async (req, res) => {
+	const {
+		id,
+	} = req.params;
+
+	const crawl = await Crawls.findOneById(id);
+	if (!crawl) {
+		res.status(400).json({
+			error: 'Crawl not found',
+		});
+		return;
+	}
+
+	res.json({
+		crawl,
+	});
+};
+
 export default {
 	findCrawlList,
 	upsertCrawl,
+	findCrawlById,
 };
