@@ -68,13 +68,39 @@ const upsertCrawl = async (req, res) => {
 		});
 	} else {
 		// Update crawl
+		const crawl = await Crawls.findOneById(_id);
+		if (!crawl) {
+			res.status(400).json({
+				error: 'Crawl not found',
+			});
+			return;
+		}
+
 		const update = {
 			numInstance,
 			ignoreUrlPatterns,
 		};
 
-		await Crawls.updateCrawlById(_id, update);
+		// check if change status
+		if (status && status !== crawl.status) {
+			update.status = status;
 
+			switch (status) {
+			case 'running':
+				console.log('start crawl');
+				break;
+			case 'stopped':
+				console.log('stop crawl');
+				break;
+			case 'paused':
+				console.log('pause crawl');
+				break;
+			default:
+				break;
+			}
+		}
+
+		await Crawls.updateCrawlById(_id, update);
 		res.json({
 			success: true,
 		});
@@ -93,7 +119,6 @@ const findCrawlById = async (req, res) => {
 		});
 		return;
 	}
-
 	res.json({
 		crawl,
 	});
