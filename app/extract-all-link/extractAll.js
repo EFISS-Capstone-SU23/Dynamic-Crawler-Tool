@@ -12,7 +12,7 @@ import {
 	saveProductData,
 } from './extractProductData.js';
 import Products from '../../models/Products.js';
-import logger from '../../config/log.js';
+import createLog from '../../config/createLog.js';
 import {
 	saveJsonToFile,
 } from '../../utils/file/saveFileFromURL.js';
@@ -31,15 +31,16 @@ import Crawls from '../../models/Crawls.js';
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const startExtractPage = async (driver, url, downloadedURL, params) => new Promise(async (resolve) => {
+	const {
+		xPath,
+		logger,
+	} = params;
+
 	logger.info(`Open page: ${url}`);
 	if (!url) {
 		resolve([]);
 		return;
 	}
-
-	const {
-		xPath,
-	} = params;
 
 	driver.get(url);
 
@@ -49,11 +50,11 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 	// Try to extract product data
 	// if (downloadedURL[url]) {
 	if (!downloadedURL[url] || DEV_MOD) {
-		const productData = await extractProductData(driver, xPath);
+		const productData = await extractProductData(driver, xPath, logger);
 		if (productData && productData.title && productData.price && productData.description && (productData.imageLinks || []).length > 0) {
 			logger.info(`Extract product data: ${url}`);
 			downloadedURL[url] = true;
-			await saveProductData(productData, url);
+			await saveProductData(productData, url, logger);
 		}
 	}
 
@@ -142,6 +143,7 @@ const _extractAll = async (params, driverArray) => {
 		continueExtract,
 		ignoreUrlPatterns,
 		crawlId,
+		logger,
 	} = params;
 
 	const visitedURL = {};
@@ -214,7 +216,6 @@ const _extractAll = async (params, driverArray) => {
 };
 
 const quitAllDriver = (driverArray) => {
-	logger.info('Quit all driver');
 	driverArray.forEach((driver) => {
 		driver.quit();
 	});
@@ -224,15 +225,20 @@ export default async function extractAll(params) {
 	const {
 		startUrl,
 		numInstance,
+		crawlId,
 	} = params;
+	const logger = createLog(crawlId);
 	logger.info(`Start extract all link from: ${startUrl}, max driver: ${numInstance}`);
 	const driverArray = getDriverArray(numInstance);
 
+	params.logger = logger;
 	try {
 		await _extractAll(params, driverArray).then(() => {
+			logger.info('Quit all driver');
 			quitAllDriver(driverArray);
 		});
 	} catch (error) {
+		logger.info('Quit all driver');
 		quitAllDriver(driverArray);
 	}
 

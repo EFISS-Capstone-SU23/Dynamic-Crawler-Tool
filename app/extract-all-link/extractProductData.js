@@ -3,7 +3,6 @@
 /* eslint-disable no-restricted-syntax */
 import Products from '../../models/Products.js';
 import { saveFileFromURL, getExtFromUrl } from '../../utils/file/saveFileFromURL.js';
-import logger from '../../config/log.js';
 import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
 import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT, STORAGE_PREFIX } from '../../config/config.js';
 import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
@@ -13,7 +12,7 @@ import { bucketName } from '../storage/index.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const extractProductData = async (driver, xPath) => {
+export const extractProductData = async (driver, xPath, logger) => {
 	const {
 		title,
 		price,
@@ -58,7 +57,7 @@ export const extractProductData = async (driver, xPath) => {
 	const diffHeight = await getDiffHeight(imageContainerElement);
 
 	if (diffHeight > 0) {
-		await scrollElement(driver, imageContainerElement, diffHeight, imgElements.length);
+		await scrollElement(driver, imageContainerElement, diffHeight, imgElements.length, logger);
 		await delay(DELAY_LOADING_PRODUCT);
 	}
 
@@ -105,14 +104,14 @@ export const extractProductData = async (driver, xPath) => {
 	};
 };
 
-const downloadImage = async (product, domain, imageLinks) => {
+const downloadImage = async (product, domain, imageLinks, logger) => {
 	const imagesPromise = imageLinks.map(async (imageLink, i) => {
 		const ext = getExtFromUrl(imageLink);
 		// output/<site name>/<id>_<site_name_with_under_score>.jpg
 		// const path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
 		const path = `${STORAGE_PREFIX}/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
 
-		const fileBuffer = await saveFileFromURL(imageLink, path);
+		const fileBuffer = await saveFileFromURL(imageLink, path, logger);
 		if (!fileBuffer) {
 			return;
 		}
@@ -130,7 +129,7 @@ const downloadImage = async (product, domain, imageLinks) => {
 	return imagesPath.filter((imagePath) => imagePath);
 };
 
-export const saveProductData = async (productData, url) => {
+export const saveProductData = async (productData, url, logger) => {
 	const {
 		title,
 		price,
@@ -154,7 +153,7 @@ export const saveProductData = async (productData, url) => {
 	});
 
 	// download image in imageLinks
-	const imagePath = await downloadImage(product, domain, imageLinks);
+	const imagePath = await downloadImage(product, domain, imageLinks, logger);
 
 	// save product image path to database
 	await Products.updateProductById(product._id, {
