@@ -1,4 +1,5 @@
 import Crawls from '../models/Crawls.js';
+import Templates from '../models/Templates.js';
 
 const findCrawlList = async (req, res) => {
 	const page = parseInt(req.query.page, 10) || 1;
@@ -28,6 +29,59 @@ const findCrawlList = async (req, res) => {
 	});
 };
 
+const upsertCrawl = async (req, res) => {
+	const {
+		_id,
+		templateId,
+		maxInstances = 1,
+		ignoreUrlPatterns = [],
+		status,
+	} = req.body;
+
+	if (!_id) {
+		// Create new crawl
+		const templateData = await Templates.findOneById(templateId);
+		if (!templateData) {
+			res.status(400).json({
+				error: 'Template not found',
+			});
+			return;
+		}
+
+		const crawl = {
+			templateData,
+			// TODO: add runBy
+			runBy: 'admin',
+			status,
+			maxInstances,
+			ignoreUrlPatterns,
+		};
+
+		console.log(crawl);
+
+		await Crawls.insertNewCrawl(crawl);
+
+		// TODO: start crawl
+
+		res.json({
+			success: true,
+		});
+	} else {
+		// Update crawl
+		const update = {
+			maxInstances,
+			ignoreUrlPatterns,
+		};
+
+		await Crawls.updateCrawlById(_id, update);
+
+		res.json({
+			success: true,
+		});
+	}
+};
+
 export default {
 	findCrawlList,
+	upsertCrawl,
 };

@@ -5,6 +5,10 @@ const TemplateSchema = new mongoose.Schema({
 		type: Object,
 		required: true,
 	},
+	ignoreUrlPatterns: {
+		type: Array,
+		required: true,
+	},
 	runBy: {
 		type: String,
 		required: true,
@@ -44,6 +48,14 @@ const Crawls = {
 			skip,
 			limit: pageSize,
 			sort,
+		});
+	},
+	insertNewCrawl: async (crawl) => _db.create(crawl),
+	updateCrawlById(_id, update) {
+		return _db.updateOne({
+			_id,
+		}, {
+			$set: update,
 		});
 	},
 };
