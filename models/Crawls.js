@@ -71,6 +71,15 @@ const Crawls = {
 			$set: update,
 		});
 	},
+	setEndTime(_id) {
+		return _db.updateOne({
+			_id,
+		}, {
+			$set: {
+				endTime: new Date(),
+			},
+		});
+	},
 };
 
 export default Crawls;
