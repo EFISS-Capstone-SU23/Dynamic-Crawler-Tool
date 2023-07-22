@@ -156,9 +156,9 @@ const _extractAll = async (params, driverArray) => {
 
 	if (continueExtract) {
 		// check if cached file exist then load it into visitedURL and queue
-		if (fs.existsSync(`./cache/visited-${domain}.json`) && fs.existsSync(`./cache/queue-${domain}.json`)) {
-			const visitedURLFile = fs.readFileSync(`./cache/visited-${domain}.json`, 'utf8');
-			const queueFile = fs.readFileSync(`./cache/queue-${domain}.json`, 'utf8');
+		if (fs.existsSync(`./cache/visited-${crawlId}.json`) && fs.existsSync(`./cache/queue-${crawlId}.json`)) {
+			const visitedURLFile = fs.readFileSync(`./cache/visited-${crawlId}.json`, 'utf8');
+			const queueFile = fs.readFileSync(`./cache/queue-${crawlId}.json`, 'utf8');
 
 			if (visitedURLFile && queueFile) {
 				Object.assign(visitedURL, JSON.parse(visitedURLFile));
@@ -208,8 +208,8 @@ const _extractAll = async (params, driverArray) => {
 		logger.info(`Queue length: ${queue.length}`);
 
 		// Save visited url to file and queue to file
-		saveJsonToFile(visitedURL, `./cache/visited-${domain}.json`);
-		saveJsonToFile(queue, `./cache/queue-${domain}.json`);
+		saveJsonToFile(visitedURL, `./cache/visited-${crawlId}.json`);
+		saveJsonToFile(queue, `./cache/queue-${crawlId}.json`);
 	}
 };
 
