@@ -139,7 +139,7 @@ const _extractAll = async (params, driverArray) => {
 		startUrl,
 		numInstance,
 		continueExtract,
-		ignoreURLs,
+		ignoreUrlPatterns,
 	} = params;
 
 	const visitedURL = {};
@@ -150,7 +150,7 @@ const _extractAll = async (params, driverArray) => {
 	];
 
 	// convert string to regex
-	const ignoreURLsRegex = ignoreURLs.map((url) => new RegExp(url));
+	const ignoreURLsRegex = ignoreUrlPatterns.map((url) => new RegExp(url));
 
 	if (continueExtract) {
 		// check if cached file exist then load it into visitedURL and queue

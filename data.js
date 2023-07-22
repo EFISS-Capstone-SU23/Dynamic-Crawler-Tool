@@ -10,7 +10,7 @@ const data = [{
 			sku: '/html/body/div[7]/main/div[2]/div/div[1]/div[2]/div[1]/div/div[1]/div[2]/div[3]/div',
 		},
 	},
-	ignoreURLs: [
+	ignoreUrlPatterns: [
 		'https://boo.vn/customer/account/login/referer/.*',
 	],
 	imageLinkProperties: 'data-original',
@@ -24,7 +24,7 @@ const data = [{
 		paginationButton: '',
 		metadata: {},
 	},
-	ignoreURLs: [],
+	ignoreUrlPatterns: [],
 	imageLinkProperties: 'src',
 }, {
 	startUrl: 'https://www.uniqlo.com/vn/vi/',
@@ -38,7 +38,7 @@ const data = [{
 			color: '/html/body/div[1]/div/div/div/div/main/div/div[2]/div/div/div/div/div[2]/div/div[1]/div[2]/div[2]/div[1]/div[1]/div/h7',
 		},
 	},
-	ignoreURLs: [
+	ignoreUrlPatterns: [
 		'https://www.uniqlo.com/((?!vn)[a-z]{2})/.*$',
 	],
 	imageLinkProperties: 'src',

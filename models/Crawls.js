@@ -32,9 +32,6 @@ const CrawlSchema = new mongoose.Schema({
 	endTime: {
 		type: Date,
 	},
-	logFile: {
-		type: Object,
-	},
 }, {
 	timestamps: true,
 });

@@ -1,4 +1,5 @@
 import Crawls from '../../models/Crawls.js';
+import extractAll from '../extract-all-link/extractAll.js';
 
 export const startCrawl = async (crawlId) => {
 	const crawl = await Crawls.findOneById(crawlId);
@@ -19,5 +20,5 @@ export const startCrawl = async (crawlId) => {
 		ignoreUrlPatterns,
 	};
 
-	console.log(crawlParams);
+	extractAll(crawlParams);
 };
