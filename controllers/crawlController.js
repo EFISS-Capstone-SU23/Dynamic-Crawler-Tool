@@ -93,7 +93,9 @@ const upsertCrawl = async (req, res) => {
 				startCrawl(_id);
 				break;
 			case 'stopped':
-				Crawls.setEndTime(_id);
+				// update end time
+				update.endTime = new Date();
+
 				break;
 			case 'paused':
 				break;
