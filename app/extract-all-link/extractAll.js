@@ -228,6 +228,19 @@ export default async function extractAll(params) {
 		crawlId,
 	} = params;
 	const logger = createLog(crawlId);
+
+	// create cache file
+	const visitedURLPath = `./cache/visited-${crawlId}.json`;
+	const queuePath = `./cache/queue-${crawlId}.json`;
+
+	if (!fs.existsSync(visitedURLPath)) {
+		fs.writeFileSync(visitedURLPath, '{}');
+	}
+
+	if (!fs.existsSync(queuePath)) {
+		fs.writeFileSync(queuePath, '[]');
+	}
+
 	logger.info(`Start extract all link from: ${startUrl}, max driver: ${numInstance}`);
 	const driverArray = getDriverArray(numInstance);
 

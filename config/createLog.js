@@ -14,7 +14,7 @@ export default function createLog(crawlId) {
 			customFormat,
 		),
 		transports: [
-			// new winston.transports.Console(),
+			new winston.transports.Console(),
 			new winston.transports.File({
 			// add time stamp to log file name
 				filename: `./logs/crawl-${crawlId}.log`,
