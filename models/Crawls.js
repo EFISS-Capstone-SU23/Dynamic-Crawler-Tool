@@ -1,9 +1,17 @@
 import mongoose from 'mongoose';
 
-const TemplateSchema = new mongoose.Schema({
+const CrawlSchema = new mongoose.Schema({
 	templateData: {
 		type: Object,
 		required: true,
+	},
+	website: {
+		type: String,
+		required: true,
+	},
+	numOfCrawledProduct: {
+		type: Number,
+		default: 0,
 	},
 	ignoreUrlPatterns: {
 		type: Array,
@@ -24,14 +32,11 @@ const TemplateSchema = new mongoose.Schema({
 	endTime: {
 		type: Date,
 	},
-	logFile: {
-		type: Object,
-	},
 }, {
 	timestamps: true,
 });
 
-const _db = mongoose.model('Crawl', TemplateSchema);
+const _db = mongoose.model('Crawl', CrawlSchema);
 
 const Crawls = {
 	_db,
@@ -64,6 +69,15 @@ const Crawls = {
 			_id,
 		}, {
 			$set: update,
+		});
+	},
+	setEndTime(_id) {
+		return _db.updateOne({
+			_id,
+		}, {
+			$set: {
+				endTime: new Date(),
+			},
 		});
 	},
 };

@@ -12,7 +12,7 @@ import {
 	saveProductData,
 } from './extractProductData.js';
 import Products from '../../models/Products.js';
-import logger from '../../config/log.js';
+import createLog from '../../config/createLog.js';
 import {
 	saveJsonToFile,
 } from '../../utils/file/saveFileFromURL.js';
@@ -26,19 +26,21 @@ import {
 import {
 	DEV_MOD,
 } from '../../config/parram.js';
+import Crawls from '../../models/Crawls.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const startExtractPage = async (driver, url, downloadedURL, params) => new Promise(async (resolve) => {
+	const {
+		xPath,
+		logger,
+	} = params;
+
 	logger.info(`Open page: ${url}`);
 	if (!url) {
 		resolve([]);
 		return;
 	}
-
-	const {
-		xPath,
-	} = params;
 
 	driver.get(url);
 
@@ -48,11 +50,11 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 	// Try to extract product data
 	// if (downloadedURL[url]) {
 	if (!downloadedURL[url] || DEV_MOD) {
-		const productData = await extractProductData(driver, xPath);
+		const productData = await extractProductData(driver, xPath, logger);
 		if (productData && productData.title && productData.price && productData.description && (productData.imageLinks || []).length > 0) {
 			logger.info(`Extract product data: ${url}`);
 			downloadedURL[url] = true;
-			await saveProductData(productData, url);
+			await saveProductData(productData, url, logger);
 		}
 	}
 
@@ -137,9 +139,11 @@ const filterQueue = (queue, visitedURL, ignoreURLsRegex, domain) => {
 const _extractAll = async (params, driverArray) => {
 	const {
 		startUrl,
-		maxDriver,
+		numInstance,
 		continueExtract,
-		ignoreURLs,
+		ignoreUrlPatterns,
+		crawlId,
+		logger,
 	} = params;
 
 	const visitedURL = {};
@@ -150,13 +154,13 @@ const _extractAll = async (params, driverArray) => {
 	];
 
 	// convert string to regex
-	const ignoreURLsRegex = ignoreURLs.map((url) => new RegExp(url));
+	const ignoreURLsRegex = ignoreUrlPatterns.map((url) => new RegExp(url));
 
 	if (continueExtract) {
 		// check if cached file exist then load it into visitedURL and queue
-		if (fs.existsSync(`./cache/visited-${domain}.json`) && fs.existsSync(`./cache/queue-${domain}.json`)) {
-			const visitedURLFile = fs.readFileSync(`./cache/visited-${domain}.json`, 'utf8');
-			const queueFile = fs.readFileSync(`./cache/queue-${domain}.json`, 'utf8');
+		if (fs.existsSync(`./cache/visited-${crawlId}.json`) && fs.existsSync(`./cache/queue-${crawlId}.json`)) {
+			const visitedURLFile = fs.readFileSync(`./cache/visited-${crawlId}.json`, 'utf8');
+			const queueFile = fs.readFileSync(`./cache/queue-${crawlId}.json`, 'utf8');
 
 			if (visitedURLFile && queueFile) {
 				Object.assign(visitedURL, JSON.parse(visitedURLFile));
@@ -171,8 +175,16 @@ const _extractAll = async (params, driverArray) => {
 	const downloadedURL = await Products.getDownloadedProductURL(domain);
 
 	while (queue.length > 0) {
+		// Check status of crawl if it runnning
+		const crawl = await Crawls.findOneById(crawlId);
+
+		if (!crawl || crawl.status !== 'running') {
+			logger.info('Crawl stopped');
+			break;
+		}
+
 		// get url array for this batch
-		const urlArray = queue.splice(0, maxDriver);
+		const urlArray = queue.splice(0, numInstance);
 
 		// update visited url
 		urlArray.forEach((url) => {
@@ -198,13 +210,12 @@ const _extractAll = async (params, driverArray) => {
 		logger.info(`Queue length: ${queue.length}`);
 
 		// Save visited url to file and queue to file
-		saveJsonToFile(visitedURL, `./cache/visited-${domain}.json`);
-		saveJsonToFile(queue, `./cache/queue-${domain}.json`);
+		saveJsonToFile(visitedURL, `./cache/visited-${crawlId}.json`);
+		saveJsonToFile(queue, `./cache/queue-${crawlId}.json`);
 	}
 };
 
 const quitAllDriver = (driverArray) => {
-	logger.info('Quit all driver');
 	driverArray.forEach((driver) => {
 		driver.quit();
 	});
@@ -213,17 +224,22 @@ const quitAllDriver = (driverArray) => {
 export default async function extractAll(params) {
 	const {
 		startUrl,
-		maxDriver,
+		numInstance,
+		crawlId,
 	} = params;
-	logger.info(`Start extract all link from: ${startUrl}, max driver: ${maxDriver}`);
-	const driverArray = getDriverArray(maxDriver);
+	const logger = createLog(crawlId);
+	logger.info(`Start extract all link from: ${startUrl}, max driver: ${numInstance}`);
+	const driverArray = getDriverArray(numInstance);
 
+	params.logger = logger;
 	try {
 		await _extractAll(params, driverArray).then(() => {
-			quitAllDriver();
+			logger.info('Quit all driver');
+			quitAllDriver(driverArray);
 		});
-	} finally {
-		quitAllDriver();
+	} catch (error) {
+		logger.info('Quit all driver');
+		quitAllDriver(driverArray);
 	}
 
 	logger.info('Finish extract all link.');

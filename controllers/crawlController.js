@@ -1,5 +1,6 @@
 import Crawls from '../models/Crawls.js';
 import Templates from '../models/Templates.js';
+import { startCrawl } from '../app/crawl/crawlManager.js';
 
 const findCrawlList = async (req, res) => {
 	const page = parseInt(req.query.page, 10) || 1;
@@ -49,19 +50,21 @@ const upsertCrawl = async (req, res) => {
 		}
 
 		const crawl = {
-			templateData,
+			templateData: templateData.template,
+			website: templateData.website,
 			// TODO: add runBy
 			runBy: 'admin',
 			status,
 			numInstance,
 			ignoreUrlPatterns,
 		};
-		await Crawls.insertNewCrawl(crawl);
+		const crawlInserted = await Crawls.insertNewCrawl(crawl);
 
 		// update info in template
 		await Templates.startNewCrawlWithTemplate(templateId);
 
 		// TODO: start crawl
+		startCrawl(crawlInserted._id);
 
 		res.json({
 			success: true,
@@ -87,13 +90,14 @@ const upsertCrawl = async (req, res) => {
 
 			switch (status) {
 			case 'running':
-				console.log('start crawl');
+				startCrawl(_id);
 				break;
 			case 'stopped':
-				console.log('stop crawl');
+				// update end time
+				update.endTime = new Date();
+
 				break;
 			case 'paused':
-				console.log('pause crawl');
 				break;
 			default:
 				break;

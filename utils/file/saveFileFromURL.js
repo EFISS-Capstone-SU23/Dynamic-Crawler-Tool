@@ -3,8 +3,6 @@ import fs from 'fs';
 import { IMAGE_ALL_EXT } from '../../config/config.js';
 import { uploadToGCS } from '../../app/storage/index.js';
 
-import logger from '../../config/log.js';
-
 const createParrentDir = (path) => {
 	const dir = path.split('/').slice(0, -1).join('/');
 	if (!fs.existsSync(dir)) {
@@ -16,7 +14,7 @@ const createParrentDir = (path) => {
 
 export const getExtFromUrl = (url) => IMAGE_ALL_EXT.find((ext) => url.includes(`.${ext}`) || 'jpg');
 
-export const saveFileFromURL = async (url, path) => {
+export const saveFileFromURL = async (url, path, logger) => {
 	try {
 		// createParrentDir(path);
 		const response = await axios.get(url, {

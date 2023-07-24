@@ -1,6 +1,4 @@
 /* eslint-disable no-promise-executor-return */
-import logger from '../config/log.js';
-
 /* eslint-disable no-restricted-syntax */
 export const getDiffHeight = async (imageContainer) => {
 	const scrollHeight = parseInt(await imageContainer.getAttribute('scrollHeight'), 10);
@@ -9,7 +7,7 @@ export const getDiffHeight = async (imageContainer) => {
 	return scrollHeight - offsetHeight;
 };
 
-export const scrollElement = async (driver, imageContainer, diffHeight, imgLength) => {
+export const scrollElement = async (driver, imageContainer, diffHeight, imgLength, logger) => {
 	try {
 		// scroll the page to load all images
 		const rect = await imageContainer.getRect();

@@ -9,7 +9,7 @@
 		"start:dev": "node index.js --dev",
 		"start:prod": "node index.js --max-instance=32 --continue",
 		"start:shopee": "node app/shopee/index.js",
-		"start:server": "nodemon server.js"
+		"start:server": "nodemon server.js --ignore cache"
 	},
 	"repository": {
 		"type": "git",

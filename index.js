@@ -61,7 +61,7 @@ if (TEMPLATE) {
 }
 
 extractAll({
-	maxDriver: MAX_INSTANCE,
+	numInstance: MAX_INSTANCE,
 	continueExtract: CONTINUE,
 	...templateData,
 });
