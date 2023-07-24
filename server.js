@@ -9,7 +9,7 @@ import { SERVER_PORT } from './config/config.js';
 import templateRouter from './routes/templateRoute.js';
 import crawRouter from './routes/crawlRoute.js';
 
-import setupLogStream from './app/log-stream/setup.js';
+import { setupLogStream } from './app/log-stream/setup.js';
 
 const app = express();
 

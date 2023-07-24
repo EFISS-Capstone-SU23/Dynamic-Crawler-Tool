@@ -27,6 +27,7 @@ import {
 	DEV_MOD,
 } from '../../config/parram.js';
 import Crawls from '../../models/Crawls.js';
+import LogStreamManager from '../log-stream/LogStreamManager.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -212,6 +213,10 @@ const _extractAll = async (params, driverArray) => {
 		// Save visited url to file and queue to file
 		saveJsonToFile(visitedURL, `./cache/visited-${crawlId}.json`);
 		saveJsonToFile(queue, `./cache/queue-${crawlId}.json`);
+
+		// emit to client
+		LogStreamManager.emitVisitedURLs(Object.keys(visitedURL), crawlId);
+		LogStreamManager.emitQueue(queue, crawlId);
 	}
 };
 
