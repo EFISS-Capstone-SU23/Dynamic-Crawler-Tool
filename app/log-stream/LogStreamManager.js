@@ -11,6 +11,11 @@ const LogStreamManager = {
 			queue,
 		});
 	},
+	emitLogData(logData, crawlId) {
+		streamSocket.emit(`logData-${crawlId}`, {
+			data: logData,
+		});
+	},
 };
 
 export default LogStreamManager;

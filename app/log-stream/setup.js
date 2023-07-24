@@ -17,16 +17,32 @@ export function setupLogStream(server) {
 		streamSocket = socket;
 		const watchLogFile = async (crawlId) => {
 			const logFilePath = `./logs/crawl-${crawlId}.log`;
+			const visitedURLPath = `./cache/visited-${crawlId}.json`;
+			const queuePath = `./cache/queue-${crawlId}.json`;
 
 			const handleLogFileChange = async () => {
-				const fileData = await readLastLines.read(logFilePath, 1e4);
+				const logData = await readLastLines.read(logFilePath, 1e4);
 				socket.emit(`logData-${crawlId}`, {
-					data: fileData,
+					data: logData,
 				});
 			};
 
 			handleLogFileChange();
-			// send visited urls to client
+			// send visited urls to client if file exists
+			if (fs.existsSync(visitedURLPath)) {
+				const visitedURLs = JSON.parse(fs.readFileSync(visitedURLPath));
+				socket.emit(`visitedURLsData-${crawlId}`, {
+					visitedURLs,
+				});
+			}
+
+			// send queue to client if file exists
+			if (fs.existsSync(queuePath)) {
+				const queue = JSON.parse(fs.readFileSync(queuePath));
+				socket.emit(`queueData-${crawlId}`, {
+					queue,
+				});
+			}
 
 			fs.watch(logFilePath, async (event) => {
 				if (event === 'change') {
