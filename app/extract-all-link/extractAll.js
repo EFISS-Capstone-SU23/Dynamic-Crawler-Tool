@@ -35,6 +35,7 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 	const {
 		xPath,
 		logger,
+		crawlId,
 	} = params;
 
 	logger.info(`Open page: ${url}`);
@@ -55,7 +56,7 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 		if (productData && productData.title && productData.price && productData.description && (productData.imageLinks || []).length > 0) {
 			logger.info(`Extract product data: ${url}`);
 			downloadedURL[url] = true;
-			await saveProductData(productData, url, logger);
+			await saveProductData(productData, url, logger, crawlId);
 		}
 	}
 

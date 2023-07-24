@@ -9,6 +9,7 @@ import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
 import { transformImageURL } from '../../utils/transformURL.js';
 import { removeSmallImage } from '../../utils/file/imageFile.js';
 import { bucketName } from '../storage/index.js';
+import Crawls from '../../models/Crawls.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -129,7 +130,7 @@ const downloadImage = async (product, domain, imageLinks, logger) => {
 	return imagesPath.filter((imagePath) => imagePath);
 };
 
-export const saveProductData = async (productData, url, logger) => {
+export const saveProductData = async (productData, url, logger, crawlId) => {
 	const {
 		title,
 		price,
@@ -151,6 +152,9 @@ export const saveProductData = async (productData, url, logger) => {
 		originalImages: imageLinks,
 		group: domain,
 	});
+
+	// Insert num of crawled product
+	await Crawls.incrNumOfCrawledProduct(crawlId);
 
 	// download image in imageLinks
 	const imagePath = await downloadImage(product, domain, imageLinks, logger);

@@ -16,6 +16,11 @@ const LogStreamManager = {
 			data: logData,
 		});
 	},
+	emitNumOfCrawledProduct(numOfCrawledProduct, crawlId) {
+		streamSocket.emit(`numOfCrawledProduct-${crawlId}`, {
+			numOfCrawledProduct,
+		});
+	},
 };
 
 export default LogStreamManager;
