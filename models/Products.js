@@ -45,6 +45,7 @@ const ProductSchema = new mongoose.Schema({
 const _db = mongoose.model('Product', ProductSchema);
 
 const Product = {
+	_db,
 	insertNewProduct: async (product) => {
 		if (product.price) {
 			product.price = convertPrice(product.price);
