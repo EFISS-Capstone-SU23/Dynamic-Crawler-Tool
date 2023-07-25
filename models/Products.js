@@ -33,6 +33,13 @@ const ProductSchema = new mongoose.Schema({
 	group: {
 		type: String,
 	},
+	active: {
+		type: Boolean,
+		default: true,
+	},
+	activeImageMap: {
+		type: [Boolean],
+	},
 });
 
 const _db = mongoose.model('Product', ProductSchema);
@@ -50,11 +57,13 @@ const Product = {
 		// 	product.price = convertPrice(product.price);
 		// }
 
-		const updatedProduct = await _db.findOneAndUpdate(
-			{ _id: id },
-			{ $set: product },
-			{ new: true },
-		);
+		const updatedProduct = await _db.findOneAndUpdate({
+			_id: id,
+		}, {
+			$set: product,
+		}, {
+			new: true,
+		});
 		return updatedProduct;
 	},
 	getAllProductByDomain(domain) {
