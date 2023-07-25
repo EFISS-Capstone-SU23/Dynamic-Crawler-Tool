@@ -27,6 +27,7 @@ import {
 	DEV_MOD,
 } from '../../config/parram.js';
 import Crawls from '../../models/Crawls.js';
+import LogStreamManager from '../log-stream/LogStreamManager.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -34,6 +35,7 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 	const {
 		xPath,
 		logger,
+		crawlId,
 	} = params;
 
 	logger.info(`Open page: ${url}`);
@@ -54,7 +56,7 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 		if (productData && productData.title && productData.price && productData.description && (productData.imageLinks || []).length > 0) {
 			logger.info(`Extract product data: ${url}`);
 			downloadedURL[url] = true;
-			await saveProductData(productData, url, logger);
+			await saveProductData(productData, url, logger, crawlId);
 		}
 	}
 
@@ -212,6 +214,10 @@ const _extractAll = async (params, driverArray) => {
 		// Save visited url to file and queue to file
 		saveJsonToFile(visitedURL, `./cache/visited-${crawlId}.json`);
 		saveJsonToFile(queue, `./cache/queue-${crawlId}.json`);
+
+		// emit to client
+		LogStreamManager.emitVisitedURLs(Object.keys(visitedURL), crawlId);
+		LogStreamManager.emitQueue(queue, crawlId);
 	}
 };
 
@@ -228,6 +234,19 @@ export default async function extractAll(params) {
 		crawlId,
 	} = params;
 	const logger = createLog(crawlId);
+
+	// create cache file
+	const visitedURLPath = `./cache/visited-${crawlId}.json`;
+	const queuePath = `./cache/queue-${crawlId}.json`;
+
+	if (!fs.existsSync(visitedURLPath)) {
+		fs.writeFileSync(visitedURLPath, '{}');
+	}
+
+	if (!fs.existsSync(queuePath)) {
+		fs.writeFileSync(queuePath, '[]');
+	}
+
 	logger.info(`Start extract all link from: ${startUrl}, max driver: ${numInstance}`);
 	const driverArray = getDriverArray(numInstance);
 

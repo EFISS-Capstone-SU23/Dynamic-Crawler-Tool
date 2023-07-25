@@ -1,12 +1,11 @@
 import fs from 'fs';
 import readLastLines from 'read-last-lines';
-
-// Socket.io
 import {
 	Server,
 } from 'socket.io';
 
-export default function setupLogStreamServer(server) {
+export let streamSocket;
+export function setupLogStream(server) {
 	const io = new Server(server, {
 		cors: {
 			origin: 'http://localhost:3000',
@@ -15,33 +14,45 @@ export default function setupLogStreamServer(server) {
 	});
 
 	io.on('connection', (socket) => {
-		console.log('Client connected to log stream');
+		streamSocket = socket;
+		const watchLogFile = async (crawlId) => {
+			const logFilePath = `./logs/crawl-${crawlId}.log`;
+			const visitedURLPath = `./cache/visited-${crawlId}.json`;
+			const queuePath = `./cache/queue-${crawlId}.json`;
 
-		// Function to send log data to the client
-		function sendLogData(crawlId, data) {
-			socket.emit(`logData-${crawlId}`, {
-				data,
+			const handleLogFileChange = async () => {
+				const logData = await readLastLines.read(logFilePath, 1e4);
+				socket.emit(`logData-${crawlId}`, {
+					data: logData,
+				});
+			};
+
+			handleLogFileChange();
+			// send visited urls to client if file exists
+			if (fs.existsSync(visitedURLPath)) {
+				const visitedURLs = JSON.parse(fs.readFileSync(visitedURLPath));
+				socket.emit(`visitedURLsData-${crawlId}`, {
+					visitedURLs,
+				});
+			}
+
+			// send queue to client if file exists
+			if (fs.existsSync(queuePath)) {
+				const queue = JSON.parse(fs.readFileSync(queuePath));
+				socket.emit(`queueData-${crawlId}`, {
+					queue,
+				});
+			}
+
+			fs.watch(logFilePath, async (event) => {
+				if (event === 'change') {
+					handleLogFileChange();
+				}
 			});
-		}
-
-		const handleFileChange = async (logFilePath, crawlId) => {
-			const fileData = await readLastLines.read(logFilePath, 100);
-			sendLogData(crawlId, fileData);
 		};
 
-		socket.on('subscribeToLog', (crawlId) => {
-			if (crawlId) {
-				const logFilePath = `./logs/crawl-${crawlId}.log`;
-				handleFileChange(logFilePath, crawlId);
-
-				fs.watch(logFilePath, (event) => {
-					if (event === 'change') {
-						handleFileChange(logFilePath, crawlId);
-					}
-				});
-			} else {
-				console.log('Invalid log ID:', crawlId);
-			}
+		socket.on('subscribeToLog', async (crawlId) => {
+			watchLogFile(crawlId);
 		});
 	});
 

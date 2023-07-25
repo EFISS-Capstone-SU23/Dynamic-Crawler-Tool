@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import LogStreamManager from '../app/log-stream/LogStreamManager.js';
 
 const CrawlSchema = new mongoose.Schema({
 	templateData: {
@@ -79,6 +80,22 @@ const Crawls = {
 				endTime: new Date(),
 			},
 		});
+	},
+	async incrNumOfCrawledProduct(_id) {
+		await _db.updateOne({
+			_id,
+		}, {
+			$inc: {
+				numOfCrawledProduct: 1,
+			},
+		});
+
+		// stream to client
+		const crawl = await this.findOneById(_id);
+		const numOfCrawledProduct = crawl.numOfCrawledProduct || 0;
+
+		LogStreamManager.emitNumOfCrawledProduct(numOfCrawledProduct, _id);
+		return numOfCrawledProduct;
 	},
 };
 
