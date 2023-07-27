@@ -124,7 +124,7 @@ const downloadImage = async (product, domain, imageLinks, logger) => {
 
 		const isRemoved = await removeSmallImage(fileBuffer, path);
 		if (isRemoved) {
-			return;
+			return '';
 		}
 
 		await checkFileTypeByContent(path);
@@ -136,7 +136,7 @@ const downloadImage = async (product, domain, imageLinks, logger) => {
 	});
 
 	const imagesPath = await Promise.all(imagesPromise);
-	return imagesPath.filter((imagePath) => imagePath);
+	return imagesPath;
 };
 
 export const saveProductData = async (productData, url, logger, crawlId) => {
@@ -167,9 +167,31 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 
 	// download image in imageLinks
 	const imagePath = await downloadImage(product, domain, imageLinks, logger);
+	const originalImages = product.originalImages;
 
-	// save product image path to database
-	await Products.updateProductById(product._id, {
-		images: imagePath,
+	// find all index of image path that null
+	const nullIndex = imagePath.reduce((acc, cur, i) => {
+		if (!cur) {
+			acc.push(i);
+		}
+		return acc;
+	}, []);
+
+	// remove null image path in both imagePath and product.originalImages
+	nullIndex.forEach((index) => {
+		imagePath.splice(index, 1);
+		originalImages.splice(index, 1);
 	});
+
+	if (imagePath.length) {
+		// save product image path to database
+		await Products.updateProductById(product._id, {
+			images: imagePath,
+			originalImages,
+		});
+	} else {
+		// remove product if no image
+		logger.info('Remove product because no image - ', product._id);
+		await Products.deleteProductById(product._id);
+	}
 };

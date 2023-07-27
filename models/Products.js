@@ -92,6 +92,11 @@ const Product = {
 
 		return downloadedURL;
 	},
+	deleteProductById(id) {
+		return _db.deleteOne({
+			_id: id,
+		});
+	},
 };
 
 export default Product;
