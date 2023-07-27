@@ -6,7 +6,7 @@ import { bucket } from './app/storage/setupStorage.js';
 const main = async () => {
 	console.log('Test connection to database');
 	console.log('MONGODB_URI:', MONGODB_URI);
-	const allProducts = await Products.getAllProduct();
+	const allProducts = await Products.getSampleOfProduct();
 	console.log('Number of products for test:', allProducts.length);
 
 	console.log('Test connection to storage');
