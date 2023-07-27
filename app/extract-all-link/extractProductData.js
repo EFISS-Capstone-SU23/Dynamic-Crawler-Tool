@@ -128,6 +128,10 @@ const downloadImage = async (product, domain, imageLinks, logger) => {
 		}
 
 		// checkFileTypeByContent(path);
+
+		if (FILE_STORAGE_TYPE === 'local') {
+			return path;
+		}
 		return `https://storage.googleapis.com/${bucketName}/${path}`;
 	});
 
