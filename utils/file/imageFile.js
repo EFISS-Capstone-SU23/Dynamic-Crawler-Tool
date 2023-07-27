@@ -6,7 +6,7 @@ import {
 	MIN_HEIGHT,
 	MIN_WITH,
 } from '../../config/config.js';
-import { removeFile } from '../../app/storage/index.js';
+import { removeFile, uploadToGCS } from '../../app/storage/index.js';
 
 const FILE_STORAGE_TYPE = process.env.FILE_STORAGE_TYPE || 'local';
 
@@ -33,13 +33,18 @@ export const removeSmallImage = async (fileBuffer, filePath) => {
 	return false;
 };
 
-export const checkFileTypeByContent = (filePath) => {
-	fs.readFile(filePath, async (err, data) => {
-		const fileInfo = await fileTypeFromBuffer(data);
-		const currentExt = filePath.split('.').pop();
-		if (fileInfo && fileInfo.ext !== currentExt) {
-			const newFilePath = filePath.replace(currentExt, fileInfo.ext);
+export const checkFileTypeByContent = async (filePath, fileBuffer) => {
+	const fileInfo = await fileTypeFromBuffer(fileBuffer);
+	const currentExt = filePath.split('.').pop();
+	if (fileInfo && fileInfo.ext !== currentExt) {
+		// rename file
+		const newFilePath = filePath.replace(`.${currentExt}`, `.${fileInfo.ext}`);
+
+		if (FILE_STORAGE_TYPE === 'local') {
 			fs.renameSync(filePath, newFilePath);
+		} else if (FILE_STORAGE_TYPE === 'gcs') {
+			await removeFile(filePath);
+			await uploadToGCS(fileBuffer, newFilePath);
 		}
-	});
+	}
 };

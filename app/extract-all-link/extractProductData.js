@@ -7,7 +7,7 @@ import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
 import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT, STORAGE_PREFIX } from '../../config/config.js';
 import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
 import { transformImageURL } from '../../utils/transformURL.js';
-import { removeSmallImage } from '../../utils/file/imageFile.js';
+import { removeSmallImage, checkFileTypeByContent } from '../../utils/file/imageFile.js';
 import { bucketName } from '../storage/index.js';
 import Crawls from '../../models/Crawls.js';
 
@@ -127,7 +127,7 @@ const downloadImage = async (product, domain, imageLinks, logger) => {
 			return;
 		}
 
-		// checkFileTypeByContent(path);
+		await checkFileTypeByContent(path);
 
 		if (FILE_STORAGE_TYPE === 'local') {
 			return path;
