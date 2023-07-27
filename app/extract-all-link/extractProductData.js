@@ -11,6 +11,8 @@ import { removeSmallImage } from '../../utils/file/imageFile.js';
 import { bucketName } from '../storage/index.js';
 import Crawls from '../../models/Crawls.js';
 
+const FILE_STORAGE_TYPE = process.env.FILE_STORAGE_TYPE || 'local';
+
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const extractProductData = async (driver, xPath, logger) => {
@@ -109,8 +111,11 @@ const downloadImage = async (product, domain, imageLinks, logger) => {
 	const imagesPromise = imageLinks.map(async (imageLink, i) => {
 		const ext = getExtFromUrl(imageLink);
 		// output/<site name>/<id>_<site_name_with_under_score>.jpg
-		// const path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
-		const path = `${STORAGE_PREFIX}/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
+		let path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
+
+		if (FILE_STORAGE_TYPE === 'gcs') {
+			path = `${STORAGE_PREFIX}/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
+		}
 
 		const fileBuffer = await saveFileFromURL(imageLink, path, logger);
 		if (!fileBuffer) {

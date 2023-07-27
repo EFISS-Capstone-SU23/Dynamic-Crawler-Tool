@@ -3,6 +3,8 @@ import fs from 'fs';
 import { IMAGE_ALL_EXT } from '../../config/config.js';
 import { uploadToGCS } from '../../app/storage/index.js';
 
+const FILE_STORAGE_TYPE = process.env.FILE_STORAGE_TYPE || 'local';
+
 const createParrentDir = (path) => {
 	const dir = path.split('/').slice(0, -1).join('/');
 	if (!fs.existsSync(dir)) {
@@ -25,7 +27,19 @@ export const saveFileFromURL = async (url, path, logger) => {
 		});
 
 		const fileBuffer = Buffer.from(response.data, 'binary');
-		await uploadToGCS(fileBuffer, path);
+
+		if (FILE_STORAGE_TYPE === 'local') {
+			createParrentDir(path);
+			const writer = fs.createWriteStream(path);
+			response.data.pipe(writer);
+
+			await new Promise((resolve, reject) => {
+				writer.on('finish', resolve);
+				writer.on('error', reject);
+			});
+		} else if (FILE_STORAGE_TYPE === 'gcs') {
+			await uploadToGCS(fileBuffer, path);
+		}
 
 		return fileBuffer;
 	} catch (error) {
