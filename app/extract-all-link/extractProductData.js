@@ -109,7 +109,11 @@ export const extractProductData = async (driver, xPath, logger) => {
 
 const downloadImage = async (product, domain, imageLinks, logger) => {
 	const imagesPromise = imageLinks.map(async (imageLink, i) => {
+        
+        // FIXME: what if imageLink is not ending with an extension?
+        // e.g. https://down-vn.img.susercontent.com/file/sg-11134201-22120-snglnnji0rkve7
 		const ext = getExtFromUrl(imageLink);
+
 		// output/<site name>/<id>_<site_name_with_under_score>.jpg
 		let path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
 
@@ -128,6 +132,7 @@ const downloadImage = async (product, domain, imageLinks, logger) => {
 		}
 
 		await checkFileTypeByContent(path);
+        // FIXME: if the above function successfully rename the path, then the image will be renamed in the GCS storage, but not in the database
 
 		if (FILE_STORAGE_TYPE === 'local') {
 			return path;
@@ -161,6 +166,20 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 		originalImages: imageLinks,
 		group: domain,
 	});
+
+    // If instance is terminated here, then the image will exist in the database but not in the GCS storage
+    // -> not critical
+    // recommend to set a flag in the database to indicate whether this function is successful or not
+    // set the flag to false by default, and re-set it to true at the end of this function
+
+    // Conclusion - TODO:
+    // - add flag to database ensure integrity
+    // - add a field "active" as boolean array, will track whether each image is exist or not
+    // - check image content to get extension first, then push to GCS storage later, instead of hotfix rename them on GCS
+    // - write a script as a scheduled job that will for loop through entire database,
+    //   and check each image in "images" exist in GCS storage or not
+    //   if not, then re-fetch the image from originalImages and save it to GCS storage
+    //   if it cannot be fetched, then deactive the image
 
 	// Insert num of crawled product
 	await Crawls.incrNumOfCrawledProduct(crawlId);
