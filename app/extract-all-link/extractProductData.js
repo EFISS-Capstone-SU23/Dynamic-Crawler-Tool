@@ -10,6 +10,7 @@ import { transformImageURL } from '../../utils/transformURL.js';
 import { removeSmallImage, checkFileTypeByContent } from '../../utils/file/imageFile.js';
 import { bucketName } from '../storage/index.js';
 import Crawls from '../../models/Crawls.js';
+import productAPI from '../../api/productAPI.js';
 
 const FILE_STORAGE_TYPE = process.env.FILE_STORAGE_TYPE || 'local';
 
@@ -151,7 +152,16 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 	const domain = new URL(url).hostname;
 
 	// save product data to database
-	const product = await Products.insertNewProduct({
+	// const product = await Products.insertNewProduct({
+	// 	title,
+	// 	price,
+	// 	description,
+	// 	url,
+	// 	metadata,
+	// 	originalImages: imageLinks,
+	// 	group: domain,
+	// });
+	const product = await productAPI.insertNewProduct({
 		title,
 		price,
 		description,
