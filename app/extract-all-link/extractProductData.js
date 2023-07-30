@@ -159,6 +159,7 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 		metadata,
 		originalImages: imageLinks,
 		group: domain,
+		crawlId,
 	});
 
 	// If instance is terminated here, then the image will exist in the database but not in the GCS storage
