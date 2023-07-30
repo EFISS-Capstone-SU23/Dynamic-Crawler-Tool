@@ -181,7 +181,7 @@ const _extractAll = async (params, driverArray) => {
 		const crawl = await Crawls.findOneById(crawlId);
 
 		if (!crawl || crawl.status !== 'running') {
-			logger.info('Crawl stopped');
+			logger.info('Crawl staus is ', crawl.status);
 			break;
 		}
 
@@ -248,6 +248,8 @@ export default async function extractAll(params) {
 	}
 
 	logger.info(`Start extract all link from: ${startUrl}, max driver: ${numInstance}`);
+
+	await delay(2 * 2000);
 	const driverArray = getDriverArray(numInstance);
 
 	params.logger = logger;
