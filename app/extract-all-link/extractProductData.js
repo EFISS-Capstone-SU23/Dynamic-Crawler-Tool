@@ -129,9 +129,9 @@ const downloadImage = async (product, domain, imageLinks, logger) => {
 
 		await saveFileFromBuffer(fileBuffer, finalPath);
 		if (FILE_STORAGE_TYPE === 'local') {
-			return path;
+			return finalPath;
 		}
-		return `https://storage.googleapis.com/${bucketName}/${path}`;
+		return `https://storage.googleapis.com/${bucketName}/${finalPath}`;
 	});
 
 	const imagesPath = await Promise.all(imagesPromise);
