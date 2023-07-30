@@ -175,14 +175,12 @@ const _extractAll = async (params, driverArray) => {
 
 	// get all product with domain and mask as downloaded
 	const downloadedURL = await productAPI.getDownloadedProductURL(domain);
-	console.log('downloadedURL', downloadedURL);
-
 	while (queue.length > 0) {
 		// Check status of crawl if it runnning
 		const crawl = await Crawls.findOneById(crawlId);
 
 		if (!crawl || crawl.status !== 'running') {
-			logger.info('Crawl status is ', crawl.status);
+			logger.info(`Crawler status is: ${crawl.status}`);
 			break;
 		}
 
