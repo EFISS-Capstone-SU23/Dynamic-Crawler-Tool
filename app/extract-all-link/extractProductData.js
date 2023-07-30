@@ -130,7 +130,7 @@ const downloadImage = async (product, domain, imageLinks, logger) => {
 			return '';
 		}
 
-		await checkFileTypeByContent(path);
+		await checkFileTypeByContent(path, fileBuffer);
 		// FIXME: if the above function successfully rename the path, then the image will be renamed in the GCS storage, but not in the database
 
 		if (FILE_STORAGE_TYPE === 'local') {
