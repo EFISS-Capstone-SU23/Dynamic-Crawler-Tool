@@ -16,7 +16,11 @@ export default {
 		return res.data.product;
 	},
 	getDownloadedProductURL: async (domain) => {
-		const res = await instance.get(`/getDownloadedProductURL/${domain}`);
+		const res = await instance.get(`/downloadedUrls/${domain}`);
 		return res.data.downloadedURL;
+	},
+	deleteProductById: async (id) => {
+		const res = await instance.delete(`/delete/${id}`);
+		return res.data;
 	},
 };

@@ -1,7 +1,6 @@
 /* eslint-disable no-promise-executor-return */
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
-import Products from '../../models/Products.js';
 import { saveFileFromBuffer, getFileBufferFromURL } from '../../utils/file/saveFileFromURL.js';
 import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
 import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT, STORAGE_PREFIX } from '../../config/config.js';
@@ -206,6 +205,6 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 	} else {
 		// remove product if no image
 		logger.info('Remove product because no image - ', product._id);
-		await Products.deleteProductById(product._id);
+		await productAPI.deleteProductById(product._id);
 	}
 };
