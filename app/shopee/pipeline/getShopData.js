@@ -100,10 +100,9 @@ export default async function getShopData(shopId, group) {
 			}
 
 			// save product image path to database
-			await Products.updateProductById(product._id, {
+			await productAPI.updateProductById(product._id, {
 				images: imageLinks,
 			});
-
 			await delay(0.2 * 1000);
 		}
 

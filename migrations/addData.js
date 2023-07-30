@@ -1,5 +1,6 @@
 import '../config/env.js';
 import '../config/mongoose.js';
+import productAPI from '../api/productAPI.js';
 import Products from '../models/Products.js';
 
 const main = async () => {
@@ -10,7 +11,7 @@ const main = async () => {
 
 		if (!group) {
 			const domain = new URL(url).hostname;
-			await Products.updateProductById(_id, {
+			await productAPI.updateProductById(_id, {
 				group: domain,
 				originalImages: [],
 			});

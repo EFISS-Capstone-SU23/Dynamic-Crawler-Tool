@@ -199,7 +199,7 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 
 	if (imagePath.length) {
 		// save product image path to database
-		await Products.updateProductById(product._id, {
+		await productAPI.updateProductById(product._id, {
 			images: imagePath,
 			originalImages,
 		});

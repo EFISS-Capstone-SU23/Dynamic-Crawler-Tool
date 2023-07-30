@@ -11,4 +11,8 @@ export default {
 		const res = await instance.post('/new', product);
 		return res.data.product;
 	},
+	updateProductById: async (id, product) => {
+		const res = await instance.post(`/update/${id}`, product);
+		return res.data.product;
+	},
 };

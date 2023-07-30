@@ -8,6 +8,7 @@ import fs from 'fs';
 import Products from '../../../models/Products.js';
 import logger from '../../../config/log.js';
 import { delay } from '../../../utils/delay.js';
+import productAPI from '../../../api/productAPI.js';
 
 const USER_FOLDER = './app/shopee/config/shopeeUser/';
 const BASE_HEADER = {
@@ -49,7 +50,7 @@ const fetchProductData = async (id, url, header) => {
 		// remove first category
 		// categories.shift();
 
-		await Products.updateProductById(id, {
+		await productAPI.updateProductById(id, {
 			description,
 			categories: categories.map((category) => category.display_name),
 			originalImages: images.map((image) => `https://down-vn.img.susercontent.com/file/${image}`),
