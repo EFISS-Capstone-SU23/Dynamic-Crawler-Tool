@@ -34,7 +34,7 @@ export function setupLogStream(server) {
 			if (fs.existsSync(visitedURLPath)) {
 				const visitedURLs = JSON.parse(fs.readFileSync(visitedURLPath));
 				socket.emit(`visitedURLsData-${crawlId}`, {
-					visitedURLs,
+					visitedURLs: Object.keys(visitedURLs),
 				});
 			}
 
