@@ -258,11 +258,17 @@ export default async function extractAll(params) {
 			logger.info('Finish extract all link.');
 			logger.info('Quit all driver');
 			quitAllDriver(driverArray);
+
+			// update status of crawl
+			Crawls.updateStatus(crawlId, 'stopped');
 		});
 	} catch (error) {
 		logger.error('Error when extract all link');
 		logger.error(error);
 		logger.info('Quit all driver');
 		quitAllDriver(driverArray);
+
+		// update status of crawl
+		Crawls.updateStatus(crawlId, 'stopped');
 	}
 }
