@@ -15,4 +15,8 @@ export default {
 		const res = await instance.post(`/update/${id}`, product);
 		return res.data.product;
 	},
+	getDownloadedProductURL: async (domain) => {
+		const res = await instance.get(`/getDownloadedProductURL/${domain}`);
+		return res.data.downloadedURL;
+	},
 };

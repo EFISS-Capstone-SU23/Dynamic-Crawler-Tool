@@ -3,7 +3,6 @@
 /* eslint-disable no-loop-func */
 import axios from 'axios';
 
-import Products from '../../../models/Products.js';
 import { saveFileFromURL } from '../../../utils/file/saveFileFromURL.js';
 import logger from '../../../config/log.js';
 import { delay } from '../../../utils/delay.js';
@@ -41,7 +40,7 @@ export default async function getShopData(shopId, group) {
 	logger.info(`Downloading shop ${group} - ${shopId}`);
 	let offSet = 0;
 
-	const downloadedURL = await Products.getDownloadedProductURL('shopee.vn');
+	const downloadedURL = await productAPI.getDownloadedProductURL('shopee.vn');
 
 	while (true) {
 		logger.info(`Downloading page ${offSet / PAGE_SIZE + 1} of shop ${group}`);

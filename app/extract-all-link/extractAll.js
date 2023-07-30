@@ -11,7 +11,6 @@ import {
 	extractProductData,
 	saveProductData,
 } from './extractProductData.js';
-import Products from '../../models/Products.js';
 import createLog from '../../config/createLog.js';
 import {
 	saveJsonToFile,
@@ -28,6 +27,7 @@ import {
 } from '../../config/parram.js';
 import Crawls from '../../models/Crawls.js';
 import LogStreamManager from '../log-stream/LogStreamManager.js';
+import productAPI from '../../api/productAPI.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -174,7 +174,7 @@ const _extractAll = async (params, driverArray) => {
 	}
 
 	// get all product with domain and mask as downloaded
-	const downloadedURL = await Products.getDownloadedProductURL(domain);
+	const downloadedURL = await productAPI.getDownloadedProductURL(domain);
 
 	while (queue.length > 0) {
 		// Check status of crawl if it runnning
