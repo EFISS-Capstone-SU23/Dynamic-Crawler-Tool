@@ -16,6 +16,15 @@ const createParrentDir = (path) => {
 
 export const getExtFromUrl = (url) => IMAGE_ALL_EXT.find((ext) => url.includes(`.${ext}`) || 'jpg');
 
+const saveFileToLocal = (fileBuffer, path) => new Promise((resolve, reject) => {
+	fs.writeFileSync(path, fileBuffer, (err) => {
+		if (err) {
+			reject(err);
+		}
+		resolve();
+	});
+});
+
 export const saveFileFromURL = async (url, path, logger) => {
 	try {
 		// createParrentDir(path);
@@ -30,13 +39,8 @@ export const saveFileFromURL = async (url, path, logger) => {
 
 		if (FILE_STORAGE_TYPE === 'local') {
 			createParrentDir(path);
-			const writer = fs.createWriteStream(path);
-			response.data.pipe(writer);
-
-			await new Promise((resolve, reject) => {
-				writer.on('finish', resolve);
-				writer.on('error', reject);
-			});
+			// save file to local
+			await saveFileToLocal(fileBuffer, path);
 		} else if (FILE_STORAGE_TYPE === 'gcs') {
 			await uploadToGCS(fileBuffer, path);
 		}

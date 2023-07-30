@@ -14,7 +14,7 @@ o.addArguments('disable-infobars');
 o.addArguments('start-maximized');
 
 if (HEADLESS) {
-	o.addArguments('headless'); // running test on visual chrome browser
+	// o.addArguments('headless'); // running test on visual chrome browser
 }
 
 // Add Chrome user agent
