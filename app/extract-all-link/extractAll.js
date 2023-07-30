@@ -247,6 +247,7 @@ export default async function extractAll(params) {
 		fs.writeFileSync(queuePath, '[]');
 	}
 
+	logger.info('===================');
 	logger.info(`Start extract all link from: ${startUrl}, max driver: ${numInstance}`);
 
 	await delay(2 * 2000);
