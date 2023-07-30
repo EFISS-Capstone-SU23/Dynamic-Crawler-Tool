@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+// eslint-disable-next-line import/no-cycle
 import LogStreamManager from '../app/log-stream/LogStreamManager.js';
 
 const CrawlSchema = new mongoose.Schema({

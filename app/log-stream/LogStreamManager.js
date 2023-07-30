@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-cycle
 import { streamSocket } from './setup.js';
 
 const LogStreamManager = {

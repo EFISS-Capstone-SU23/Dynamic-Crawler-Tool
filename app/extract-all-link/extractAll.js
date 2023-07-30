@@ -181,7 +181,7 @@ const _extractAll = async (params, driverArray) => {
 		const crawl = await Crawls.findOneById(crawlId);
 
 		if (!crawl || crawl.status !== 'running') {
-			logger.info('Crawl staus is ', crawl.status);
+			logger.info('Crawl status is ', crawl.status);
 			break;
 		}
 
