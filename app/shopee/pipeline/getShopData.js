@@ -9,6 +9,7 @@ import logger from '../../../config/log.js';
 import { delay } from '../../../utils/delay.js';
 import { STORAGE_PREFIX } from '../../../config/config.js';
 import { bucketName } from '../../storage/setupStorage.js';
+import productAPI from '../../../api/productAPI.js';
 
 const PAGE_SIZE = 100;
 const MAX_DOWNLOAD_IMAGE = 30 * 1000;
@@ -75,7 +76,7 @@ export default async function getShopData(shopId, group) {
 			}
 
 			logger.info(`Downloading item ${name}`);
-			const product = await Products.insertNewProduct({
+			const product = await productAPI.insertNewProduct({
 				title: name,
 				price: price / 1e5,
 				originalImages: images,

@@ -152,15 +152,6 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 	const domain = new URL(url).hostname;
 
 	// save product data to database
-	// const product = await Products.insertNewProduct({
-	// 	title,
-	// 	price,
-	// 	description,
-	// 	url,
-	// 	metadata,
-	// 	originalImages: imageLinks,
-	// 	group: domain,
-	// });
 	const product = await productAPI.insertNewProduct({
 		title,
 		price,
