@@ -2,7 +2,7 @@
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
 import Products from '../../models/Products.js';
-import { saveFileFromURL, getExtFromUrl } from '../../utils/file/saveFileFromURL.js';
+import { saveFileFromBuffer, getFileBufferFromURL } from '../../utils/file/saveFileFromURL.js';
 import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
 import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT, STORAGE_PREFIX } from '../../config/config.js';
 import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
@@ -109,30 +109,25 @@ export const extractProductData = async (driver, xPath, logger) => {
 
 const downloadImage = async (product, domain, imageLinks, logger) => {
 	const imagesPromise = imageLinks.map(async (imageLink, i) => {
-		// FIXME: what if imageLink is not ending with an extension?
-		// e.g. https://down-vn.img.susercontent.com/file/sg-11134201-22120-snglnnji0rkve7
-		const ext = getExtFromUrl(imageLink);
-
-		// output/<site name>/<id>_<site_name_with_under_score>.jpg
-		let path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
-
-		if (FILE_STORAGE_TYPE === 'gcs') {
-			path = `${STORAGE_PREFIX}/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}.${ext}`;
-		}
-
-		const fileBuffer = await saveFileFromURL(imageLink, path, logger);
+		const fileBuffer = await getFileBufferFromURL(imageLink, logger);
 		if (!fileBuffer) {
 			return;
 		}
 
-		const isRemoved = await removeSmallImage(fileBuffer, path);
-		if (isRemoved) {
-			return '';
+		// output/<site name>/<id>_<site_name_with_under_score>.jpg
+		let path = `./output/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}`;
+		if (FILE_STORAGE_TYPE === 'gcs') {
+			path = `${STORAGE_PREFIX}/${domain}/${product._id}_${i}_${domain.replace(/[^a-zA-Z0-9]/g, '_')}`;
 		}
 
-		await checkFileTypeByContent(path, fileBuffer);
-		// FIXME: if the above function successfully rename the path, then the image will be renamed in the GCS storage, but not in the database
+		const finalPath = await checkFileTypeByContent(path, fileBuffer);
 
+		const isRemoved = await removeSmallImage(fileBuffer);
+		if (isRemoved) {
+			return;
+		}
+
+		await saveFileFromBuffer(fileBuffer, finalPath);
 		if (FILE_STORAGE_TYPE === 'local') {
 			return path;
 		}

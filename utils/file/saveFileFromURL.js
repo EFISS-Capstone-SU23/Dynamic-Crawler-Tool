@@ -20,6 +20,33 @@ const saveFileToLocal = (fileBuffer, path) => {
 	fs.writeFileSync(path, fileBuffer);
 };
 
+export const getFileBufferFromURL = async (url, logger) => {
+	try {
+		const response = await axios.get(url, {
+			responseType: 'arraybuffer',
+			headers: {
+				'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome',
+			},
+		});
+
+		const fileBuffer = Buffer.from(response.data, 'binary');
+
+		return fileBuffer;
+	} catch (error) {
+		logger.error(`Failed to download file: ${error.message}`);
+	}
+};
+
+export const saveFileFromBuffer = async (fileBuffer, path) => {
+	if (FILE_STORAGE_TYPE === 'local') {
+		createParrentDir(path);
+		// save file to local
+		saveFileToLocal(fileBuffer, path);
+	} else if (FILE_STORAGE_TYPE === 'gcs') {
+		await uploadToGCS(fileBuffer, path);
+	}
+};
+
 export const saveFileFromURL = async (url, path, logger) => {
 	try {
 		// createParrentDir(path);
