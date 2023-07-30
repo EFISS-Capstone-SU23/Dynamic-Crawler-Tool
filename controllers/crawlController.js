@@ -1,6 +1,6 @@
 import Crawls from '../models/Crawls.js';
 import Templates from '../models/Templates.js';
-import { startCrawl } from '../app/crawl/crawlManager.js';
+import { startCrawl, resumeCrawl } from '../app/crawl/crawlManager.js';
 
 const findCrawlList = async (req, res) => {
 	const page = parseInt(req.query.page, 10) || 1;
@@ -90,7 +90,7 @@ const upsertCrawl = async (req, res) => {
 
 			switch (status) {
 			case 'running':
-				startCrawl(_id);
+				resumeCrawl(_id);
 				break;
 			case 'stopped':
 				// update end time
