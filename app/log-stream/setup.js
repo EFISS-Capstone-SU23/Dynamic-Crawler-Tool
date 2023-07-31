@@ -3,6 +3,8 @@ import readLastLines from 'read-last-lines';
 import {
 	Server,
 } from 'socket.io';
+// eslint-disable-next-line import/no-cycle
+import Crawls from '../../models/Crawls.js';
 
 export let streamSocket;
 export function setupLogStream(server) {
@@ -32,7 +34,7 @@ export function setupLogStream(server) {
 			if (fs.existsSync(visitedURLPath)) {
 				const visitedURLs = JSON.parse(fs.readFileSync(visitedURLPath));
 				socket.emit(`visitedURLsData-${crawlId}`, {
-					visitedURLs,
+					visitedURLs: Object.keys(visitedURLs),
 				});
 			}
 
@@ -49,6 +51,14 @@ export function setupLogStream(server) {
 					handleLogFileChange();
 				}
 			});
+
+			const crawl = await Crawls.findOneById(crawlId);
+			if (crawl) {
+				const numOfCrawledProduct = crawl.numOfCrawledProduct || 0;
+				socket.emit(`numOfCrawledProduct-${crawlId}`, {
+					numOfCrawledProduct,
+				});
+			}
 		};
 
 		socket.on('subscribeToLog', async (crawlId) => {

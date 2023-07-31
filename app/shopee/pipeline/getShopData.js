@@ -3,12 +3,12 @@
 /* eslint-disable no-loop-func */
 import axios from 'axios';
 
-import Products from '../../../models/Products.js';
 import { saveFileFromURL } from '../../../utils/file/saveFileFromURL.js';
 import logger from '../../../config/log.js';
 import { delay } from '../../../utils/delay.js';
 import { STORAGE_PREFIX } from '../../../config/config.js';
 import { bucketName } from '../../storage/setupStorage.js';
+import productAPI from '../../../api/productAPI.js';
 
 const PAGE_SIZE = 100;
 const MAX_DOWNLOAD_IMAGE = 30 * 1000;
@@ -40,7 +40,7 @@ export default async function getShopData(shopId, group) {
 	logger.info(`Downloading shop ${group} - ${shopId}`);
 	let offSet = 0;
 
-	const downloadedURL = await Products.getDownloadedProductURL('shopee.vn');
+	const downloadedURL = await productAPI.getDownloadedProductURL('shopee.vn');
 
 	while (true) {
 		logger.info(`Downloading page ${offSet / PAGE_SIZE + 1} of shop ${group}`);
@@ -75,7 +75,7 @@ export default async function getShopData(shopId, group) {
 			}
 
 			logger.info(`Downloading item ${name}`);
-			const product = await Products.insertNewProduct({
+			const product = await productAPI.insertNewProduct({
 				title: name,
 				price: price / 1e5,
 				originalImages: images,
@@ -99,10 +99,9 @@ export default async function getShopData(shopId, group) {
 			}
 
 			// save product image path to database
-			await Products.updateProductById(product._id, {
+			await productAPI.updateProductById(product._id, {
 				images: imageLinks,
 			});
-
 			await delay(0.2 * 1000);
 		}
 
