@@ -65,6 +65,15 @@ const Crawls = {
 			return null;
 		}
 	},
+	updateStatus(_id, status) {
+		return _db.updateOne({
+			_id,
+		}, {
+			$set: {
+				status,
+			},
+		});
+	},
 	insertNewCrawl: async (crawl) => _db.create(crawl),
 	updateCrawlById(_id, update) {
 		return _db.updateOne({
