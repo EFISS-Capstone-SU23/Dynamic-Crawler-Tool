@@ -1,6 +1,8 @@
 /* eslint-disable no-promise-executor-return */
 /* eslint-disable guard-for-in */
 /* eslint-disable no-restricted-syntax */
+import { resolve as resolvePath } from 'path';
+
 import { saveFileFromBuffer, getFileBufferFromURL } from '../../utils/file/saveFileFromURL.js';
 import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
 import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT, STORAGE_PREFIX } from '../../config/config.js';
@@ -129,7 +131,9 @@ const downloadImage = async (product, domain, imageLinks, logger) => {
 
 		await saveFileFromBuffer(fileBuffer, finalPath);
 		if (FILE_STORAGE_TYPE === 'local') {
-			return finalPath;
+			// return absolute path for on this local machine
+			const absolutePath = resolvePath(finalPath);
+			return absolutePath;
 		}
 		return `https://storage.googleapis.com/${bucketName}/${finalPath}`;
 	});
