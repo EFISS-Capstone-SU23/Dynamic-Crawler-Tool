@@ -10,7 +10,7 @@ const main = async () => {
 	const products = await Products.getAllProduct();
 
 	for (const product of products) {
-		// if group not contain shopee
+		// if shopName not contain shopee
 		if (product.url.includes('shopee')) {
 			continue;
 		}

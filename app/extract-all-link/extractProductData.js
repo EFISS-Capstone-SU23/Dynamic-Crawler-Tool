@@ -158,7 +158,7 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 		url,
 		metadata,
 		originalImages: imageLinks,
-		group: domain,
+		shopName: domain,
 		crawlId,
 	});
 

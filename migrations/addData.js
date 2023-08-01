@@ -7,12 +7,12 @@ const main = async () => {
 	const products = await Products.getAllProduct();
 
 	for (const product of products) {
-		const { group, _id, url } = product;
+		const { shopName, _id, url } = product;
 
-		if (!group) {
+		if (!shopName) {
 			const domain = new URL(url).hostname;
 			await productAPI.updateProductById(_id, {
-				group: domain,
+				shopName: domain,
 				originalImages: [],
 			});
 			console.log(`Product ${_id} updated`);

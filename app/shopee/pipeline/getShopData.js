@@ -19,9 +19,9 @@ const timeoutDownloadImage = new Promise((resolve) => {
 	}, MAX_DOWNLOAD_IMAGE);
 });
 
-const downloadImage = async (product, group, images) => {
+const downloadImage = async (product, shopName, images) => {
 	const imagesPromise = images.map(async (imageLink, i) => {
-		const imgPath = `${STORAGE_PREFIX}/${group}/${product._id}_${i}_${group.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
+		const imgPath = `${STORAGE_PREFIX}/${shopName}/${product._id}_${i}_${shopName.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
 
 		const saveStatus = await saveFileFromURL(imageLink, imgPath);
 
@@ -36,21 +36,21 @@ const downloadImage = async (product, group, images) => {
 	return imageLinksFiltered;
 };
 
-export default async function getShopData(shopId, group) {
-	logger.info(`Downloading shop ${group} - ${shopId}`);
+export default async function getShopData(shopId, shopName) {
+	logger.info(`Downloading shop ${shopName} - ${shopId}`);
 	let offSet = 0;
 
 	const downloadedURL = await productAPI.getDownloadedProductURL('shopee.vn');
 
 	while (true) {
-		logger.info(`Downloading page ${offSet / PAGE_SIZE + 1} of shop ${group}`);
+		logger.info(`Downloading page ${offSet / PAGE_SIZE + 1} of shop ${shopName}`);
 		const API_ENDPOINT = `https://shopee.vn/api/v4/shop/rcmd_items?bundle=shop_page_category_tab_main&limit=${100}&offset=${offSet}&shop_id=${shopId}`;
 
 		const res = await axios.get(API_ENDPOINT);
 		const data = res.data.data;
 
 		if (!data || !(data.items || []).length) {
-			logger.info(`No more data for shop ${group}`);
+			logger.info(`No more data for shop ${shopName}`);
 			break;
 		}
 		const items = data.items;
@@ -81,14 +81,14 @@ export default async function getShopData(shopId, group) {
 				originalImages: images,
 				description,
 				url,
-				group,
+				shopName,
 				metadata: {},
 			});
 
 			// download image in imageLinks
 			// filter null\
 			const imageLinks = await Promise.race([
-				downloadImage(product, group, images),
+				downloadImage(product, shopName, images),
 				timeoutDownloadImage,
 			]);
 

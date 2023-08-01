@@ -55,8 +55,8 @@ const main = async () => {
 
 	logger.info('Step 02: Downloading shop product data');
 	for (const shop of shopInfo) {
-		const group = `shopee-${shop.shopName}`;
-		await getShopData(shop.shopId, group);
+		const shopName = `shopee-${shop.shopName}`;
+		await getShopData(shop.shopId, shopName);
 	}
 };
 

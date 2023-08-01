@@ -28,7 +28,7 @@ const ProductSchema = new mongoose.Schema({
 	metadata: {
 		type: Object,
 	},
-	group: {
+	shopName: {
 		type: String,
 	},
 	active: {
