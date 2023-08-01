@@ -206,6 +206,7 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 		await productAPI.updateProductById(product._id, {
 			images: imagePath,
 			originalImages,
+			activeImageMap: imagePath.map(() => true),
 		});
 	} else {
 		// remove product if no image
