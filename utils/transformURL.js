@@ -42,8 +42,18 @@ export default (url, domain) => {
 	transfromedURL = transfromedURL.startsWith('/') ? `https://${domain}${transfromedURL}` : transfromedURL;
 
 	// if urlQuery contain page then add it back to url
+	const query = {};
 	if (urlQuery.page) {
-		transfromedURL = `${transfromedURL}?page=${urlQuery.page}`;
+		query.page = urlQuery.page;
+	}
+
+	if (urlQuery.p) {
+		query.p = urlQuery.p;
+	}
+
+	if (Object.keys(query).length > 0) {
+		const urlSearchParamsFinal = new URLSearchParams(query);
+		transfromedURL += `?${urlSearchParamsFinal.toString()}`;
 	}
 
 	return transfromedURL;
