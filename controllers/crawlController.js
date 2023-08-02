@@ -19,6 +19,10 @@ const findCrawlList = async (req, res) => {
 		};
 	}
 
+	if (query.status && query.status !== 'all') {
+		searchQuery.status = query.status;
+	}
+
 	const data = await Crawls.findCrawlList(page, pageSize, searchQuery);
 	const total = await Crawls.countTemplatesByQuery(searchQuery);
 
