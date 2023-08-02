@@ -208,6 +208,8 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 			originalImages,
 			activeImageMap: imagePath.map(() => true),
 		});
+
+		Crawls.incrNumOfCrawledImage(crawlId, imagePath.length);
 	} else {
 		// remove product if no image
 		logger.info('Remove product because no image - ', product._id);

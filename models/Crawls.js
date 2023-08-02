@@ -15,6 +15,10 @@ const CrawlSchema = new mongoose.Schema({
 		type: Number,
 		default: 0,
 	},
+	numOfCrawledImage: {
+		type: Number,
+		default: 0,
+	},
 	ignoreUrlPatterns: {
 		type: Array,
 		required: true,
@@ -106,6 +110,22 @@ const Crawls = {
 
 		LogStreamManager.emitNumOfCrawledProduct(numOfCrawledProduct, _id);
 		return numOfCrawledProduct;
+	},
+	async incrNumOfCrawledImage(_id, numberOfImages) {
+		await _db.updateOne({
+			_id,
+		}, {
+			$inc: {
+				numOfCrawledImage: numberOfImages,
+			},
+		});
+
+		// stream to client
+		const crawl = await this.findOneById(_id);
+		const numOfCrawledImage = crawl.numOfCrawledImage || 0;
+
+		LogStreamManager.emitNumOfCrawledImage(numOfCrawledImage, _id);
+		return numOfCrawledImage;
 	},
 };
 
