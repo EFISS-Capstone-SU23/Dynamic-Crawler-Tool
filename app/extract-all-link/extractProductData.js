@@ -181,7 +181,6 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 	//   if it cannot be fetched, then deactive the image
 
 	// Insert num of crawled product
-	await Crawls.incrNumOfCrawledProduct(crawlId);
 
 	// download image in imageLinks
 	const imagePath = await downloadImage(product, domain, imageLinks, logger);
@@ -209,7 +208,8 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 			activeImageMap: imagePath.map(() => true),
 		});
 
-		Crawls.incrNumOfCrawledImage(crawlId, imagePath.length);
+		await Crawls.incrNumOfCrawledImage(crawlId, imagePath.length);
+		await Crawls.incrNumOfCrawledProduct(crawlId);
 	} else {
 		// remove product if no image
 		logger.info('Remove product because no image - ', product._id);
