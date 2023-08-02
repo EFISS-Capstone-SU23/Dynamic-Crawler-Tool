@@ -91,15 +91,19 @@ const upsertCrawl = async (req, res) => {
 		// check if change status
 		if (status && status !== crawl.status) {
 			update.status = status;
+			if (status === 'stopped') {
+				update.endTime = new Date();
+			}
+		}
 
+		await Crawls.updateCrawlById(_id, update);
+
+		if (status && status !== crawl.status) {
 			switch (status) {
 			case 'running':
 				resumeCrawl(_id);
 				break;
 			case 'stopped':
-				// update end time
-				update.endTime = new Date();
-
 				break;
 			case 'paused':
 				break;
@@ -108,7 +112,6 @@ const upsertCrawl = async (req, res) => {
 			}
 		}
 
-		await Crawls.updateCrawlById(_id, update);
 		res.json({
 			success: true,
 		});
