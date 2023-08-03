@@ -21,7 +21,7 @@ export function setupLogStream(server) {
 			const queuePath = `./cache/queue-${crawlId}.json`;
 
 			const handleLogFileChange = async () => {
-				const logData = await readLastLines.read(logFilePath, 1e4);
+				const logData = await readLastLines.read(logFilePath, 1e3);
 				socket.emit(`logData-${crawlId}`, {
 					data: logData,
 				});
