@@ -8,6 +8,8 @@ import {
 	HEADLESS,
 } from '../config/parram.js';
 
+const SELENIUM_HUB_URL = process.env.SELENIUM_HUB_URL || 'http://localhost:4444';
+
 const o = new chrome.Options();
 // o.addArguments('start-fullscreen');
 o.addArguments('disable-infobars');
@@ -27,4 +29,5 @@ o.setUserPreferences({
 export const getDriver = () => new Builder()
 	.forBrowser('chrome')
 	.setChromeOptions(o)
+	.usingServer(SELENIUM_HUB_URL)
 	.build();
