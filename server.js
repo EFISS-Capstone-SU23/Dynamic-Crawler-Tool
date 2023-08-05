@@ -11,6 +11,8 @@ import crawRouter from './routes/crawlRoute.js';
 
 import { setupLogStream } from './app/log-stream/setup.js';
 
+process.setMaxListeners(30);
+
 const app = express();
 
 // setup body parser

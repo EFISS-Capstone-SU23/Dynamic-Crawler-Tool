@@ -28,7 +28,14 @@ export const transformImageURL = (url) => {
 
 export default (url, domain) => {
 	// get all query of url as object
-	const urlObject = new URL(url);
+	let urlObject = null;
+
+	try {
+		urlObject = new URL(url);
+	} catch (error) {
+		return null;
+	}
+
 	const urlSearchParams = new URLSearchParams(urlObject.search);
 	const urlQuery = Object.fromEntries(urlSearchParams.entries());
 

@@ -8,6 +8,7 @@ import {
 	HEADLESS,
 } from '../config/parram.js';
 
+// eslint-disable-next-line no-unused-vars
 const SELENIUM_HUB_URL = process.env.SELENIUM_HUB_URL || 'http://localhost:4444';
 
 const o = new chrome.Options();
@@ -26,8 +27,13 @@ o.setUserPreferences({
 	credential_enable_service: false,
 });
 
+// export const getDriver = () => new Builder()
+// 	.forBrowser('chrome')
+// 	.setChromeOptions(o)
+// 	.usingServer(SELENIUM_HUB_URL)
+// 	.build();
+
 export const getDriver = () => new Builder()
 	.forBrowser('chrome')
 	.setChromeOptions(o)
-	.usingServer(SELENIUM_HUB_URL)
 	.build();

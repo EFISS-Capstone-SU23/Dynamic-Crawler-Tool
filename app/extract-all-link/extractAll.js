@@ -1,6 +1,7 @@
 /* eslint-disable no-promise-executor-return */
 /* eslint-disable no-loop-func */
 /* eslint-disable no-restricted-syntax */
+/*  eslint-disable no-unused-vars */
 import {
 	By,
 } from 'selenium-webdriver';
@@ -61,20 +62,35 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 	}
 
 	const output = [];
-
+	const start = Date.now();
 	const getLinks = async () => {
-		const links = await driver.findElements(By.css('a'));
+		// const links = await driver.findElements(By.css('a'));
 
-		for (const link of links) {
-			try {
-				const href = await link.getAttribute('href');
+		// for (const link of links) {
+		// 	try {
+		// 		const href = await link.getAttribute('href');
 
-				if (href !== null) {
+		// 		if (href !== null) {
+		// 			output.push(href);
+		// 		}
+		// 	} catch (error) {
+		// 		// logger.error(`Error when get href: ${url}`);
+		// 		// logger.error(error);
+		// 	}
+		// }
+
+		// get html of body tag in the page, then extract all link from it (faster)
+		const bodyElement = await getElementByXpath(driver, '/html/body');
+		if (bodyElement) {
+			const bodyHTML = await bodyElement.getAttribute('innerHTML');
+			const regex = /href="([^"]*)"/g;
+			const matches = bodyHTML.matchAll(regex);
+
+			for (const match of matches) {
+				const href = match[1];
+				if (href) {
 					output.push(href);
 				}
-			} catch (error) {
-				// logger.error(`Error when get href: ${url}`);
-				// logger.error(error);
 			}
 		}
 	};
@@ -108,7 +124,7 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 	} else {
 		await getLinks();
 	}
-
+	console.log(`Finish get body html in ${(Date.now() - start) / 1000}s`);
 	resolve(output);
 });
 
@@ -202,7 +218,10 @@ const _extractAll = async (params, driverArray) => {
 		resultArray.forEach((result) => {
 			result.forEach((url) => {
 				if (url) {
-					queue.push(transfromURL(url, domain));
+					const transfromedURL = transfromURL(url, domain);
+					if (transfromedURL) {
+						queue.push(transfromedURL);
+					}
 				}
 			});
 		});
