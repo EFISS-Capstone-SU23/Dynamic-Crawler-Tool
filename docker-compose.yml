@@ -1,0 +1,13 @@
+version: '3'
+services:
+  crawler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: asia-southeast1-docker.pkg.dev/efiss-394203/efiss/crawler:latest
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env

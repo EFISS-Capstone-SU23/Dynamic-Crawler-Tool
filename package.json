@@ -6,10 +6,11 @@
 	"scripts": {
 		"prepare": "husky install",
 		"lint": "eslint .",
+		"start": "node server.js",
+		"start:server": "nodemon server.js --ignore cache",
 		"start:dev": "node index.js --dev",
 		"start:prod": "node index.js --max-instance=32 --continue",
-		"start:shopee": "node app/shopee/index.js",
-		"start:server": "nodemon server.js --ignore cache"
+		"start:shopee": "node app/shopee/index.js"
 	},
 	"repository": {
 		"type": "git",
