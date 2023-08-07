@@ -193,8 +193,8 @@ const _extractAll = async (params, driverArray) => {
 	if (continueExtract) {
 		const crawl = await Crawls.findOneById(crawlId);
 		if (crawl) {
-			Object.assign(visitedURLs, crawl.visitedUrls);
-			queue = filterQueue(crawl.queue, visitedURLs, ignoreURLsRegex, domain);
+			Object.assign(visitedURLs, crawl.visitedUrls || {});
+			queue = filterQueue(crawl.queue || [], visitedURLs, ignoreURLsRegex, domain);
 		}
 	}
 
