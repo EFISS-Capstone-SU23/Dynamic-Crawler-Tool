@@ -18,6 +18,11 @@ export function setupLogStream(server) {
 		const watchLogFile = async (crawlId) => {
 			const logFilePath = `./logs/crawl-${crawlId}.log`;
 
+			// if file not exist, create it
+			if (!fs.existsSync(logFilePath)) {
+				fs.writeFileSync(logFilePath, '');
+			}
+
 			const handleLogFileChange = async () => {
 				const logData = await readLastLines.read(logFilePath, 1e3);
 				socket.emit(`logData-${crawlId}`, {
