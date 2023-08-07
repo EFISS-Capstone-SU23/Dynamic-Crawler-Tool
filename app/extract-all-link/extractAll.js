@@ -34,6 +34,7 @@ import Products from '../../models/Products.js';
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const startExtractPage = async (driver, url, downloadedURL, params) => new Promise(async (resolve) => {
+	await delay(2.5 * 1000);
 	const {
 		xPath,
 		logger,
@@ -92,7 +93,10 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 			const bodyHTML = await bodyElement.getAttribute('innerHTML');
 			const regex = /href="([^"]*)"/g;
 			const matches = bodyHTML.matchAll(regex);
-			for (const match of matches) {
+			const matchArray = Array.from(matches);
+
+			logger.info(`Get ${matchArray.length} links from ${url}`);
+			for (const match of matchArray) {
 				let href = match[1];
 				if (href) {
 					if (href.startsWith('/')) {
@@ -284,7 +288,7 @@ export default async function extractAll(params) {
 		quitAllDriver(driverArray);
 
 		// update status of crawl
-		Crawls.updateStatus(crawlId, 'stopped');
+		await Crawls.updateStatus(crawlId, 'stopped');
 	} catch (error) {
 		logger.error('Error when extract all link');
 		logger.error(error);
@@ -292,6 +296,6 @@ export default async function extractAll(params) {
 		quitAllDriver(driverArray);
 
 		// update status of crawl
-		Crawls.updateStatus(crawlId, 'paused');
+		await Crawls.updateStatus(crawlId, 'paused');
 	}
 }
