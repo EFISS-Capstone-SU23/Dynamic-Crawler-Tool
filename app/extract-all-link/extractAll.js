@@ -92,10 +92,12 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 			const bodyHTML = await bodyElement.getAttribute('innerHTML');
 			const regex = /href="([^"]*)"/g;
 			const matches = bodyHTML.matchAll(regex);
-
 			for (const match of matches) {
-				const href = match[1];
+				let href = match[1];
 				if (href) {
+					if (href.startsWith('/')) {
+						href = `https://${new URL(url).hostname}${href}`;
+					}
 					output.push(href);
 				}
 			}
