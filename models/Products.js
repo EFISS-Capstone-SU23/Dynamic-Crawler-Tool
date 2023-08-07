@@ -40,6 +40,11 @@ const ProductSchema = new mongoose.Schema({
 	activeImageMap: {
 		type: [Boolean],
 	},
+	crawlId: {
+		type: String,
+	},
+}, {
+	timestamps: true,
 });
 
 const _db = mongoose.model('Product', ProductSchema);
