@@ -142,7 +142,16 @@ const filterQueue = (queue, visitedURL, ignoreURLsRegex, domain) => {
 
 	// filter ignore url with regex and filter visited url
 	queue = queue.filter((url) => {
-		if (!url.includes(domain)) {
+		// if (!url.includes(domain)) {
+		// 	return false;
+		// }
+
+		try {
+			const urlObj = new URL(url);
+			if (urlObj.hostname !== domain) {
+				return false;
+			}
+		} catch (error) {
 			return false;
 		}
 
