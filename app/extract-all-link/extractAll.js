@@ -49,12 +49,13 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 	// handle if page not existed
 	try {
 		driver.get(url);
+		// wait for page to load
+		await driver.wait(() => driver.executeScript('return document.readyState').then((readyState) => readyState === 'complete'), 10000);
 	} catch (error) {
+		logger.error(`Error when open page: ${url}`);
+		logger.error(error);
 		resolve([]);
 	}
-
-	// wait for page to load
-	await driver.wait(() => driver.executeScript('return document.readyState').then((readyState) => readyState === 'complete'), 10000);
 
 	// Try to extract product data
 	// if (downloadedURL[url]) {
