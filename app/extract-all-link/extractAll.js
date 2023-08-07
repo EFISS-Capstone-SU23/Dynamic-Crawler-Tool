@@ -29,6 +29,7 @@ import {
 import Crawls from '../../models/Crawls.js';
 import LogStreamManager from '../log-stream/LogStreamManager.js';
 import productAPI from '../../api/productAPI.js';
+import Products from '../../models/Products.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -45,10 +46,16 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 		return;
 	}
 
-	driver.get(url);
-
-	// wait for page to load
-	await driver.wait(() => driver.executeScript('return document.readyState').then((readyState) => readyState === 'complete'), 10000);
+	// handle if page not existed
+	try {
+		driver.get(url);
+		// wait for page to load
+		await driver.wait(() => driver.executeScript('return document.readyState').then((readyState) => readyState === 'complete'), 10000);
+	} catch (error) {
+		logger.error(`Error when open page: ${url}`);
+		logger.error(error);
+		resolve([]);
+	}
 
 	// Try to extract product data
 	// if (downloadedURL[url]) {
@@ -164,7 +171,7 @@ const _extractAll = async (params, driverArray) => {
 		logger,
 	} = params;
 
-	const visitedURL = {};
+	const visitedURLs = {};
 
 	const domain = new URL(startUrl).hostname;
 	let queue = [
@@ -175,22 +182,15 @@ const _extractAll = async (params, driverArray) => {
 	const ignoreURLsRegex = ignoreUrlPatterns.map((url) => new RegExp(url));
 
 	if (continueExtract) {
-		// check if cached file exist then load it into visitedURL and queue
-		if (fs.existsSync(`./cache/visited-${crawlId}.json`) && fs.existsSync(`./cache/queue-${crawlId}.json`)) {
-			const visitedURLFile = fs.readFileSync(`./cache/visited-${crawlId}.json`, 'utf8');
-			const queueFile = fs.readFileSync(`./cache/queue-${crawlId}.json`, 'utf8');
-
-			if (visitedURLFile && queueFile) {
-				Object.assign(visitedURL, JSON.parse(visitedURLFile));
-				queue = JSON.parse(queueFile);
-
-				queue = filterQueue(queue, visitedURL, ignoreURLsRegex, domain);
-			}
+		const crawl = await Crawls.findOneById(crawlId);
+		if (crawl) {
+			Object.assign(visitedURLs, crawl.visitedUrls);
+			queue = filterQueue(crawl.queue, visitedURLs, ignoreURLsRegex, domain);
 		}
 	}
 
 	// get all product with domain and mask as downloaded
-	const downloadedURL = await productAPI.getDownloadedProductURL(domain);
+	const downloadedURL = await Products.getDownloadedProductURL(domain);
 	while (queue.length > 0) {
 		// Check status of crawl if it runnning
 		const crawl = await Crawls.findOneById(crawlId);
@@ -205,7 +205,7 @@ const _extractAll = async (params, driverArray) => {
 
 		// update visited url
 		urlArray.forEach((url) => {
-			visitedURL[url] = true;
+			visitedURLs[url] = true;
 		});
 
 		// start extract page and return promise array
@@ -226,15 +226,20 @@ const _extractAll = async (params, driverArray) => {
 			});
 		});
 
-		queue = filterQueue(queue, visitedURL, ignoreURLsRegex, domain);
+		queue = filterQueue(queue, visitedURLs, ignoreURLsRegex, domain);
 		logger.info(`Queue length: ${queue.length}`);
 
 		// Save visited url to file and queue to file
-		saveJsonToFile(visitedURL, `./cache/visited-${crawlId}.json`);
-		saveJsonToFile(queue, `./cache/queue-${crawlId}.json`);
+		// saveJsonToFile(visitedURL, `./cache/visited-${crawlId}.json`);
+		// saveJsonToFile(queue, `./cache/queue-${crawlId}.json`);
+
+		await Crawls.updateCrawlById(crawlId, {
+			visitedUrls: visitedURLs,
+			queue,
+		});
 
 		// emit to client
-		LogStreamManager.emitVisitedURLs(Object.keys(visitedURL), crawlId);
+		LogStreamManager.emitVisitedURLs(Object.keys(visitedURLs), crawlId);
 		LogStreamManager.emitQueue(queue, crawlId);
 	}
 };
@@ -252,18 +257,6 @@ export default async function extractAll(params) {
 		crawlId,
 	} = params;
 	const logger = createLog(crawlId);
-
-	// create cache file
-	const visitedURLPath = `./cache/visited-${crawlId}.json`;
-	const queuePath = `./cache/queue-${crawlId}.json`;
-
-	if (!fs.existsSync(visitedURLPath)) {
-		fs.writeFileSync(visitedURLPath, '{}');
-	}
-
-	if (!fs.existsSync(queuePath)) {
-		fs.writeFileSync(queuePath, '[]');
-	}
 
 	logger.info('===================');
 	logger.info(`Start extract all link from: ${startUrl}, max driver: ${numInstance}`);

@@ -1,6 +1,6 @@
 import '../config/env.js';
 import '../config/mongoose.js';
-import productAPI from '../api/productAPI.js';
+// import productAPI from '../api/productAPI.js';
 import Products from '../models/Products.js';
 
 const main = async () => {
@@ -11,7 +11,7 @@ const main = async () => {
 
 		if (!shopName) {
 			const domain = new URL(url).hostname;
-			await productAPI.updateProductById(_id, {
+			await Products.updateProductById(_id, {
 				shopName: domain,
 				originalImages: [],
 			});

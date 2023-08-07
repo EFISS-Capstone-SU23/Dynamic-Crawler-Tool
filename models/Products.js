@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import convertPrice from '../utils/convertPrice.js';
+
 const ProductSchema = new mongoose.Schema({
 	title: {
 		type: String,
@@ -44,17 +46,18 @@ const _db = mongoose.model('Product', ProductSchema);
 
 const Product = {
 	_db,
-	// insertNewProduct: async (product) => {
-	// 	if (product.price) {
-	// 		product.price = convertPrice(product.price);
-	// 	}
+	insertNewProduct: async (product) => {
+		if (product.price) {
+			product.price = convertPrice(product.price);
+		}
+		product.active = true;
 
-	// 	return _db.create(product);
-	// },
+		return _db.create(product);
+	},
 	async updateProductById(id, product) {
-		// if (product.price) {
-		// 	product.price = convertPrice(product.price);
-		// }
+		if (product.price) {
+			product.price = convertPrice(product.price);
+		}
 
 		const updatedProduct = await _db.findOneAndUpdate({
 			_id: id,
