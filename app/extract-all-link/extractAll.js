@@ -170,7 +170,7 @@ const _extractAll = async (params, driverArray) => {
 		logger,
 	} = params;
 
-	const visitedURL = {};
+	const visitedURLs = {};
 
 	const domain = new URL(startUrl).hostname;
 	let queue = [
@@ -181,17 +181,10 @@ const _extractAll = async (params, driverArray) => {
 	const ignoreURLsRegex = ignoreUrlPatterns.map((url) => new RegExp(url));
 
 	if (continueExtract) {
-		// check if cached file exist then load it into visitedURL and queue
-		if (fs.existsSync(`./cache/visited-${crawlId}.json`) && fs.existsSync(`./cache/queue-${crawlId}.json`)) {
-			const visitedURLFile = fs.readFileSync(`./cache/visited-${crawlId}.json`, 'utf8');
-			const queueFile = fs.readFileSync(`./cache/queue-${crawlId}.json`, 'utf8');
-
-			if (visitedURLFile && queueFile) {
-				Object.assign(visitedURL, JSON.parse(visitedURLFile));
-				queue = JSON.parse(queueFile);
-
-				queue = filterQueue(queue, visitedURL, ignoreURLsRegex, domain);
-			}
+		const crawl = await Crawls.findOneById(crawlId);
+		if (crawl) {
+			Object.assign(visitedURLs, crawl.visitedUrls);
+			queue = filterQueue(crawl.queue, visitedURLs, ignoreURLsRegex, domain);
 		}
 	}
 
@@ -211,7 +204,7 @@ const _extractAll = async (params, driverArray) => {
 
 		// update visited url
 		urlArray.forEach((url) => {
-			visitedURL[url] = true;
+			visitedURLs[url] = true;
 		});
 
 		// start extract page and return promise array
@@ -232,15 +225,20 @@ const _extractAll = async (params, driverArray) => {
 			});
 		});
 
-		queue = filterQueue(queue, visitedURL, ignoreURLsRegex, domain);
+		queue = filterQueue(queue, visitedURLs, ignoreURLsRegex, domain);
 		logger.info(`Queue length: ${queue.length}`);
 
 		// Save visited url to file and queue to file
-		saveJsonToFile(visitedURL, `./cache/visited-${crawlId}.json`);
-		saveJsonToFile(queue, `./cache/queue-${crawlId}.json`);
+		// saveJsonToFile(visitedURL, `./cache/visited-${crawlId}.json`);
+		// saveJsonToFile(queue, `./cache/queue-${crawlId}.json`);
+
+		await Crawls.updateCrawlById(crawlId, {
+			visitedUrls: visitedURLs,
+			queue,
+		});
 
 		// emit to client
-		LogStreamManager.emitVisitedURLs(Object.keys(visitedURL), crawlId);
+		LogStreamManager.emitVisitedURLs(Object.keys(visitedURLs), crawlId);
 		LogStreamManager.emitQueue(queue, crawlId);
 	}
 };
@@ -258,18 +256,6 @@ export default async function extractAll(params) {
 		crawlId,
 	} = params;
 	const logger = createLog(crawlId);
-
-	// create cache file
-	const visitedURLPath = `./cache/visited-${crawlId}.json`;
-	const queuePath = `./cache/queue-${crawlId}.json`;
-
-	if (!fs.existsSync(visitedURLPath)) {
-		fs.writeFileSync(visitedURLPath, '{}');
-	}
-
-	if (!fs.existsSync(queuePath)) {
-		fs.writeFileSync(queuePath, '[]');
-	}
 
 	logger.info('===================');
 	logger.info(`Start extract all link from: ${startUrl}, max driver: ${numInstance}`);

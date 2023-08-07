@@ -38,6 +38,14 @@ const CrawlSchema = new mongoose.Schema({
 	endTime: {
 		type: Date,
 	},
+	queue: {
+		type: Array,
+		default: [],
+	},
+	visitedUrls: {
+		type: Object,
+		default: {},
+	},
 }, {
 	timestamps: true,
 });
