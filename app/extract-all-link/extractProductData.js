@@ -11,7 +11,8 @@ import { transformImageURL } from '../../utils/transformURL.js';
 import { removeSmallImage, checkFileTypeByContent } from '../../utils/file/imageFile.js';
 import { bucketName } from '../storage/index.js';
 import Crawls from '../../models/Crawls.js';
-import productAPI from '../../api/productAPI.js';
+import Products from '../../models/Products.js';
+// import productAPI from '../../api/productAPI.js';
 
 const FILE_STORAGE_TYPE = process.env.FILE_STORAGE_TYPE || 'local';
 
@@ -155,7 +156,18 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 	const domain = new URL(url).hostname;
 
 	// save product data to database
-	const product = await productAPI.insertNewProduct({
+	// const product = await productAPI.insertNewProduct({
+	// 	title,
+	// 	price,
+	// 	description,
+	// 	url,
+	// 	metadata,
+	// 	originalImages: imageLinks,
+	// 	shopName: domain,
+	// 	crawlId,
+	// });
+
+	const product = await Products.insertNewProduct({
 		title,
 		price,
 		description,
@@ -202,7 +214,7 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 
 	if (imagePath.length) {
 		// save product image path to database
-		await productAPI.updateProductById(product._id, {
+		await Products.updateProductById(product._id, {
 			images: imagePath,
 			originalImages,
 			activeImageMap: imagePath.map(() => true),
@@ -213,6 +225,6 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 	} else {
 		// remove product if no image
 		logger.info('Remove product because no image - ', product._id);
-		await productAPI.deleteProductById(product._id);
+		await Products.deleteProductById(product._id);
 	}
 };

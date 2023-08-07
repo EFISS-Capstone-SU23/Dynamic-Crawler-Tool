@@ -29,6 +29,7 @@ import {
 import Crawls from '../../models/Crawls.js';
 import LogStreamManager from '../log-stream/LogStreamManager.js';
 import productAPI from '../../api/productAPI.js';
+import Products from '../../models/Products.js';
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -195,7 +196,7 @@ const _extractAll = async (params, driverArray) => {
 	}
 
 	// get all product with domain and mask as downloaded
-	const downloadedURL = await productAPI.getDownloadedProductURL(domain);
+	const downloadedURL = await Products.getDownloadedProductURL(domain);
 	while (queue.length > 0) {
 		// Check status of crawl if it runnning
 		const crawl = await Crawls.findOneById(crawlId);

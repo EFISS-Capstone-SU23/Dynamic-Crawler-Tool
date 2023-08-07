@@ -8,7 +8,8 @@ import logger from '../../../config/log.js';
 import { delay } from '../../../utils/delay.js';
 import { STORAGE_PREFIX } from '../../../config/config.js';
 import { bucketName } from '../../storage/setupStorage.js';
-import productAPI from '../../../api/productAPI.js';
+// import productAPI from '../../../api/productAPI.js';
+import Products from '../../../models/Products.js';
 
 const PAGE_SIZE = 100;
 const MAX_DOWNLOAD_IMAGE = 30 * 1000;
@@ -40,7 +41,7 @@ export default async function getShopData(shopId, shopName) {
 	logger.info(`Downloading shop ${shopName} - ${shopId}`);
 	let offSet = 0;
 
-	const downloadedURL = await productAPI.getDownloadedProductURL('shopee.vn');
+	const downloadedURL = await Products.getDownloadedProductURL('shopee.vn');
 
 	while (true) {
 		logger.info(`Downloading page ${offSet / PAGE_SIZE + 1} of shop ${shopName}`);
@@ -75,7 +76,16 @@ export default async function getShopData(shopId, shopName) {
 			}
 
 			logger.info(`Downloading item ${name}`);
-			const product = await productAPI.insertNewProduct({
+			// const product = await productAPI.insertNewProduct({
+			// 	title: name,
+			// 	price: price / 1e5,
+			// 	originalImages: images,
+			// 	description,
+			// 	url,
+			// 	shopName,
+			// 	metadata: {},
+			// });
+			const product = await Products.insertNewProduct({
 				title: name,
 				price: price / 1e5,
 				originalImages: images,
@@ -99,7 +109,7 @@ export default async function getShopData(shopId, shopName) {
 			}
 
 			// save product image path to database
-			await productAPI.updateProductById(product._id, {
+			await Products.updateProductById(product._id, {
 				images: imageLinks,
 			});
 			await delay(0.2 * 1000);
