@@ -45,7 +45,12 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 		return;
 	}
 
-	driver.get(url);
+	// handle if page not existed
+	try {
+		driver.get(url);
+	} catch (error) {
+		resolve([]);
+	}
 
 	// wait for page to load
 	await driver.wait(() => driver.executeScript('return document.readyState').then((readyState) => readyState === 'complete'), 10000);
