@@ -288,7 +288,10 @@ export default async function extractAll(params) {
 		quitAllDriver(driverArray);
 
 		// update status of crawl
-		await Crawls.updateStatus(crawlId, 'stopped');
+		await Crawls.updateCrawlById(crawlId, {
+			status: 'stopped',
+			endTime: new Date(),
+		});
 	} catch (error) {
 		logger.error('Error when extract all link');
 		logger.error(error);
