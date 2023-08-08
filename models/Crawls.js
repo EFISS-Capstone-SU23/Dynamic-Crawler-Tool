@@ -135,6 +135,11 @@ const Crawls = {
 		LogStreamManager.emitNumOfCrawledImage(numOfCrawledImage, _id);
 		return numOfCrawledImage;
 	},
+	findByStatus(status) {
+		return _db.find({
+			status,
+		});
+	},
 };
 
 export default Crawls;
