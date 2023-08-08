@@ -287,11 +287,14 @@ export default async function extractAll(params) {
 		logger.info('Quit all driver');
 		quitAllDriver(driverArray);
 
-		// update status of crawl
-		await Crawls.updateCrawlById(crawlId, {
-			status: 'stopped',
-			endTime: new Date(),
-		});
+		// update status of crawl if current status is not paused
+		const crawl = await Crawls.findOneById(crawlId);
+		if (crawl && crawl.status !== 'paused') {
+			await Crawls.updateCrawlById(crawlId, {
+				status: 'stopped',
+				endTime: new Date(),
+			});
+		}
 	} catch (error) {
 		logger.error('Error when extract all link');
 		logger.error(error);
