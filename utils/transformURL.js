@@ -11,6 +11,11 @@ export const transformImageURL = (url) => {
 		'size',
 	];
 
+	// if url start with // then remove it
+	if (url.startsWith('//')) {
+		url = url.slice(2);
+	}
+
 	// add https to url if it not contain protocol
 	if (!url.startsWith('http')) {
 		url = `https:${url}`;
