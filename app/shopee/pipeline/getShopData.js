@@ -13,7 +13,7 @@ import { bucketName } from '../../storage/setupStorage.js';
 // import productAPI from '../../../api/productAPI.js';
 import Products from '../../../models/Products.js';
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 100;
 const MAX_DOWNLOAD_IMAGE = 2 * 60 * 1000;
 const userCookiePath = './app/shopee/config/userCookie.txt';
 let currentCookie = null;
@@ -136,6 +136,9 @@ export default async function getShopData(shopId, shopName) {
 			if (!imageLinks) {
 				logger.error(`Timeout download image for item ${name}`);
 				logger.error(shopId, itemid);
+
+				// remove product
+				await Products.deleteProductById(product._id);
 				continue;
 			}
 
@@ -147,6 +150,8 @@ export default async function getShopData(shopId, shopName) {
 			await delay(0.2 * 1000);
 		}
 
+		// sleep 30s
+		await delay(30 * 1000);
 		offSet += PAGE_SIZE;
 	}
 }
