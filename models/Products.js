@@ -98,6 +98,18 @@ const Product = {
 
 		return downloadedURL;
 	},
+	async getDownloadedProductURLByShopName(shopName) {
+		const downloadedURL = {};
+
+		const products = await this._db.find({
+			shopName,
+		});
+		products.forEach((product) => {
+			downloadedURL[product.url] = true;
+		});
+
+		return downloadedURL;
+	},
 	deleteProductById(id) {
 		return _db.deleteOne({
 			_id: id,

@@ -45,7 +45,7 @@ export default async function getShopData(shopId, shopName) {
 
 	while (true) {
 		logger.info(`Downloading page ${offSet / PAGE_SIZE + 1} of shop ${shopName}`);
-		const API_ENDPOINT = `https://shopee.vn/api/v4/shop/rcmd_items?bundle=shop_page_category_tab_main&limit=${100}&offset=${offSet}&shop_id=${shopId}`;
+		const API_ENDPOINT = `https://shopee.vn/api/v4/shop/rcmd_items?bundle=shop_page_category_tab_main&limit=${PAGE_SIZE}&offset=${offSet}&shop_id=${shopId}`;
 
 		const res = await axios.get(API_ENDPOINT);
 		const data = res.data.data;
@@ -93,6 +93,7 @@ export default async function getShopData(shopId, shopName) {
 				url,
 				shopName,
 				metadata: {},
+				active: true,
 			});
 
 			// download image in imageLinks
@@ -111,6 +112,7 @@ export default async function getShopData(shopId, shopName) {
 			// save product image path to database
 			await Products.updateProductById(product._id, {
 				images: imageLinks,
+				activeImageMap: imageLinks.map(() => true),
 			});
 			await delay(0.2 * 1000);
 		}
