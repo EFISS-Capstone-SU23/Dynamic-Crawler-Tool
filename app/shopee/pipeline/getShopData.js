@@ -149,11 +149,11 @@ export default async function getShopData(shopId, shopName) {
 				images: imageLinks,
 				activeImageMap: imageLinks.map(() => true),
 			});
-			await delay(0.2 * 1000);
+			await delay(0.3 * 1000);
 		}
 
 		// sleep 30s
-		await delay(10 * 1000);
+		// await delay(10 * 1000);
 		offSet += PAGE_SIZE;
 	}
 }
