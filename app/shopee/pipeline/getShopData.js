@@ -14,7 +14,7 @@ import { bucketName } from '../../storage/setupStorage.js';
 import Products from '../../../models/Products.js';
 
 const PAGE_SIZE = 100;
-const MAX_DOWNLOAD_IMAGE = 2 * 60 * 1000;
+const MAX_DOWNLOAD_IMAGE = 	10 * 60 * 1000;
 const userCookiePath = './app/shopee/config/userCookie.txt';
 let currentCookie = null;
 
@@ -28,7 +28,9 @@ const downloadImage = async (product, shopName, images) => {
 	const imagesPromise = images.map(async (imageLink, i) => {
 		const imgPath = `${STORAGE_PREFIX}/${shopName}/${product._id}_${i}_${shopName.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
 
+		console.log('Start download image', imageLink);
 		const saveStatus = await saveFileFromURL(imageLink, imgPath);
+		console.log('End download image', imageLink);
 
 		if (!saveStatus) {
 			return null;
@@ -151,7 +153,7 @@ export default async function getShopData(shopId, shopName) {
 		}
 
 		// sleep 30s
-		await delay(30 * 1000);
+		await delay(10 * 1000);
 		offSet += PAGE_SIZE;
 	}
 }
