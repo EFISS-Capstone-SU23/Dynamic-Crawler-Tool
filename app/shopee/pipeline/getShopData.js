@@ -2,6 +2,8 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-loop-func */
 import axios from 'axios';
+import fs from 'fs';
+// import cookie from 'cookie';
 
 import { saveFileFromURL } from '../../../utils/file/saveFileFromURL.js';
 import logger from '../../../config/log.js';
@@ -11,8 +13,10 @@ import { bucketName } from '../../storage/setupStorage.js';
 // import productAPI from '../../../api/productAPI.js';
 import Products from '../../../models/Products.js';
 
-const PAGE_SIZE = 100;
-const MAX_DOWNLOAD_IMAGE = 30 * 1000;
+const PAGE_SIZE = 50;
+const MAX_DOWNLOAD_IMAGE = 2 * 60 * 1000;
+const userCookiePath = './app/shopee/config/userCookie.txt';
+let currentCookie = null;
 
 const timeoutDownloadImage = new Promise((resolve) => {
 	setTimeout(() => {
@@ -47,7 +51,33 @@ export default async function getShopData(shopId, shopName) {
 		logger.info(`Downloading page ${offSet / PAGE_SIZE + 1} of shop ${shopName}`);
 		const API_ENDPOINT = `https://shopee.vn/api/v4/shop/rcmd_items?bundle=shop_page_category_tab_main&limit=${PAGE_SIZE}&offset=${offSet}&shop_id=${shopId}`;
 
-		const res = await axios.get(API_ENDPOINT);
+		// get cookie
+		if (!currentCookie) {
+			// in first time, read cookie from file
+			currentCookie = fs.readFileSync(userCookiePath, 'utf8');
+		}
+
+		const res = await axios.get(API_ENDPOINT, {
+			headers: {
+				cookie: currentCookie.trim(),
+				'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+			},
+		});
+
+		// update cookie for next request
+		// const setCookieHeader = res.headers['set-cookie'];
+		// if (setCookieHeader) {
+		// 	const cookies = setCookieHeader.map(cookie.parse);
+
+		// 	console.log(Object.entries(cookies));
+		// 	const serializedCookies = Object.entries(cookies)
+		// 		.map(([key, value]) => `${key}=${value}`)
+		// 		.join('; ');
+
+		// 	currentCookie = serializedCookies;
+		// 	fs.writeFileSync(userCookiePath, serializedCookies);
+		// }
+
 		const data = res.data.data;
 
 		if (!data || !(data.items || []).length) {
