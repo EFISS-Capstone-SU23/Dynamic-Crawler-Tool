@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-continue */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-loop-func */
@@ -28,9 +29,7 @@ const downloadImage = async (product, shopName, images) => {
 	const imagesPromise = images.map(async (imageLink, i) => {
 		const imgPath = `${STORAGE_PREFIX}/${shopName}/${product._id}_${i}_${shopName.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
 
-		console.log('Start download image', imageLink);
 		const saveStatus = await saveFileFromURL(imageLink, imgPath);
-		console.log('End download image', imageLink);
 
 		if (!saveStatus) {
 			return null;
@@ -130,10 +129,11 @@ export default async function getShopData(shopId, shopName) {
 
 			// download image in imageLinks
 			// filter null\
-			const imageLinks = await Promise.race([
-				downloadImage(product, shopName, images),
-				timeoutDownloadImage,
-			]);
+			// const imageLinks = await Promise.race([
+			// 	downloadImage(product, shopName, images),
+			// 	timeoutDownloadImage,
+			// ]);
+			const imageLinks = await downloadImage(product, shopName, images);
 
 			if (!imageLinks) {
 				logger.error(`Timeout download image for item ${name}`);
