@@ -41,7 +41,7 @@ export default async function getShopData(shopId, shopName) {
 	logger.info(`Downloading shop ${shopName} - ${shopId}`);
 	let offSet = 0;
 
-	const downloadedURL = await Products.getDownloadedProductURL('shopee.vn');
+	const downloadedURL = await Products.getDownloadedProductURLByShopName(shopName);
 
 	while (true) {
 		logger.info(`Downloading page ${offSet / PAGE_SIZE + 1} of shop ${shopName}`);
