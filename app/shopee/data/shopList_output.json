@@ -1,10 +1,5 @@
 [
     {
-        "shopId": "11043",
-        "shopName": "Rhodishop",
-        "shopNameRaw": "Rhodishop"
-    },
-    {
         "shopId": "81166",
         "shopName": "linhtumii",
         "shopNameRaw": "linhtumii"
@@ -33368,5 +33363,10 @@
         "shopId": "964504938",
         "shopName": "Ca_hng_vy_ci_mizyl",
         "shopNameRaw": "Cửa hàng váy cưới mới（zyl)"
+    },
+    {
+        "shopId": "11043",
+        "shopName": "Rhodishop",
+        "shopNameRaw": "Rhodishop"
     }
 ]
