@@ -8,7 +8,7 @@ const DATA_PATH = './app/shopee/data/shopList_output.json';
 const CHECKED_URL_PATH = './cache/shopeeCheckedURL.json';
 const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
 
-const WORKER_NUMBER = 2;
+const WORKER_NUMBER = 16;
 
 const main = async () => {
 	const currentShopName = 'FACIOSHOP.COM';
