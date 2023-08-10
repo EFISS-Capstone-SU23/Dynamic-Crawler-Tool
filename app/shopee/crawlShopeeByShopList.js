@@ -5,20 +5,15 @@ import '../../config/mongoose.js';
 import getShopData from './pipeline/getShopData.js';
 
 const DATA_PATH = './app/shopee/data/shopList_output.json';
-const CHECKED_URL_PATH = './cache/shopeeCheckedURL.json';
+// const CHECKED_URL_PATH = './cache/shopeeCheckedURL.json';
 const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
 
-const WORKER_NUMBER = 16;
+const WORKER_NUMBER = 5;
 
 const main = async () => {
-	const currentShopName = 'FACIOSHOP.COM';
+	const currentShopName = '';
 
 	let shopInfo = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
-
-	let checkedURL = {};
-	if (fs.existsSync(CHECKED_URL_PATH)) {
-		checkedURL = JSON.parse(fs.readFileSync(CHECKED_URL_PATH, 'utf8'));
-	}
 
 	let checkedShopId = {};
 	if (fs.existsSync(CHECKED_SHOP_ID_PATH)) {
@@ -46,15 +41,15 @@ const main = async () => {
 	}
 
 	const worker = async (shopInfoPart) => {
-		// random delay between 0 and 5s
-		const delayTime = Math.random() * 5000;
+		// random delay between 2s and 10s
+		const delayTime = Math.floor(Math.random() * 8000) + 2000;
 		// eslint-disable-next-line no-promise-executor-return
-		await new Promise((resolve) => setTimeout(resolve, delayTime));
-
-		for (const shop of shopInfoPart) {
-			const shopName = `shopee-${shop.shopName}`;
-			await getShopData(parseInt(shop.shopId, 10), shopName, checkedURL, checkedShopId);
-		}
+		setTimeout(async () => {
+			for (const shop of shopInfoPart) {
+				const shopName = `shopee-${shop.shopName}`;
+				await getShopData(parseInt(shop.shopId, 10), shopName, checkedShopId);
+			}
+		}, delayTime);
 	};
 	const workerPromise = shopInfoParts.map((shopInfoPart) => worker(shopInfoPart));
 	await Promise.all(workerPromise);

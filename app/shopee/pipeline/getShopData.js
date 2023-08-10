@@ -41,7 +41,7 @@ const keywords = [
 	'quần',
 	'váy',
 	'đầm',
-	'giày',
+	// 'giày',
 ];
 
 const downloadImage = async (product, shopName, images) => {
@@ -98,7 +98,7 @@ const requestGetWithCookie = async (url) => {
 	}
 };
 
-export default async function getShopData(shopId, shopName, checkedURL = {}, checkedShopId = {}) {
+export default async function getShopData(shopId, shopName, checkedShopId = {}) {
 	// check if shopId is checked
 	if (checkedShopId[shopId]) {
 		return;
@@ -143,12 +143,6 @@ export default async function getShopData(shopId, shopName, checkedURL = {}, che
 			images = images.map((image) => `https://down-vn.img.susercontent.com/file/${image}`);
 
 			const url = `https://shopee.vn/product/${shopId}/${itemid}`;
-
-			if (checkedURL[url]) {
-				continue;
-			}
-
-			checkedURL[url] = true;
 
 			if (downloadedURL[url]) {
 				continue;
@@ -240,9 +234,6 @@ export default async function getShopData(shopId, shopName, checkedURL = {}, che
 		// sleep 30s
 		// await delay(10 * 1000);
 		offSet += PAGE_SIZE;
-
-		// save checkedURL
-		fs.writeFileSync(CHECKED_URL_PATH, JSON.stringify(checkedURL, null, 4));
 	}
 
 	// save checkedShopId
