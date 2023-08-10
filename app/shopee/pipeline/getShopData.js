@@ -25,6 +25,12 @@ const timeoutDownloadImage = new Promise((resolve) => {
 	}, MAX_DOWNLOAD_IMAGE);
 });
 
+const FASHION_CATEGORY = [
+	'Thời Trang Nam',
+	'Thời Trang Nữ',
+	'Thời Trang Trẻ Em',
+];
+
 const downloadImage = async (product, shopName, images) => {
 	const imagesPromise = images.map(async (imageLink, i) => {
 		const imgPath = `${STORAGE_PREFIX}/${shopName}/${product._id}_${i}_${shopName.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
@@ -100,13 +106,11 @@ export default async function getShopData(shopId, shopName) {
 			images = images.map((image) => `https://down-vn.img.susercontent.com/file/${image}`);
 
 			const url = `https://shopee.vn/product/${shopId}/${itemid}`;
-			const description = name;
 
 			if (downloadedURL[url]) {
 				continue;
 			}
 
-			logger.info(`Downloading item ${name}`);
 			// const product = await productAPI.insertNewProduct({
 			// 	title: name,
 			// 	price: price / 1e5,
@@ -116,6 +120,37 @@ export default async function getShopData(shopId, shopName) {
 			// 	shopName,
 			// 	metadata: {},
 			// });
+
+			// fetch item data
+			const URL_ENDPOINT = `https://shopee.vn/api/v4/item/get?itemid=${itemid}&shopid=${shopId}`;
+
+			const productRes = await axios.get(URL_ENDPOINT, {
+				headers: {
+					cookie: currentCookie.trim(),
+				},
+			});
+			const productData = productRes.data.data;
+
+			if (!productData) {
+				logger.error(`Cannot get product data for item ${name}`);
+				logger.error(shopId, itemid);
+
+				continue;
+			}
+
+			const {
+				categories,
+				description,
+			} = productData;
+			const categoriesName = categories.map((category) => category.display_name);
+
+			// check if category is fashion
+			if (!categoriesName.some((categoryName) => FASHION_CATEGORY.includes(categoryName))) {
+				logger.info(`Skip item ${name} because it is not fashion`);
+				continue;
+			}
+			logger.info(`Downloading item ${name}`);
+
 			const product = await Products.insertNewProduct({
 				title: name,
 				price: price / 1e5,
@@ -125,6 +160,7 @@ export default async function getShopData(shopId, shopName) {
 				shopName,
 				metadata: {},
 				active: true,
+				categories: categoriesName,
 			});
 
 			// download image in imageLinks
