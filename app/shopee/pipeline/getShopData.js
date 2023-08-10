@@ -17,6 +17,8 @@ import Products from '../../../models/Products.js';
 const PAGE_SIZE = 100;
 const MAX_DOWNLOAD_IMAGE = 	10 * 60 * 1000;
 const userCookiePath = './app/shopee/config/userCookie.txt';
+const CHECKED_URL_PATH = './cache/shopeeCheckedURL.json';
+
 let currentCookie = null;
 
 const timeoutDownloadImage = new Promise((resolve) => {
@@ -48,7 +50,7 @@ const downloadImage = async (product, shopName, images) => {
 	return imageLinksFiltered;
 };
 
-export default async function getShopData(shopId, shopName) {
+export default async function getShopData(shopId, shopName, checkedURL = {}) {
 	logger.info(`Downloading shop ${shopName} - ${shopId}`);
 	let offSet = 0;
 
@@ -106,6 +108,12 @@ export default async function getShopData(shopId, shopName) {
 			images = images.map((image) => `https://down-vn.img.susercontent.com/file/${image}`);
 
 			const url = `https://shopee.vn/product/${shopId}/${itemid}`;
+
+			if (checkedURL[url]) {
+				continue;
+			}
+
+			checkedURL[url] = true;
 
 			if (downloadedURL[url]) {
 				continue;
@@ -198,5 +206,8 @@ export default async function getShopData(shopId, shopName) {
 		// sleep 30s
 		// await delay(10 * 1000);
 		offSet += PAGE_SIZE;
+
+		// save checkedURL
+		fs.writeFileSync(CHECKED_URL_PATH, JSON.stringify(checkedURL, null, 4));
 	}
 }
