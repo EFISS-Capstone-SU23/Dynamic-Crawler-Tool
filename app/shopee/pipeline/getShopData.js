@@ -16,7 +16,7 @@ import Products from '../../../models/Products.js';
 
 const PAGE_SIZE = 100;
 const MAX_DOWNLOAD_IMAGE = 	10 * 60 * 1000;
-const userCookiePath = './app/shopee/config/userCookie.txt';
+const userCookiePath = './app/shopee/config/userCookie.json';
 const DAT_PATH = './app/shopee/config/af-ac-enc-dat.txt';
 const CHECKED_URL_PATH = './cache/shopeeCheckedURL.json';
 
@@ -68,15 +68,13 @@ const requestGetWithCookie = async (url) => {
 		const setCookieHeader = res.headers['set-cookie'];
 		if (setCookieHeader) {
 			const cookies = setCookieHeader.map(cookie.parse);
-
-			// console.log(cookies);
 			cookies
 				.forEach((c) => {
 					// get first poperty of cookie
 					const key = Object.keys(c)[0];
-					console.log(key, c[key]);
+					// console.log(key, c[key]);
 					currentCookie[key] = c[key];
-				}).join('; ');
+				});
 
 			//  save cookie to file json
 			fs.writeFileSync(userCookiePath, JSON.stringify(currentCookie, null, 4));
@@ -84,7 +82,7 @@ const requestGetWithCookie = async (url) => {
 
 		return res.data;
 	} catch (error) {
-		console.log('error', error.response);
+		console.log('error', error.message);
 		console.log(url);
 
 		return null;
@@ -99,25 +97,11 @@ export default async function getShopData(shopId, shopName, checkedURL = {}) {
 
 	while (true) {
 		logger.info(`Downloading page ${offSet / PAGE_SIZE + 1} of shop ${shopName}`);
-		const API_ENDPOINT = `https://shopee.vn/api/v4/shop/rcmd_items?bundle=shop_page_category_tab_main&limit=${PAGE_SIZE}&offset=${offSet}&shop_id=${shopId}`;
+		const API_ENDPOINT = `https://shopee.vn/api/v4/shop/rcmd_items?bundle=shop_page_category_tab_main&limit=${PAGE_SIZE}&offset=${offSet}&shop_id=${shopId}&sort_type=1&upstream=search`;
 
 		const res = await requestGetWithCookie(API_ENDPOINT);
-		// update cookie for next request
-		// const setCookieHeader = res.headers['set-cookie'];
-		// if (setCookieHeader) {
-		// 	const cookies = setCookieHeader.map(cookie.parse);
-
-		// 	console.log(Object.entries(cookies));
-		// 	const serializedCookies = Object.entries(cookies)
-		// 		.map(([key, value]) => `${key}=${value}`)
-		// 		.join('; ');
-
-		// 	currentCookie = serializedCookies;
-		// 	fs.writeFileSync(userCookiePath, serializedCookies);
-		// }
-
 		if (!res) {
-			continue;
+			break;
 		}
 
 		const data = res.data;
@@ -162,53 +146,52 @@ export default async function getShopData(shopId, shopName, checkedURL = {}) {
 			// });
 
 			// fetch item data
-			const URL_ENDPOINT = `https://shopee.vn/api/v4/item/get?itemid=${itemid}&shopid=${shopId}`;
+			// const URL_ENDPOINT = `https://shopee.vn/api/v4/item/get?itemid=${itemid}&shopid=${shopId}`;
 
 			// random sleep from 1.0 top 2.0s
 			// const time = Math.random() * (2.0 - 1.0) + 1.0;
 
-			const productRes = await requestGetWithCookie(URL_ENDPOINT);
-			await delay(3.5 * 1000);
+			// const productRes = await requestGetWithCookie(URL_ENDPOINT);
+			// await delay(3.5 * 1000);
 
-			if (!productRes) {
-				logger.error(`Null request ${name}`);
-				logger.error(shopId, itemid);
+			// if (!productRes) {
+			// 	logger.error(`Null request ${name}`);
+			// 	logger.error(shopId, itemid);
 
-				continue;
-			}
+			// 	continue;
+			// }
 
-			const productData = productRes.data;
+			// const productData = productRes.data;
 
-			if (!productData) {
-				logger.error(`Cannot get product data for item ${name}`);
-				logger.error(shopId, itemid);
+			// if (!productData) {
+			// 	logger.error(`Cannot get product data for item ${name}`);
+			// 	logger.error(shopId, itemid);
 
-				continue;
-			}
+			// 	continue;
+			// }
 
-			const {
-				categories,
-				description,
-			} = productData;
-			const categoriesName = categories.map((category) => category.display_name);
+			// const {
+			// 	categories,
+			// 	description,
+			// } = productData;
+			// const categoriesName = categories.map((category) => category.display_name);
 
-			// check if category is fashion
-			if (!categoriesName.some((categoryName) => FASHION_CATEGORY.some((fashionCategory) => categoryName.includes(fashionCategory)))) {
-				// logger.info(`Skip item ${name} because it is not fashion`);
-				continue;
-			}
+			// // check if category is fashion
+			// if (!categoriesName.some((categoryName) => FASHION_CATEGORY.some((fashionCategory) => categoryName.includes(fashionCategory)))) {
+			// 	// logger.info(`Skip item ${name} because it is not fashion`);
+			// 	continue;
+			// }
 			logger.info(`Downloading item ${name}`);
 
 			const product = await Products.insertNewProduct({
 				title: name,
 				price: price / 1e5,
 				originalImages: images,
-				description,
+				description: name,
 				url,
 				shopName,
 				metadata: {},
 				active: true,
-				categories: categoriesName,
 			});
 
 			// download image in imageLinks

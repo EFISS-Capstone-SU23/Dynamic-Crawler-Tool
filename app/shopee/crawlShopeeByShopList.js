@@ -8,7 +8,7 @@ const DATA_PATH = './app/shopee/data/shopList_output.json';
 const CHECKED_URL_PATH = './cache/shopeeCheckedURL.json';
 
 const main = async () => {
-	const currentShopName = 'Qun_o_th_thao_nam_Kin_Sport';
+	const currentShopName = 'FACIOSHOP.COM';
 
 	let shopInfo = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
 
