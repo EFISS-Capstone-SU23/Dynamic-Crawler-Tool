@@ -166,10 +166,10 @@ export default async function getShopData(shopId, shopName, checkedURL = {}) {
 			const URL_ENDPOINT = `https://shopee.vn/api/v4/item/get?itemid=${itemid}&shopid=${shopId}`;
 
 			// random sleep from 1.0 top 2.0s
-			const time = Math.random() * (2.0 - 1.0) + 1.0;
-			await delay(time * 1000);
+			// const time = Math.random() * (2.0 - 1.0) + 1.0;
 
 			const productRes = await requestGetWithCookie(URL_ENDPOINT);
+			await delay(2.5 * 1000);
 
 			if (!productRes) {
 				logger.error(`Cannot get product data for item ${name}`);
