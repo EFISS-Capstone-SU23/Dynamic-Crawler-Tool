@@ -6,6 +6,7 @@ import getShopData from './pipeline/getShopData.js';
 
 const DATA_PATH = './app/shopee/data/shopList_output.json';
 const CHECKED_URL_PATH = './cache/shopeeCheckedURL.json';
+const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
 
 const main = async () => {
 	const currentShopName = 'FACIOSHOP.COM';
@@ -15,6 +16,11 @@ const main = async () => {
 	let checkedURL = {};
 	if (fs.existsSync(CHECKED_URL_PATH)) {
 		checkedURL = JSON.parse(fs.readFileSync(CHECKED_URL_PATH, 'utf8'));
+	}
+
+	let checkedShopId = {};
+	if (fs.existsSync(CHECKED_SHOP_ID_PATH)) {
+		checkedShopId = JSON.parse(fs.readFileSync(CHECKED_SHOP_ID_PATH, 'utf8'));
 	}
 
 	if (currentShopName) {
@@ -27,7 +33,7 @@ const main = async () => {
 
 	for (const shop of shopInfo) {
 		const shopName = `shopee-${shop.shopName}`;
-		await getShopData(parseInt(shop.shopId, 10), shopName, checkedURL);
+		await getShopData(parseInt(shop.shopId, 10), shopName, checkedURL, checkedShopId);
 	}
 };
 

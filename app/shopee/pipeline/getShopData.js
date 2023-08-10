@@ -19,6 +19,7 @@ const MAX_DOWNLOAD_IMAGE = 	10 * 60 * 1000;
 const userCookiePath = './app/shopee/config/userCookie.json';
 const DAT_PATH = './app/shopee/config/af-ac-enc-dat.txt';
 const CHECKED_URL_PATH = './cache/shopeeCheckedURL.json';
+const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
 
 const currentCookie = JSON.parse(fs.readFileSync(userCookiePath, 'utf8'));
 const currentDat = fs.readFileSync(DAT_PATH, 'utf8').trim();
@@ -97,7 +98,7 @@ const requestGetWithCookie = async (url) => {
 	}
 };
 
-export default async function getShopData(shopId, shopName, checkedURL = {}) {
+export default async function getShopData(shopId, shopName, checkedURL = {}, checkedShopId = {}) {
 	logger.info(`Downloading shop ${shopName} - ${shopId}`);
 	let offSet = 0;
 
@@ -238,4 +239,9 @@ export default async function getShopData(shopId, shopName, checkedURL = {}) {
 		// save checkedURL
 		fs.writeFileSync(CHECKED_URL_PATH, JSON.stringify(checkedURL, null, 4));
 	}
+
+	// save checkedShopId
+	checkedShopId[shopId] = true;
+
+	fs.writeFileSync(CHECKED_SHOP_ID_PATH, JSON.stringify(checkedShopId, null, 4));
 }
