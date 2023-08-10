@@ -49,8 +49,13 @@ const main = async () => {
 				// remove special characters (emojis, etc.) except underscore and dot
 				const shopNameProcessed = shopName.replace(/ /g, '_').replace(/[^\w.]/g, '');
 
-				output.push({ shopId, shopName: shopNameProcessed, shopNameRaw: shopName });
+				output.push({
+					shopId, shopName: shopNameProcessed, shopNameRaw: shopName, parent_catid: cat.parent_catid,
+				});
 			}
+
+			// sort by parent_catid
+			output.sort((a, b) => a.parent_catid - b.parent_catid);
 			fs.writeFileSync('./data/shopList_output.json', JSON.stringify(output, null, 4));
 		}
 	}
