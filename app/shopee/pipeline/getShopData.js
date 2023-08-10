@@ -4,7 +4,7 @@
 /* eslint-disable no-loop-func */
 import axios from 'axios';
 import fs from 'fs';
-// import cookie from 'cookie';
+import cookie from 'cookie';
 
 import { saveFileFromURL } from '../../../utils/file/saveFileFromURL.js';
 import logger from '../../../config/log.js';
@@ -50,6 +50,42 @@ const downloadImage = async (product, shopName, images) => {
 	return imageLinksFiltered;
 };
 
+const requestGetWithCookie = async (url) => {
+	try {
+		const res = await axios.get(url, {
+			headers: {
+				cookie: currentCookie.trim(),
+				'af-ac-enc-dat': 'AAcyLjkuMi0yAAABid5CcokAAA/NAxAAAAAAAAAAAj+vsCNYRQtlBEi9eHhIEncfIYqwkRT9yzQU9sT5G90SZdx22Ya2dN5jgu9PvDoU8lIX8VhkcacgL2kemMBHRH70aNAIOdwCep1Q99EpbW5p/Pvn2Ofdpi66i51H4EG+R9nePyqD6E5H4klmr0mTwJtTNt6j1OcCNS7M1dm/lCnSfv2Pbnr5Ughh0u74tGQZkUDYJ3DlYCPQjA6+JS/Z1S6N32r6DPD+YpKckfaCaXgjkPJiHzHsLg/KKuX5ngnrB2gh0smlS+EncvH6CraI/hIzscJ+Z1CJe14X+eXYi7H5ZO78qPd8M/kL3w94mn2sVcZIcDcuKUDJBRsxf6AXjZCmcJ2GtMuVi2/+Dve5XjZC8M1ZPlJhFKOj4NfzJri3sTlWb2OX+yIurpSBgrqEApRZVYT8l/82EyfDx/bVRcPaaRvYmydPsqW/05OwE2UYZML3BRfBtfb6hsFnQW3si1z+nDRansmpFtCLio4F9fmX30otNIRBl7L03VQeYWa4u8Xo8KzoTSYUoZmmcTW5TFjhYuOTLvIRZyZ1lLkuxgMzcDHyX3a3azzTZpfW/Jao/lfEuW7oTSYUoZmmcTW5TFjhYuOTLvIRZyZ1lLkuxgMzcDHyX7TX0ab1QwRWuaZ4JlUere92+vHZwM0CH9aJrMyByAHYilagjeXO+g8oPH3pZVAHEZZ94d5r0czHgMSp10LFt9cLuOZYNwUIyv4ZirUTkvn6ilagjeXO+g8oPH3pZVAHEV/548WqHdvxxp3cepiCWtwLjIzUb5NevfxOTk7pZUYS4uCgisFY7om8kJPXrmzIjvCOA8DPNz601jFsfIZVQIQveqjOsnqLHoXuCvALGBBul/82EyfDx/bVRcPaaRvYm5f/NhMnw8f21UXD2mkb2Jt9GM/RITWcCp6ZKbfRn5Ss/d36QXZdPXw6a2855idAWXNdBn/e1csioJgvqaNQvtgV/ZVdtQE16+YjjrCqknpqMJJmwsnU0WQGAv4Bj2fY4JBJM185VJop2ase7oss/H+HQaC6rpU/rbmBUNItKZki',
+				'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+			},
+		});
+
+		// update cookie for next request
+		const setCookieHeader = res.headers['set-cookie'];
+		if (setCookieHeader) {
+			const cookies = setCookieHeader.map(cookie.parse);
+
+			// console.log(cookies);
+			const serializedCookies = cookies
+				.map((c) => {
+					// get first poperty of cookie
+					const key = Object.keys(c)[0];
+					return `${key}=${c[key]}`;
+				}).join('; ');
+
+			currentCookie = serializedCookies;
+			fs.writeFileSync(userCookiePath, serializedCookies);
+		}
+
+		return res.data;
+	} catch (error) {
+		console.log('error', error.response);
+		console.log(url);
+
+		return null;
+	}
+};
+
 export default async function getShopData(shopId, shopName, checkedURL = {}) {
 	logger.info(`Downloading shop ${shopName} - ${shopId}`);
 	let offSet = 0;
@@ -66,13 +102,7 @@ export default async function getShopData(shopId, shopName, checkedURL = {}) {
 			currentCookie = fs.readFileSync(userCookiePath, 'utf8');
 		}
 
-		const res = await axios.get(API_ENDPOINT, {
-			headers: {
-				cookie: currentCookie.trim(),
-				'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-			},
-		});
-
+		const res = await requestGetWithCookie(API_ENDPOINT);
 		// update cookie for next request
 		// const setCookieHeader = res.headers['set-cookie'];
 		// if (setCookieHeader) {
@@ -87,8 +117,11 @@ export default async function getShopData(shopId, shopName, checkedURL = {}) {
 		// 	fs.writeFileSync(userCookiePath, serializedCookies);
 		// }
 
-		const data = res.data.data;
+		if (!res) {
+			continue;
+		}
 
+		const data = res.data;
 		if (!data || !(data.items || []).length) {
 			logger.info(`No more data for shop ${shopName}`);
 			break;
@@ -132,15 +165,20 @@ export default async function getShopData(shopId, shopName, checkedURL = {}) {
 			// fetch item data
 			const URL_ENDPOINT = `https://shopee.vn/api/v4/item/get?itemid=${itemid}&shopid=${shopId}`;
 
-			const productRes = await axios.get(URL_ENDPOINT, {
-				headers: {
-					cookie: currentCookie.trim(),
-					'af-ac-enc-dat': 'AAcyLjkuMi0yAAABid5CcokAAA/NAxAAAAAAAAAAAj+vsCNYRQtlBEi9eHhIEncfIYqwkRT9yzQU9sT5G90SZdx22Ya2dN5jgu9PvDoU8lIX8VhkcacgL2kemMBHRH70aNAIOdwCep1Q99EpbW5p/Pvn2Ofdpi66i51H4EG+R9nePyqD6E5H4klmr0mTwJtTNt6j1OcCNS7M1dm/lCnSfv2Pbnr5Ughh0u74tGQZkUDYJ3DlYCPQjA6+JS/Z1S6N32r6DPD+YpKckfaCaXgjkPJiHzHsLg/KKuX5ngnrB2gh0smlS+EncvH6CraI/hIzscJ+Z1CJe14X+eXYi7H5ZO78qPd8M/kL3w94mn2sVcZIcDcuKUDJBRsxf6AXjZCmcJ2GtMuVi2/+Dve5XjZC8M1ZPlJhFKOj4NfzJri3sTlWb2OX+yIurpSBgrqEApRZVYT8l/82EyfDx/bVRcPaaRvYmydPsqW/05OwE2UYZML3BRfBtfb6hsFnQW3si1z+nDRansmpFtCLio4F9fmX30otNIRBl7L03VQeYWa4u8Xo8KzoTSYUoZmmcTW5TFjhYuOTLvIRZyZ1lLkuxgMzcDHyX3a3azzTZpfW/Jao/lfEuW7oTSYUoZmmcTW5TFjhYuOTLvIRZyZ1lLkuxgMzcDHyX7TX0ab1QwRWuaZ4JlUere92+vHZwM0CH9aJrMyByAHYilagjeXO+g8oPH3pZVAHEZZ94d5r0czHgMSp10LFt9cLuOZYNwUIyv4ZirUTkvn6ilagjeXO+g8oPH3pZVAHEV/548WqHdvxxp3cepiCWtwLjIzUb5NevfxOTk7pZUYS4uCgisFY7om8kJPXrmzIjvCOA8DPNz601jFsfIZVQIQveqjOsnqLHoXuCvALGBBul/82EyfDx/bVRcPaaRvYm5f/NhMnw8f21UXD2mkb2Jt9GM/RITWcCp6ZKbfRn5Ss/d36QXZdPXw6a2855idAWXNdBn/e1csioJgvqaNQvtgV/ZVdtQE16+YjjrCqknpqMJJmwsnU0WQGAv4Bj2fY4JBJM185VJop2ase7oss/H+HQaC6rpU/rbmBUNItKZki',
-					'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
-				},
-			});
+			// random sleep from 1.0 top 2.0s
+			const time = Math.random() * (2.0 - 1.0) + 1.0;
+			await delay(time * 1000);
 
-			const productData = productRes.data.data;
+			const productRes = await requestGetWithCookie(URL_ENDPOINT);
+
+			if (!productRes) {
+				logger.error(`Cannot get product data for item ${name}`);
+				logger.error(shopId, itemid);
+
+				continue;
+			}
+
+			const productData = productRes.data;
 
 			if (!productData) {
 				logger.error(`Cannot get product data for item ${name}`);
@@ -196,11 +234,6 @@ export default async function getShopData(shopId, shopName, checkedURL = {}) {
 				images: imageLinks,
 				activeImageMap: imageLinks.map(() => true),
 			});
-
-			// random sleep from 1.0 top 2.5s
-			const time = Math.random() * (2.5 - 1.0) + 1.0;
-			logger.info(`Sleeping ${time}s`);
-			await delay(time * 1000);
 		}
 
 		// sleep 30s
