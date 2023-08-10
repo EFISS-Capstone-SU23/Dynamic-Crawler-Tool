@@ -17,9 +17,11 @@ import Products from '../../../models/Products.js';
 const PAGE_SIZE = 100;
 const MAX_DOWNLOAD_IMAGE = 	10 * 60 * 1000;
 const userCookiePath = './app/shopee/config/userCookie.txt';
+const DAT_PATH = './app/shopee/config/af-ac-enc-dat.txt';
 const CHECKED_URL_PATH = './cache/shopeeCheckedURL.json';
 
-let currentCookie = null;
+const currentCookie = JSON.parse(fs.readFileSync(userCookiePath, 'utf8'));
+const currentDat = fs.readFileSync(DAT_PATH, 'utf8').trim();
 
 const timeoutDownloadImage = new Promise((resolve) => {
 	setTimeout(() => {
@@ -51,11 +53,13 @@ const downloadImage = async (product, shopName, images) => {
 };
 
 const requestGetWithCookie = async (url) => {
+	const cookieToString = (cookieObj) => Object.entries(cookieObj).map(([key, value]) => `${key}=${value}`).join('; ');
+
 	try {
 		const res = await axios.get(url, {
 			headers: {
-				cookie: currentCookie.trim(),
-				'af-ac-enc-dat': 'AAcyLjkuMi0yAAABid5CcokAAA/NAxAAAAAAAAAAAj+vsCNYRQtlBEi9eHhIEncfIYqwkRT9yzQU9sT5G90SZdx22Ya2dN5jgu9PvDoU8lIX8VhkcacgL2kemMBHRH70aNAIOdwCep1Q99EpbW5p/Pvn2Ofdpi66i51H4EG+R9nePyqD6E5H4klmr0mTwJtTNt6j1OcCNS7M1dm/lCnSfv2Pbnr5Ughh0u74tGQZkUDYJ3DlYCPQjA6+JS/Z1S6N32r6DPD+YpKckfaCaXgjkPJiHzHsLg/KKuX5ngnrB2gh0smlS+EncvH6CraI/hIzscJ+Z1CJe14X+eXYi7H5ZO78qPd8M/kL3w94mn2sVcZIcDcuKUDJBRsxf6AXjZCmcJ2GtMuVi2/+Dve5XjZC8M1ZPlJhFKOj4NfzJri3sTlWb2OX+yIurpSBgrqEApRZVYT8l/82EyfDx/bVRcPaaRvYmydPsqW/05OwE2UYZML3BRfBtfb6hsFnQW3si1z+nDRansmpFtCLio4F9fmX30otNIRBl7L03VQeYWa4u8Xo8KzoTSYUoZmmcTW5TFjhYuOTLvIRZyZ1lLkuxgMzcDHyX3a3azzTZpfW/Jao/lfEuW7oTSYUoZmmcTW5TFjhYuOTLvIRZyZ1lLkuxgMzcDHyX7TX0ab1QwRWuaZ4JlUere92+vHZwM0CH9aJrMyByAHYilagjeXO+g8oPH3pZVAHEZZ94d5r0czHgMSp10LFt9cLuOZYNwUIyv4ZirUTkvn6ilagjeXO+g8oPH3pZVAHEV/548WqHdvxxp3cepiCWtwLjIzUb5NevfxOTk7pZUYS4uCgisFY7om8kJPXrmzIjvCOA8DPNz601jFsfIZVQIQveqjOsnqLHoXuCvALGBBul/82EyfDx/bVRcPaaRvYm5f/NhMnw8f21UXD2mkb2Jt9GM/RITWcCp6ZKbfRn5Ss/d36QXZdPXw6a2855idAWXNdBn/e1csioJgvqaNQvtgV/ZVdtQE16+YjjrCqknpqMJJmwsnU0WQGAv4Bj2fY4JBJM185VJop2ase7oss/H+HQaC6rpU/rbmBUNItKZki',
+				cookie: cookieToString(currentCookie).trim(),
+				'af-ac-enc-dat': currentDat,
 				'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
 			},
 		});
@@ -66,15 +70,16 @@ const requestGetWithCookie = async (url) => {
 			const cookies = setCookieHeader.map(cookie.parse);
 
 			// console.log(cookies);
-			const serializedCookies = cookies
-				.map((c) => {
+			cookies
+				.forEach((c) => {
 					// get first poperty of cookie
 					const key = Object.keys(c)[0];
-					return `${key}=${c[key]}`;
+					console.log(key, c[key]);
+					currentCookie[key] = c[key];
 				}).join('; ');
 
-			currentCookie = serializedCookies;
-			fs.writeFileSync(userCookiePath, serializedCookies);
+			//  save cookie to file json
+			fs.writeFileSync(userCookiePath, JSON.stringify(currentCookie, null, 4));
 		}
 
 		return res.data;
@@ -95,12 +100,6 @@ export default async function getShopData(shopId, shopName, checkedURL = {}) {
 	while (true) {
 		logger.info(`Downloading page ${offSet / PAGE_SIZE + 1} of shop ${shopName}`);
 		const API_ENDPOINT = `https://shopee.vn/api/v4/shop/rcmd_items?bundle=shop_page_category_tab_main&limit=${PAGE_SIZE}&offset=${offSet}&shop_id=${shopId}`;
-
-		// get cookie
-		if (!currentCookie) {
-			// in first time, read cookie from file
-			currentCookie = fs.readFileSync(userCookiePath, 'utf8');
-		}
 
 		const res = await requestGetWithCookie(API_ENDPOINT);
 		// update cookie for next request
@@ -169,10 +168,10 @@ export default async function getShopData(shopId, shopName, checkedURL = {}) {
 			// const time = Math.random() * (2.0 - 1.0) + 1.0;
 
 			const productRes = await requestGetWithCookie(URL_ENDPOINT);
-			await delay(2.5 * 1000);
+			await delay(3.5 * 1000);
 
 			if (!productRes) {
-				logger.error(`Cannot get product data for item ${name}`);
+				logger.error(`Null request ${name}`);
 				logger.error(shopId, itemid);
 
 				continue;
