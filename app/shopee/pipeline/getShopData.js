@@ -99,6 +99,11 @@ const requestGetWithCookie = async (url) => {
 };
 
 export default async function getShopData(shopId, shopName, checkedURL = {}, checkedShopId = {}) {
+	// check if shopId is checked
+	if (checkedShopId[shopId]) {
+		return;
+	}
+
 	logger.info(`Downloading shop ${shopName} - ${shopId}`);
 	let offSet = 0;
 
