@@ -35,6 +35,14 @@ const FASHION_CATEGORY = [
 	'Thời Trang Trẻ em',
 ];
 
+const keywords = [
+	'áo',
+	'quần',
+	'váy',
+	'đầm',
+	'giày',
+];
+
 const downloadImage = async (product, shopName, images) => {
 	const imagesPromise = images.map(async (imageLink, i) => {
 		const imgPath = `${STORAGE_PREFIX}/${shopName}/${product._id}_${i}_${shopName.replace(/[^a-zA-Z0-9]/g, '_')}.jpeg`;
@@ -117,6 +125,11 @@ export default async function getShopData(shopId, shopName, checkedURL = {}) {
 				itemid,
 				price,
 			} = item;
+
+			// check if name contains keyword
+			if (!keywords.some((keyword) => name.toLowerCase().includes(keyword))) {
+				continue;
+			}
 
 			let {
 				images,
