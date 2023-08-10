@@ -7,7 +7,16 @@ import getShopData from './pipeline/getShopData.js';
 const DATA_PATH = './app/shopee/data/shopList_output.json';
 
 const main = async () => {
-	const shopInfo = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
+	const currentShopName = 'Khn_rn_shop';
+
+	let shopInfo = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
+
+	if (currentShopName) {
+		// get all shop after currentShopName and currentShopName
+		const currentShopIndex = shopInfo.findIndex((shop) => shop.shopName === currentShopName);
+		console.log('currentShopIndex', currentShopIndex);
+		shopInfo = shopInfo.slice(currentShopIndex);
+	}
 	console.log('shopInfo', shopInfo.length);
 
 	for (const shop of shopInfo) {

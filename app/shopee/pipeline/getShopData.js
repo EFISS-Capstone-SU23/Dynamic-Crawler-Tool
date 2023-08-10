@@ -124,11 +124,19 @@ export default async function getShopData(shopId, shopName) {
 			// fetch item data
 			const URL_ENDPOINT = `https://shopee.vn/api/v4/item/get?itemid=${itemid}&shopid=${shopId}`;
 
-			const productRes = await axios.get(URL_ENDPOINT, {
-				headers: {
-					cookie: currentCookie.trim(),
-				},
-			});
+			let productRes;
+			try {
+				productRes = await axios.get(URL_ENDPOINT, {
+					headers: {
+						cookie: currentCookie.trim(),
+					},
+				});
+			} catch (err) {
+				// console.log(err);
+				console.log(URL_ENDPOINT);
+
+				continue;
+			}
 			const productData = productRes.data.data;
 
 			if (!productData) {
