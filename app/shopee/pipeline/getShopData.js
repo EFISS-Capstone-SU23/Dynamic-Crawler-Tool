@@ -37,6 +37,8 @@ const FASHION_CATEGORY = [
 	'Thời Trang Trẻ em',
 ];
 
+const MAX_RETRY = 3;
+
 const keywords = [
 	'áo',
 	'quần',
@@ -99,6 +101,28 @@ const requestGetWithCookie = async (url) => {
 	}
 };
 
+const getItem = async (API_ENDPOINT, shopName, num) => {
+	const res = await requestGetWithCookie(API_ENDPOINT);
+	if (!res) {
+		return null;
+	}
+
+	const data = res.data || {};
+	const items = data.items;
+
+	if (!items) {
+		logger.info(`There are error when downloading shop ${shopName}`);
+
+		if (num < MAX_RETRY) {
+			await delay(3 * 60 * 1000);
+			return getItem(API_ENDPOINT, shopName, num + 1);
+		}
+		return null;
+	}
+
+	return items;
+};
+
 export default async function getShopData(shopId, shopName, checkedShopId = {}) {
 	// check if shopId is checked
 	if (checkedShopId[shopId]) {
@@ -120,10 +144,9 @@ export default async function getShopData(shopId, shopName, checkedShopId = {}) 
 		}
 
 		const data = res.data || {};
-		const items = data.items;
+		const items = await getItem(API_ENDPOINT, shopName, 1);
 
 		if (!items) {
-			logger.info(`There are error when downloading shop ${shopName} - ${shopId}`);
 			throw new Error('There are error when downloading shop');
 		}
 
