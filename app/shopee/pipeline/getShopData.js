@@ -135,7 +135,8 @@ export default async function getShopData(shopId, shopName, checkedShopId = {}) 
 			} = item;
 
 			// check if name contains keyword
-			if (!keywords.some((keyword) => name.toLowerCase().includes(keyword))) {
+			const nameWords = name.toLowerCase().split(' ');
+			if (!keywords.some((keyword) => nameWords.includes(keyword))) {
 				continue;
 			}
 
