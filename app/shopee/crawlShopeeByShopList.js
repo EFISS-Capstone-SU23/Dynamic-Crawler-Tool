@@ -47,7 +47,12 @@ const main = async () => {
 		setTimeout(async () => {
 			for (const shop of shopInfoPart) {
 				const shopName = `shopee-${shop.shopName}`;
-				await getShopData(parseInt(shop.shopId, 10), shopName, checkedShopId);
+				try {
+					await getShopData(parseInt(shop.shopId, 10), shopName, checkedShopId);
+				} catch (error) {
+					console.log(error);
+					break;
+				}
 			}
 		}, delayTime);
 	};

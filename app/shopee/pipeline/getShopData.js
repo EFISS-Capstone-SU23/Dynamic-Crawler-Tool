@@ -119,12 +119,13 @@ export default async function getShopData(shopId, shopName, checkedShopId = {}) 
 			break;
 		}
 
-		const data = res.data;
-		if (!data || !(data.items || []).length) {
-			logger.info(`No more data for shop ${shopName}`);
-			break;
-		}
+		const data = res.data || {};
 		const items = data.items;
+
+		if (!items) {
+			logger.info(`There are error when downloading shop ${shopName} - ${shopId}`);
+			throw new Error('There are error when downloading shop');
+		}
 
 		for (const item of items) {
 			const {
@@ -149,52 +150,6 @@ export default async function getShopData(shopId, shopName, checkedShopId = {}) 
 				continue;
 			}
 
-			// const product = await productAPI.insertNewProduct({
-			// 	title: name,
-			// 	price: price / 1e5,
-			// 	originalImages: images,
-			// 	description,
-			// 	url,
-			// 	shopName,
-			// 	metadata: {},
-			// });
-
-			// fetch item data
-			// const URL_ENDPOINT = `https://shopee.vn/api/v4/item/get?itemid=${itemid}&shopid=${shopId}`;
-
-			// random sleep from 1.0 top 2.0s
-			// const time = Math.random() * (2.0 - 1.0) + 1.0;
-
-			// const productRes = await requestGetWithCookie(URL_ENDPOINT);
-			// await delay(3.5 * 1000);
-
-			// if (!productRes) {
-			// 	logger.error(`Null request ${name}`);
-			// 	logger.error(shopId, itemid);
-
-			// 	continue;
-			// }
-
-			// const productData = productRes.data;
-
-			// if (!productData) {
-			// 	logger.error(`Cannot get product data for item ${name}`);
-			// 	logger.error(shopId, itemid);
-
-			// 	continue;
-			// }
-
-			// const {
-			// 	categories,
-			// 	description,
-			// } = productData;
-			// const categoriesName = categories.map((category) => category.display_name);
-
-			// // check if category is fashion
-			// if (!categoriesName.some((categoryName) => FASHION_CATEGORY.some((fashionCategory) => categoryName.includes(fashionCategory)))) {
-			// 	// logger.info(`Skip item ${name} because it is not fashion`);
-			// 	continue;
-			// }
 			logger.info(`Downloading item ${name}`);
 
 			const product = await Products.insertNewProduct({
@@ -234,6 +189,12 @@ export default async function getShopData(shopId, shopName, checkedShopId = {}) 
 
 		// sleep 30s
 		// await delay(10 * 1000);
+
+		if (data.no_more) {
+			logger.info(`No more data for shop ${shopName}`);
+			break;
+		}
+
 		offSet += PAGE_SIZE;
 	}
 
