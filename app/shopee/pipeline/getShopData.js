@@ -16,12 +16,13 @@ import Products from '../../../models/Products.js';
 
 const PAGE_SIZE = 100;
 const MAX_DOWNLOAD_IMAGE = 	10 * 60 * 1000;
-const userCookiePath = './app/shopee/config/userCookie.json';
 const DAT_PATH = './app/shopee/config/af-ac-enc-dat.txt';
-const CHECKED_URL_PATH = './cache/shopeeCheckedURL.json';
 const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
 
-const currentCookie = JSON.parse(fs.readFileSync(userCookiePath, 'utf8'));
+// const userCookiePath = './app/shopee/config/userCookie.json';
+const userCookiePath = './app/shopee/config/userCookie.txt';
+
+const currentCookie = fs.readFileSync(userCookiePath, 'utf8');
 const currentDat = fs.readFileSync(DAT_PATH, 'utf8').trim();
 
 const timeoutDownloadImage = new Promise((resolve) => {
@@ -67,27 +68,27 @@ const requestGetWithCookie = async (url) => {
 	try {
 		const res = await axios.get(url, {
 			headers: {
-				cookie: cookieToString(currentCookie).trim(),
+				cookie: currentCookie.trim(),
 				'af-ac-enc-dat': currentDat,
 				'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
 			},
 		});
 
 		// update cookie for next request
-		const setCookieHeader = res.headers['set-cookie'];
-		if (setCookieHeader) {
-			const cookies = setCookieHeader.map(cookie.parse);
-			cookies
-				.forEach((c) => {
-					// get first poperty of cookie
-					const key = Object.keys(c)[0];
-					// console.log(key, c[key]);
-					currentCookie[key] = c[key];
-				});
+		// const setCookieHeader = res.headers['set-cookie'];
+		// if (setCookieHeader) {
+		// 	const cookies = setCookieHeader.map(cookie.parse);
+		// 	cookies
+		// 		.forEach((c) => {
+		// 			// get first poperty of cookie
+		// 			const key = Object.keys(c)[0];
+		// 			// console.log(key, c[key]);
+		// 			currentCookie[key] = c[key];
+		// 		});
 
-			//  save cookie to file json
-			fs.writeFileSync(userCookiePath, JSON.stringify(currentCookie, null, 4));
-		}
+		// 	//  save cookie to file json
+		// 	fs.writeFileSync(userCookiePath, JSON.stringify(currentCookie, null, 4));
+		// }
 
 		return res.data;
 	} catch (error) {
