@@ -11,6 +11,8 @@ const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
 const WORKER_NUMBER = 5;
 
 const main = async () => {
+	console.log('start crawlShopeeByShopList.js');
+
 	const currentShopName = '';
 
 	let shopInfo = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
@@ -47,12 +49,7 @@ const main = async () => {
 		setTimeout(async () => {
 			for (const shop of shopInfoPart) {
 				const shopName = `shopee-${shop.shopName}`;
-				try {
-					await getShopData(parseInt(shop.shopId, 10), shopName, checkedShopId);
-				} catch (error) {
-					console.log(error);
-					break;
-				}
+				await getShopData(parseInt(shop.shopId, 10), shopName, checkedShopId);
 			}
 		}, delayTime);
 	};

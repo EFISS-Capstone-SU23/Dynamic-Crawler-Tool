@@ -37,7 +37,7 @@ const FASHION_CATEGORY = [
 	'Thời Trang Trẻ em',
 ];
 
-const MAX_RETRY = 3;
+const MAX_RETRY = 5;
 
 const keywords = [
 	'áo',
@@ -111,10 +111,11 @@ const getItem = async (API_ENDPOINT, shopName, num) => {
 	const items = data.items;
 
 	if (!items) {
-		logger.info(`There are error when downloading shop ${shopName}`);
+		logger.info(`There are error when getting items of shop ${shopName}`);
 
 		if (num < MAX_RETRY) {
-			await delay(3 * 60 * 1000);
+			await delay(5 * 60 * 1000);
+			logger.info(`Retry ${num + 1} for shop ${shopName}`);
 			return getItem(API_ENDPOINT, shopName, num + 1);
 		}
 		return null;
