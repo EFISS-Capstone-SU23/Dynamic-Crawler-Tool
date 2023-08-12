@@ -1,7 +1,7 @@
 {
-	"name": "dynamic-crawler-tool",
+	"name": "efiss-dynamic-crawler",
 	"version": "1.0.0",
-	"description": "Dynamic Crawler Tool",
+	"description": "EFISS Dynamic Crawler",
 	"main": "index.js",
 	"scripts": {
 		"prepare": "husky install",
