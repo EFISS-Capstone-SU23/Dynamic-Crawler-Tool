@@ -28,7 +28,10 @@ const main = async () => {
 		console.log('currentShopIndex', currentShopIndex);
 		shopInfo = shopInfo.slice(currentShopIndex);
 	}
-	console.log('shopInfo', shopInfo.length);
+
+	// filter checked shop
+	shopInfo = shopInfo.filter((shop) => !checkedShopId[shop.shopId]);
+	console.log('shopInfo length', shopInfo.length);
 
 	// suffle shopInfo
 	shopInfo.sort(() => Math.random() - 0.5);
