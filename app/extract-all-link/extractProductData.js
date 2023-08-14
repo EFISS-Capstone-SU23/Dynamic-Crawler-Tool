@@ -40,20 +40,20 @@ export const extractProductData = async (driver, xPath, logger) => {
 	}
 
 	const descriptionElement = await getElementByXpath(driver, description);
-	if (!descriptionElement) {
-		return {};
-	}
+	// if (!descriptionElement) {
+	// 	return {};
+	// }
 
 	// await delay(DELAY_LOADING_PRODUCT);
 	const imageContainerElement = await getElementByXpath(driver, imageContainer);
 
-	if (!titleElement || !priceElement || !descriptionElement || !imageContainerElement) {
+	if (!titleElement || !priceElement || !imageContainerElement) {
 		return {};
 	}
 
 	const titleText = await titleElement.getText();
 	const priceText = await priceElement.getText();
-	const descriptionText = await descriptionElement.getText();
+	const descriptionText = descriptionElement ? await descriptionElement.getText() : titleText;
 
 	// const imgElements = await getElementsByXpath(imageContainerElement, imageElement) || [];
 	// We need to use css selector instead of xpath because of length
