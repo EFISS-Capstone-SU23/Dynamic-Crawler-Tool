@@ -20,7 +20,7 @@ const getProperty = async (driver, xPath) => {
 		return null;
 	}
 
-	const text = element.getText();
+	const text = await element.getText();
 	return text.trim().split('\n')[0];
 };
 
@@ -89,6 +89,7 @@ const main = async () => {
 		template,
 	} = templateData;
 
+	const startUrl = template.startUrl;
 	const {
 		title,
 		price,
@@ -96,11 +97,11 @@ const main = async () => {
 		imageContainer,
 		imageElement = 'img',
 		imageLinkProperties = 'src',
-		startUrl,
-	} = template;
+	} = template.xPath || {};
 
 	// go to start url
 	await driver.get(startUrl);
+	await driver.wait(() => driver.executeScript('return document.readyState').then((readyState) => readyState === 'complete'), 10000);
 
 	const titleText = await getProperty(driver, title);
 	const priceText = await getProperty(driver, price);
@@ -115,4 +116,7 @@ const main = async () => {
 	console.log(imageLinks);
 };
 
-main();
+main().then(() => {
+	console.log('Done');
+	process.exit(0);
+});
