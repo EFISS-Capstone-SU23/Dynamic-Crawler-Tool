@@ -38,6 +38,8 @@ export const scrollElement = async (driver, imageContainer, diffHeight, imgLengt
 			).perform();
 		}
 	} catch (error) {
-		logger.error(`Error in scrollElement: ${error}`);
+		if (logger) {
+			logger.error(`Error in scrollElement: ${error}`);
+		}
 	}
 };
