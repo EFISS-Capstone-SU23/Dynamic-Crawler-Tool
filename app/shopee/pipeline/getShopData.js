@@ -7,18 +7,12 @@ import logger from '../../../config/log.js';
 import { delay } from '../../../utils/delay.js';
 import { STORAGE_PREFIX } from '../../../config/config.js';
 import { bucketName } from '../../storage/setupStorage.js';
-// import productAPI from '../../../api/productAPI.js';
 import Products from '../../../models/Products.js';
 
 const PAGE_SIZE = 100;
-const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
-
-// const userCookiePath = './app/shopee/config/userCookie.json';
-const userCookiePath = './app/shopee/config/userCookie.txt';
-
-const currentCookie = fs.readFileSync(userCookiePath, 'utf8');
-
 const MAX_RETRY = 5;
+const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
+const COOKIE_FOLDER = './app/shopee/config/shopeeCookie/';
 
 const keywords = [
 	'áo',
@@ -27,6 +21,11 @@ const keywords = [
 	'đầm',
 	// 'giày',
 ];
+
+// read all file cookie in COOKIE_FOLDER and push into array
+const cookieFiles = fs.readdirSync(COOKIE_FOLDER);
+const cookies = cookieFiles.map((cookieFile) => fs.readFileSync(`${COOKIE_FOLDER}/${cookieFile}`, 'utf8'));
+let currentCookieIndex = 0;
 
 const downloadImage = async (product, shopName, images) => {
 	const imagesPromise = images.map(async (imageLink, i) => {
@@ -47,6 +46,11 @@ const downloadImage = async (product, shopName, images) => {
 
 const requestGetWithCookie = async (url) => {
 	try {
+		// read current cookie
+		const currentCookie = cookies[currentCookieIndex];
+
+		// update currentCookieIndex
+		currentCookieIndex = (currentCookieIndex + 1) % cookies.length;
 		const res = await axios.get(url, {
 			headers: {
 				cookie: currentCookie.trim(),
