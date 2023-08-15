@@ -8,7 +8,7 @@ const DATA_PATH = './app/shopee/data/shopList_output.json';
 // const CHECKED_URL_PATH = './cache/shopeeCheckedURL.json';
 const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
 
-const WORKER_NUMBER = 10;
+const WORKER_NUMBER = 6;
 
 const main = async () => {
 	console.log('start crawlShopeeByShopList.js');
