@@ -103,6 +103,7 @@ export default async function getShopData(shopId, shopName, checkedShopId = {}) 
 	const downloadedURL = await Products.getDownloadedProductURLByShopName(shopName);
 
 	while (true) {
+		const startTime = Date.now();
 		logger.info(`Downloading page ${offSet / PAGE_SIZE + 1} of shop ${shopName}`);
 		const API_ENDPOINT = `https://shopee.vn/api/v4/shop/rcmd_items?bundle=shop_page_category_tab_main&limit=${PAGE_SIZE}&offset=${offSet}&shop_id=${shopId}&sort_type=1&upstream=search`;
 
@@ -180,6 +181,14 @@ export default async function getShopData(shopId, shopName, checkedShopId = {}) 
 		}
 
 		offSet += PAGE_SIZE;
+
+		// delay 1s to avoid being blocked
+		const endTime = Date.now();
+		const diffInSecond = Math.floor((endTime - startTime) / 1000);
+
+		if (diffInSecond < 7.5) {
+			await delay((7.5 - diffInSecond) * 1000);
+		}
 	}
 
 	// save checkedShopId
