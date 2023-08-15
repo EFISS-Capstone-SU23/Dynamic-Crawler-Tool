@@ -24,7 +24,7 @@ export function setupLogStream(server) {
 			}
 
 			const handleLogFileChange = async () => {
-				const logData = await readLastLines.read(logFilePath, 1e3);
+				const logData = await readLastLines.read(logFilePath, 200);
 				socket.emit(`logData-${crawlId}`, {
 					data: logData,
 				});
