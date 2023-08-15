@@ -114,9 +114,17 @@ const getTemplateByID = async (req, res) => {
 	});
 };
 
+const getNumberOfTemplates = async (req, res) => {
+	const total = await Templates.countAllTemplates();
+	res.json({
+		total,
+	});
+};
+
 export default {
 	findTemplateList,
 	upsertTemplate,
 	deleteTempleteByID,
 	getTemplateByID,
+	getNumberOfTemplates,
 };
