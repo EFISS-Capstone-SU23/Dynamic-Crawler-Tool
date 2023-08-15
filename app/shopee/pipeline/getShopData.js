@@ -11,6 +11,7 @@ import Products from '../../../models/Products.js';
 
 const PAGE_SIZE = 100;
 const MAX_RETRY = 5;
+const MIN_PAGE_TIME = 5;
 const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
 const COOKIE_FOLDER = './app/shopee/config/shopeeCookie/';
 
@@ -186,8 +187,8 @@ export default async function getShopData(shopId, shopName, checkedShopId = {}) 
 		const endTime = Date.now();
 		const diffInSecond = Math.floor((endTime - startTime) / 1000);
 
-		if (diffInSecond < 7.5) {
-			await delay((7.5 - diffInSecond) * 1000);
+		if (diffInSecond < MIN_PAGE_TIME) {
+			await delay((MIN_PAGE_TIME - diffInSecond) * 1000);
 		}
 	}
 

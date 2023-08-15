@@ -8,11 +8,10 @@ const DATA_PATH = './app/shopee/data/shopList_output.json';
 // const CHECKED_URL_PATH = './cache/shopeeCheckedURL.json';
 const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
 
-const WORKER_NUMBER = 6;
+const WORKER_NUMBER = 15;
 
 const main = async () => {
 	console.log('start crawlShopeeByShopList.js');
-
 	const currentShopName = '';
 
 	let shopInfo = JSON.parse(fs.readFileSync(DATA_PATH, 'utf8'));
