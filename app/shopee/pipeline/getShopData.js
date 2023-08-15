@@ -47,6 +47,7 @@ const downloadImage = async (product, shopName, images) => {
 const requestGetWithCookie = async (url) => {
 	try {
 		// read current cookie
+		console.log('currentCookieIndex', currentCookieIndex);
 		const currentCookie = cookies[currentCookieIndex];
 
 		// update currentCookieIndex
