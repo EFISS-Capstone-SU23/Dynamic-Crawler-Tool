@@ -1,10 +1,6 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-continue */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-loop-func */
 import axios from 'axios';
 import fs from 'fs';
-import cookie from 'cookie';
 
 import { saveFileFromURL } from '../../../utils/file/saveFileFromURL.js';
 import logger from '../../../config/log.js';
@@ -15,27 +11,12 @@ import { bucketName } from '../../storage/setupStorage.js';
 import Products from '../../../models/Products.js';
 
 const PAGE_SIZE = 100;
-const MAX_DOWNLOAD_IMAGE = 	10 * 60 * 1000;
-const DAT_PATH = './app/shopee/config/af-ac-enc-dat.txt';
 const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
 
 // const userCookiePath = './app/shopee/config/userCookie.json';
 const userCookiePath = './app/shopee/config/userCookie.txt';
 
 const currentCookie = fs.readFileSync(userCookiePath, 'utf8');
-const currentDat = fs.readFileSync(DAT_PATH, 'utf8').trim();
-
-const timeoutDownloadImage = new Promise((resolve) => {
-	setTimeout(() => {
-		resolve();
-	}, MAX_DOWNLOAD_IMAGE);
-});
-
-const FASHION_CATEGORY = [
-	'Thời Trang Nam',
-	'Thời Trang Nữ',
-	'Thời Trang Trẻ em',
-];
 
 const MAX_RETRY = 5;
 
@@ -65,32 +46,13 @@ const downloadImage = async (product, shopName, images) => {
 };
 
 const requestGetWithCookie = async (url) => {
-	const cookieToString = (cookieObj) => Object.entries(cookieObj).map(([key, value]) => `${key}=${value}`).join('; ');
-
 	try {
 		const res = await axios.get(url, {
 			headers: {
 				cookie: currentCookie.trim(),
-				'af-ac-enc-dat': currentDat,
 				'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
 			},
 		});
-
-		// update cookie for next request
-		// const setCookieHeader = res.headers['set-cookie'];
-		// if (setCookieHeader) {
-		// 	const cookies = setCookieHeader.map(cookie.parse);
-		// 	cookies
-		// 		.forEach((c) => {
-		// 			// get first poperty of cookie
-		// 			const key = Object.keys(c)[0];
-		// 			// console.log(key, c[key]);
-		// 			currentCookie[key] = c[key];
-		// 		});
-
-		// 	//  save cookie to file json
-		// 	fs.writeFileSync(userCookiePath, JSON.stringify(currentCookie, null, 4));
-		// }
 
 		return res.data;
 	} catch (error) {
@@ -189,11 +151,6 @@ export default async function getShopData(shopId, shopName, checkedShopId = {}) 
 			});
 
 			// download image in imageLinks
-			// filter null\
-			// const imageLinks = await Promise.race([
-			// 	downloadImage(product, shopName, images),
-			// 	timeoutDownloadImage,
-			// ]);
 			const imageLinks = await downloadImage(product, shopName, images);
 
 			if (!imageLinks) {
@@ -211,9 +168,6 @@ export default async function getShopData(shopId, shopName, checkedShopId = {}) 
 				activeImageMap: imageLinks.map(() => true),
 			});
 		}
-
-		// sleep 30s
-		// await delay(10 * 1000);
 
 		if (data.no_more) {
 			logger.info(`No more data for shop ${shopName}`);
