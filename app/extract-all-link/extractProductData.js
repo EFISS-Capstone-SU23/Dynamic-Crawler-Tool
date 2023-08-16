@@ -5,8 +5,8 @@ import { resolve as resolvePath } from 'path';
 
 import { saveFileFromBuffer, getFileBufferFromURL } from '../../utils/file/saveFileFromURL.js';
 import { getElementByXpath, getElementsByCss } from '../../utils/getElement.js';
-import { IMAGE_ALL_EXT, DELAY_LOADING_PRODUCT, STORAGE_PREFIX } from '../../config/config.js';
-import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
+import { IMAGE_ALL_EXT, STORAGE_PREFIX } from '../../config/config.js';
+// import { getDiffHeight, scrollElement } from '../../utils/scrollElement.js';
 import { transformImageURL } from '../../utils/transformURL.js';
 import { removeSmallImage, checkFileTypeByContent } from '../../utils/file/imageFile.js';
 import { bucketName } from '../storage/index.js';
@@ -16,7 +16,7 @@ import Products from '../../models/Products.js';
 
 const FILE_STORAGE_TYPE = process.env.FILE_STORAGE_TYPE || 'local';
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+// const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const extractProductData = async (driver, xPath, logger) => {
 	const {
@@ -60,12 +60,12 @@ export const extractProductData = async (driver, xPath, logger) => {
 	const imgElements = await getElementsByCss(imageContainerElement, imageElement) || [];
 
 	// scroll the page to load all images
-	const diffHeight = await getDiffHeight(imageContainerElement);
+	// const diffHeight = await getDiffHeight(imageContainerElement);
 
-	if (diffHeight > 0) {
-		await scrollElement(driver, imageContainerElement, diffHeight, imgElements.length, logger);
-		await delay(DELAY_LOADING_PRODUCT);
-	}
+	// if (diffHeight > 0) {
+	// 	await scrollElement(driver, imageContainerElement, diffHeight, imgElements.length, logger);
+	// 	await delay(DELAY_LOADING_PRODUCT);
+	// }
 
 	let imageLinks = [];
 
