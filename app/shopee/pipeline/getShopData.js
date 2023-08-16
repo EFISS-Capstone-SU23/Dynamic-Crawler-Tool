@@ -1,43 +1,19 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable no-continue */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-loop-func */
 import axios from 'axios';
 import fs from 'fs';
-import cookie from 'cookie';
 
 import { saveFileFromURL } from '../../../utils/file/saveFileFromURL.js';
 import logger from '../../../config/log.js';
 import { delay } from '../../../utils/delay.js';
 import { STORAGE_PREFIX } from '../../../config/config.js';
 import { bucketName } from '../../storage/setupStorage.js';
-// import productAPI from '../../../api/productAPI.js';
 import Products from '../../../models/Products.js';
 
 const PAGE_SIZE = 100;
-const MAX_DOWNLOAD_IMAGE = 	10 * 60 * 1000;
-const DAT_PATH = './app/shopee/config/af-ac-enc-dat.txt';
-const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
-
-// const userCookiePath = './app/shopee/config/userCookie.json';
-const userCookiePath = './app/shopee/config/userCookie.txt';
-
-const currentCookie = fs.readFileSync(userCookiePath, 'utf8');
-const currentDat = fs.readFileSync(DAT_PATH, 'utf8').trim();
-
-const timeoutDownloadImage = new Promise((resolve) => {
-	setTimeout(() => {
-		resolve();
-	}, MAX_DOWNLOAD_IMAGE);
-});
-
-const FASHION_CATEGORY = [
-	'Thời Trang Nam',
-	'Thời Trang Nữ',
-	'Thời Trang Trẻ em',
-];
-
 const MAX_RETRY = 5;
+const MIN_PAGE_TIME = 5;
+const CHECKED_SHOP_ID_PATH = './cache/shopeeCheckedShopId.json';
+const COOKIE_FOLDER = './app/shopee/config/shopeeCookie/';
 
 const keywords = [
 	'áo',
@@ -46,6 +22,11 @@ const keywords = [
 	'đầm',
 	// 'giày',
 ];
+
+// read all file cookie in COOKIE_FOLDER and push into array
+const cookieFiles = fs.readdirSync(COOKIE_FOLDER);
+const cookies = cookieFiles.map((cookieFile) => fs.readFileSync(`${COOKIE_FOLDER}/${cookieFile}`, 'utf8'));
+let currentCookieIndex = 0;
 
 const downloadImage = async (product, shopName, images) => {
 	const imagesPromise = images.map(async (imageLink, i) => {
@@ -65,32 +46,19 @@ const downloadImage = async (product, shopName, images) => {
 };
 
 const requestGetWithCookie = async (url) => {
-	const cookieToString = (cookieObj) => Object.entries(cookieObj).map(([key, value]) => `${key}=${value}`).join('; ');
-
 	try {
+		// read current cookie
+		console.log('currentCookieIndex', currentCookieIndex);
+		const currentCookie = cookies[currentCookieIndex];
+
+		// update currentCookieIndex
+		currentCookieIndex = (currentCookieIndex + 1) % cookies.length;
 		const res = await axios.get(url, {
 			headers: {
 				cookie: currentCookie.trim(),
-				'af-ac-enc-dat': currentDat,
 				'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
 			},
 		});
-
-		// update cookie for next request
-		// const setCookieHeader = res.headers['set-cookie'];
-		// if (setCookieHeader) {
-		// 	const cookies = setCookieHeader.map(cookie.parse);
-		// 	cookies
-		// 		.forEach((c) => {
-		// 			// get first poperty of cookie
-		// 			const key = Object.keys(c)[0];
-		// 			// console.log(key, c[key]);
-		// 			currentCookie[key] = c[key];
-		// 		});
-
-		// 	//  save cookie to file json
-		// 	fs.writeFileSync(userCookiePath, JSON.stringify(currentCookie, null, 4));
-		// }
 
 		return res.data;
 	} catch (error) {
@@ -136,6 +104,7 @@ export default async function getShopData(shopId, shopName, checkedShopId = {}) 
 	const downloadedURL = await Products.getDownloadedProductURLByShopName(shopName);
 
 	while (true) {
+		const startTime = Date.now();
 		logger.info(`Downloading page ${offSet / PAGE_SIZE + 1} of shop ${shopName}`);
 		const API_ENDPOINT = `https://shopee.vn/api/v4/shop/rcmd_items?bundle=shop_page_category_tab_main&limit=${PAGE_SIZE}&offset=${offSet}&shop_id=${shopId}&sort_type=1&upstream=search`;
 
@@ -189,11 +158,6 @@ export default async function getShopData(shopId, shopName, checkedShopId = {}) 
 			});
 
 			// download image in imageLinks
-			// filter null\
-			// const imageLinks = await Promise.race([
-			// 	downloadImage(product, shopName, images),
-			// 	timeoutDownloadImage,
-			// ]);
 			const imageLinks = await downloadImage(product, shopName, images);
 
 			if (!imageLinks) {
@@ -212,15 +176,20 @@ export default async function getShopData(shopId, shopName, checkedShopId = {}) 
 			});
 		}
 
-		// sleep 30s
-		// await delay(10 * 1000);
-
 		if (data.no_more) {
 			logger.info(`No more data for shop ${shopName}`);
 			break;
 		}
 
 		offSet += PAGE_SIZE;
+
+		// delay 1s to avoid being blocked
+		const endTime = Date.now();
+		const diffInSecond = Math.floor((endTime - startTime) / 1000);
+
+		if (diffInSecond < MIN_PAGE_TIME) {
+			await delay((MIN_PAGE_TIME - diffInSecond) * 1000);
+		}
 	}
 
 	// save checkedShopId
