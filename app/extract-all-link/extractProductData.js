@@ -206,12 +206,12 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 	const originalImages = product.originalImages;
 
 	// find all index of image path that null
-	const nullIndex = imagePath.reduce((acc, cur, i) => {
-		if (!cur) {
-			acc.push(i);
+	const nullIndex = [];
+	imagePath.forEach((path, i) => {
+		if (!path) {
+			nullIndex.push(i);
 		}
-		return acc;
-	}, []);
+	});
 
 	// remove null image path in both imagePath and product.originalImages
 	nullIndex.forEach((index) => {
