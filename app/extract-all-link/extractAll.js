@@ -181,7 +181,7 @@ const _extractAll = async (params, driverArray) => {
 		startUrl,
 		numInstance,
 		continueExtract,
-		ignoreUrlPatterns,
+		ignoreUrlPatterns: ignoreUrlPatternsParram,
 		crawlId,
 		logger,
 	} = params;
@@ -194,7 +194,7 @@ const _extractAll = async (params, driverArray) => {
 	];
 
 	// convert string to regex
-	const ignoreURLsRegex = ignoreUrlPatterns.map((url) => new RegExp(url));
+	let ignoreURLsRegex = ignoreUrlPatternsParram.map((url) => new RegExp(url));
 
 	if (continueExtract) {
 		const crawl = await Crawls.findOneById(crawlId);
@@ -215,6 +215,8 @@ const _extractAll = async (params, driverArray) => {
 			break;
 		}
 
+		const ignoreUrlPatterns = crawl.ignoreUrlPatterns || [];
+		ignoreURLsRegex = ignoreUrlPatterns.map((url) => new RegExp(url));
 		// get url array for this batch
 		const urlArray = queue.splice(0, numInstance);
 
