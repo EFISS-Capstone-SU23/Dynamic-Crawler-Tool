@@ -72,41 +72,41 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 	const output = [];
 	const start = Date.now();
 	const getLinks = async () => {
-		await delay(0.5 * 1000);
-		// const links = await driver.findElements(By.css('a'));
+		// await delay(0.5 * 1000);
+		const links = await driver.findElements(By.css('a'));
 
-		// for (const link of links) {
-		// 	try {
-		// 		const href = await link.getAttribute('href');
+		for (const link of links) {
+			try {
+				const href = await link.getAttribute('href');
 
-		// 		if (href !== null) {
-		// 			output.push(href);
-		// 		}
-		// 	} catch (error) {
-		// 		// logger.error(`Error when get href: ${url}`);
-		// 		// logger.error(error);
-		// 	}
-		// }
-
-		// get html of body tag in the page, then extract all link from it (faster)
-		const bodyElement = await getElementByXpath(driver, '/html/body');
-		if (bodyElement) {
-			const bodyHTML = await bodyElement.getAttribute('innerHTML');
-			const regex = /href="([^"]*)"/g;
-			const matches = bodyHTML.matchAll(regex);
-			const matchArray = Array.from(matches);
-
-			logger.info(`Get ${matchArray.length} links from ${url}`);
-			for (const match of matchArray) {
-				let href = match[1];
-				if (href) {
-					if (href.startsWith('/')) {
-						href = `https://${new URL(url).hostname}${href}`;
-					}
+				if (href !== null) {
 					output.push(href);
 				}
+			} catch (error) {
+				// logger.error(`Error when get href: ${url}`);
+				// logger.error(error);
 			}
 		}
+
+		// get html of body tag in the page, then extract all link from it (faster)
+		// const bodyElement = await getElementByXpath(driver, '/html/body');
+		// if (bodyElement) {
+		// 	const bodyHTML = await bodyElement.getAttribute('innerHTML');
+		// 	const regex = /href="([^"]*)"/g;
+		// 	const matches = bodyHTML.matchAll(regex);
+		// 	const matchArray = Array.from(matches);
+
+		// 	logger.info(`Get ${matchArray.length} links from ${url}`);
+		// 	for (const match of matchArray) {
+		// 		let href = match[1];
+		// 		if (href) {
+		// 			if (href.startsWith('/')) {
+		// 				href = `https://${new URL(url).hostname}${href}`;
+		// 			}
+		// 			output.push(href);
+		// 		}
+		// 	}
+		// }
 	};
 
 	if (xPath.paginationButton) {
