@@ -143,6 +143,24 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 });
 
 const filterQueue = (queue, visitedURL, ignoreURLsRegex, domain) => {
+	const notAllowedExt = [
+		'pdf',
+		'jpg',
+		'jpeg',
+		'png',
+		'gif',
+		'webp',
+		'bmp',
+		'css',
+		'js',
+		'xml',
+		'json',
+		'ico',
+		'woff',
+		'woff2',
+		'ttf',
+	];
+
 	// filter duplicate url in queue
 	const set = new Set(queue);
 	queue = [...set];
@@ -153,14 +171,12 @@ const filterQueue = (queue, visitedURL, ignoreURLsRegex, domain) => {
 		// 	return false;
 		// }
 
-		// if url contain ., only allow html file
-		if (url.includes('.')) {
-			const urlExtracted = url.split('?')[0];
-			const ext = urlExtracted.split('.').pop();
-
-			if (!['html', 'htm'].includes(ext)) {
-				return false;
-			}
+		// check if url is not allowed ext
+		if (notAllowedExt.some((ext) => {
+			const urlWithoutQuery = url.split('?')[0];
+			return urlWithoutQuery.endsWith(`.${ext}`);
+		})) {
+			return false;
 		}
 
 		try {
