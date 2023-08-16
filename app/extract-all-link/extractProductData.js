@@ -203,26 +203,23 @@ export const saveProductData = async (productData, url, logger, crawlId) => {
 
 	// download image in imageLinks
 	const imagePath = await downloadImage(product, domain, imageLinks, logger);
-	const originalImages = product.originalImages;
+	let originalImages = product.originalImages;
 
 	// find all index of image path that null
-	const nullIndex = [];
 	imagePath.forEach((path, i) => {
 		if (!path) {
-			nullIndex.push(i);
+			originalImages[i] = null;
 		}
 	});
 
 	// remove null image path in both imagePath and product.originalImages
-	nullIndex.forEach((index) => {
-		imagePath.splice(index, 1);
-		originalImages.splice(index, 1);
-	});
+	originalImages = originalImages.filter((path) => path !== null);
+	const images = imagePath.filter((path) => path !== null);
 
 	if (imagePath.length) {
 		// save product image path to database
 		await Products.updateProductById(product._id, {
-			images: imagePath,
+			images,
 			originalImages,
 			activeImageMap: imagePath.map(() => true),
 		});
