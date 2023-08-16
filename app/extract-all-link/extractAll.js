@@ -153,6 +153,16 @@ const filterQueue = (queue, visitedURL, ignoreURLsRegex, domain) => {
 		// 	return false;
 		// }
 
+		// if url contain ., only allow html file
+		if (url.includes('.')) {
+			const urlExtracted = url.split('?')[0];
+			const ext = urlExtracted.split('.').pop();
+
+			if (!['html', 'htm'].includes(ext)) {
+				return false;
+			}
+		}
+
 		try {
 			const urlObj = new URL(url);
 			if (urlObj.hostname !== domain) {
