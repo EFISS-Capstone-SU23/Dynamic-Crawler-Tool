@@ -27,6 +27,8 @@ export const extractProductData = async (driver, xPath, logger) => {
 		metadata,
 		imageElement = 'img',
 		imageLinkProperties = 'src',
+		imageLinkFrom = '',
+		imageLinkTo = '',
 	} = xPath;
 
 	const titleElement = await getElementByXpath(driver, title);
@@ -86,6 +88,11 @@ export const extractProductData = async (driver, xPath, logger) => {
 	}
 	// remove imageLinks duplicate
 	imageLinks = [...new Set(imageLinks)];
+
+	// replace word in image link
+	if (imageLinkFrom && imageLinkTo) {
+		imageLinks = imageLinks.map((link) => link.replace(imageLinkFrom, imageLinkTo));
+	}
 
 	// get all metadata by for key value
 	const metadataValue = {};
