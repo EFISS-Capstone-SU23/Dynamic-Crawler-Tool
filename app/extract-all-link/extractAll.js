@@ -72,6 +72,7 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 	const output = [];
 	const start = Date.now();
 	const getLinks = async () => {
+		await delay(0.5 * 1000);
 		// const links = await driver.findElements(By.css('a'));
 
 		// for (const link of links) {
