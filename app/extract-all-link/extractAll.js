@@ -75,18 +75,21 @@ const startExtractPage = async (driver, url, downloadedURL, params) => new Promi
 		// await delay(0.5 * 1000);
 		const links = await driver.findElements(By.css('a'));
 
+		let counter = 0;
 		for (const link of links) {
 			try {
 				const href = await link.getAttribute('href');
 
 				if (href !== null) {
 					output.push(href);
+					counter += 1;
 				}
 			} catch (error) {
 				// logger.error(`Error when get href: ${url}`);
 				// logger.error(error);
 			}
 		}
+		logger.info(`Get ${counter} links from ${url}`);
 
 		// get html of body tag in the page, then extract all link from it (faster)
 		// const bodyElement = await getElementByXpath(driver, '/html/body');
