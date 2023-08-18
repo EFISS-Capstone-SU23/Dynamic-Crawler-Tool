@@ -71,11 +71,7 @@ const requestGetWithCookie = async (url) => {
 
 const getItem = async (API_ENDPOINT, shopName, num) => {
 	const res = await requestGetWithCookie(API_ENDPOINT);
-	if (!res) {
-		return null;
-	}
-
-	const data = res.data || {};
+	const data = res ? res.data || {} : {};
 	const items = data.items;
 
 	if (!items) {
