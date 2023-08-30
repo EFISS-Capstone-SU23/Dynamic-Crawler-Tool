@@ -27,13 +27,13 @@ o.setUserPreferences({
 	credential_enable_service: false,
 });
 
-export const getDriver = () => new Builder()
-	.forBrowser('chrome')
-	.setChromeOptions(o)
-	.usingServer(SELENIUM_HUB_URL)
-	.build();
-
 // export const getDriver = () => new Builder()
 // 	.forBrowser('chrome')
 // 	.setChromeOptions(o)
+// 	.usingServer(SELENIUM_HUB_URL)
 // 	.build();
+
+export const getDriver = () => new Builder()
+	.forBrowser('chrome')
+	.setChromeOptions(o)
+	.build();
